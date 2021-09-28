@@ -1,0 +1,27 @@
+﻿<Window x:Class="ShortcutFloat.WPF.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShortcutFloat.WPF" 
+        xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common" 
+        d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutConfigurationViewModel}"
+        mc:Ignorable="d"
+        Title="Shortcut Float" 
+        Height="450" Width="800" 
+        SizeToContent="WidthAndHeight" 
+        Topmost="True" 
+        WindowStyle="ToolWindow" 
+        ResizeMode="NoResize">
+    <Grid>
+        <StackPanel Orientation="Horizontal">
+            <ItemsControl ItemsSource="{Binding Path=ShortcutDefinitions}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Button Content="{Binding Path=Name}" Padding="25,25,25,25"/>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </StackPanel>
+    </Grid>
+</Window>

@@ -1,0 +1,52 @@
+﻿<Window x:Class="ShortcutFloat.WPF.ShortcutConfigurationWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ShortcutFloat.WPF" 
+        xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common" 
+        d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutConfigurationViewModel}"
+        mc:Ignorable="d"
+        Title="ShortcutConfigurationWindow" Height="350" Width="500" WindowStartupLocation="CenterOwner">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <GroupBox Header="Target" DataContext="{Binding Path=Target}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Label Content="Window title:" VerticalContentAlignment="Center"/>
+                <Label Content="Process name:" Grid.Row="1" VerticalContentAlignment="Center"/>
+                <TextBox Grid.Column="1" Text="{Binding Path=WindowName}"/>
+                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=ProcessName}"/>
+            </Grid>
+        </GroupBox>
+        <GroupBox Header="Shortcut definition" Grid.Row="1">
+            <ListBox ItemsSource="{Binding Path=ShortcutDefinitionsView}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate DataType="{x:Type viewmodels:ShortcutDefinitionViewModel}">
+                        <Label Content="{Binding Path=Name}"/>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+        </GroupBox>
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Padding" Value="5,5,5,5"/>
+                    <Setter Property="MinWidth" Value="75"/>
+                </Style>
+            </StackPanel.Resources>
+            <Button x:Name="SaveButton" Content="Save" Click="SaveButton_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>

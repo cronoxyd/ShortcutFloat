@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31205.134
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShortcutFloat.WPF", "ShortcutFloat.WPF\ShortcutFloat.WPF.csproj", "{3670A0C4-3A42-4E85-B7F4-A7AC659C5F18}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShortcutFloat.Common", "ShortcutFloat.Common\ShortcutFloat.Common.csproj", "{2D4A1AA5-57A2-465B-AD65-C9286D75167E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3670A0C4-3A42-4E85-B7F4-A7AC659C5F18}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3670A0C4-3A42-4E85-B7F4-A7AC659C5F18}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3670A0C4-3A42-4E85-B7F4-A7AC659C5F18}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3670A0C4-3A42-4E85-B7F4-A7AC659C5F18}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2D4A1AA5-57A2-465B-AD65-C9286D75167E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2D4A1AA5-57A2-465B-AD65-C9286D75167E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2D4A1AA5-57A2-465B-AD65-C9286D75167E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2D4A1AA5-57A2-465B-AD65-C9286D75167E}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A9B9487D-89DC-45DE-99BF-09A4451A544E}
+	EndGlobalSection
+EndGlobal
