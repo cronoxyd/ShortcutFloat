@@ -7,14 +7,17 @@
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common" 
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutConfigurationViewModel}"
         mc:Ignorable="d"
-        Title="ShortcutConfigurationWindow" Height="350" Width="500" WindowStartupLocation="CenterOwner">
+        Title="ShortcutConfigurationWindow" 
+        Height="350" Width="500" 
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <GroupBox Header="Target" DataContext="{Binding Path=Target}">
+        <GroupBox Header="Target">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
@@ -26,8 +29,8 @@
                 </Grid.RowDefinitions>
                 <Label Content="Window title:" VerticalContentAlignment="Center"/>
                 <Label Content="Process name:" Grid.Row="1" VerticalContentAlignment="Center"/>
-                <TextBox Grid.Column="1" Text="{Binding Path=WindowName}"/>
-                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=ProcessName}"/>
+                <TextBox Grid.Column="1" Text="{Binding Path=Target.WindowTitle}"/>
+                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=Target.ProcessName}"/>
             </Grid>
         </GroupBox>
         <GroupBox Header="Shortcut definition" Grid.Row="1">

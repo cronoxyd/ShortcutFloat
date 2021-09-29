@@ -12,6 +12,8 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using ShortcutFloat.Common.Models;
+using ShortcutFloat.Common.Extensions;
 
 namespace ShortcutFloat.WPF
 {
@@ -20,20 +22,24 @@ namespace ShortcutFloat.WPF
     /// </summary>
     public partial class ShortcutFloatSettingsForm : Window
     {
-        public ShortcutFloatSettingsViewModel ViewModel { get; set; } = new(null);
+        public ShortcutFloatSettingsViewModel ViewModel { get; set; }
 
-        public ShortcutFloatSettingsForm()
+        public ShortcutFloatSettingsForm(ShortcutFloatSettingsViewModel ViewModel = null)
         {
+            if (ViewModel != null)
+                this.ViewModel = ViewModel;
+            else
+                this.ViewModel = new(new ShortcutFloatSettings());
+
             InitializeComponent();
             DataContext = ViewModel;
         }
 
         private void EditDefaultConfigurationButton_Click(object sender, RoutedEventArgs e)
         {
-            var shrtCfgWin = new ShortcutConfigurationWindow()
+            var shrtCfgWin = new ShortcutConfigurationWindow(ViewModel.DefaultConfiguration.DeepClone())
             {
-                Owner = this,
-                ViewModel = ViewModel.DefaultConfiguration
+                Owner = this
             };
 
             if (shrtCfgWin.ShowDialog() != true) return;

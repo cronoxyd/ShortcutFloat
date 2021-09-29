@@ -1,15 +1,14 @@
-﻿namespace ShortcutFloat.Common.ViewModels
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace ShortcutFloat.Common.ViewModels
 {
     public class TypedViewModel<T> : ViewModel, ITypedViewModel<T> where T : class, new()
     {
         public T Model { get; set; }
 
-        public TypedViewModel(T Model) : base()
+        public TypedViewModel([NotNull] T Model) : base()
         {
-            if (Model == null)
-                this.Model = new();
-            else
-                this.Model = Model;
+            this.Model = Model;
         }
     }
     public interface ITypedViewModel<T> : IViewModel where T : class

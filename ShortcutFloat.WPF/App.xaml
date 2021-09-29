@@ -1,8 +1,12 @@
 ﻿<Application x:Class="ShortcutFloat.WPF.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:ShortcutFloat.WPF">
+             xmlns:local="clr-namespace:ShortcutFloat.WPF"
+             ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
-         
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="3,3,3,3"/>
+            <Setter Property="MinWidth" Value="75"/>
+        </Style>
     </Application.Resources>
 </Application>

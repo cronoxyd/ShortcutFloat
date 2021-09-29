@@ -1,4 +1,5 @@
-﻿using ShortcutFloat.Common.ViewModels;
+﻿using ShortcutFloat.Common.Models;
+using ShortcutFloat.Common.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,10 +21,15 @@ namespace ShortcutFloat.WPF
     /// </summary>
     public partial class ShortcutConfigurationWindow : Window
     {
-        public ShortcutConfigurationViewModel ViewModel { get; set; } = new(null);
+        public ShortcutConfigurationViewModel ViewModel { get; set; }
 
-        public ShortcutConfigurationWindow()
+        public ShortcutConfigurationWindow(ShortcutConfigurationViewModel ViewModel = null)
         {
+            if (ViewModel != null)
+                this.ViewModel = ViewModel;
+            else
+                this.ViewModel = new(new ShortcutConfiguration());
+
             InitializeComponent();
             DataContext = ViewModel;
         }

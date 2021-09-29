@@ -12,10 +12,11 @@ namespace ShortcutFloat.Common.ViewModels
         public ShortcutTarget Target { get => Model.Target; set => Model.Target = value; }
         public ObservableCollection<ShortcutDefinitionViewModel> ShortcutDefinitions { get; } = new();
         public ICollectionView ShortcutDefinitionsView { get; }
+
         public ShortcutConfigurationViewModel(ShortcutConfiguration Model) : base(Model)
         {
-            ShortcutDefinitions.CollectionChanged += ShortcutDefinitions_CollectionChanged;
             ShortcutDefinitions.AddRange(this.Model.ShortcutDefinitions.Select(def => new ShortcutDefinitionViewModel(def)));
+            ShortcutDefinitions.CollectionChanged += ShortcutDefinitions_CollectionChanged;
             ShortcutDefinitionsView = CollectionViewSource.GetDefaultView(ShortcutDefinitions);
         }
 
