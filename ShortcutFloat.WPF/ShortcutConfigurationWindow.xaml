@@ -49,6 +49,7 @@
                     <Setter Property="MinWidth" Value="75"/>
                 </Style>
             </StackPanel.Resources>
+            <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click"/>
             <Button x:Name="SaveButton" Content="Save" Click="SaveButton_Click"/>
         </StackPanel>
     </Grid>

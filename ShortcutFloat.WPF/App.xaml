@@ -5,8 +5,11 @@
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
         <Style TargetType="Button">
-            <Setter Property="Margin" Value="3,3,3,3"/>
+            <!--<Setter Property="Margin" Value="3,3,3,3"/>-->
             <Setter Property="MinWidth" Value="75"/>
+        </Style>
+        <Style TargetType="Window">
+            <Setter Property="Padding" Value="5,5,5,5"/>
         </Style>
     </Application.Resources>
 </Application>

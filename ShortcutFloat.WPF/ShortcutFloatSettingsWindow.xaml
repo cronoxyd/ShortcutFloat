@@ -23,12 +23,12 @@
             <DockPanel>
                 <ToolBarTray DockPanel.Dock="Top">
                     <ToolBar ToolBarTray.IsLocked="True">
-                        <MenuItem x:Name="NewConfigurationMenuItem" Header="New"/>
-                        <MenuItem x:Name="EditConfigurationMenuItem" Header="Edit"/>
-                        <MenuItem x:Name="RemoveConfigurationMenuItem" Header="Remove"/>
+                        <MenuItem x:Name="NewConfigurationMenuItem" Header="New" Command="{Binding Path=NewConfigurationCommand}"/>
+                        <MenuItem x:Name="EditConfigurationMenuItem" Header="Edit" Command="{Binding Path=EditConfigurationCommand}"/>
+                        <MenuItem x:Name="RemoveConfigurationMenuItem" Header="Remove" Command="{Binding Path=DeleteConfigurationCommand}"/>
                     </ToolBar>
                 </ToolBarTray>
-                <ListBox ItemsSource="{Binding Path=ShortcutConfigurationsView}" Grid.Row="1">
+                <ListBox ItemsSource="{Binding Path=ShortcutConfigurationsView}" Grid.Row="1" SelectedItem="{Binding Path=SelectedConfiguration}">
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type viewmodels:ShortcutConfigurationViewModel}">
                             <Label Content="{Binding Path=Target.ProcessName}"/>

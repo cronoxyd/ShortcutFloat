@@ -1,6 +1,7 @@
 ﻿using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Models.Actions;
 using ShortcutFloat.Common.ViewModels.Actions;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows.Input;
@@ -16,7 +17,11 @@ namespace ShortcutFloat.Common.ViewModels
 
         public ShortcutDefinitionViewModel(ShortcutDefinition Model) : base(Model)
         {
-            Actions = new(Model.Actions.Select(act => new ActionDefinitionViewModel(act)));
+            Actions = new(Model.Actions.Select(act => act switch {
+                KeystrokeDefinition => new KeystrokeDefinitionViewModel(act as KeystrokeDefinition)
+                _ => throw new NotImplementedException()
+            }));
+
             Actions.CollectionChanged += ShortcutDefinitionViewModel_CollectionChanged;
 
             SendCommand = new RelayCommand(

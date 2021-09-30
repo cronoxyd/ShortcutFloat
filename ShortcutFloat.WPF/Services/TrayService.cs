@@ -40,7 +40,6 @@ namespace ShortcutFloat.WPF.Services
 
             icon.ContextMenuStrip = iconContextMenuStrip;
             icon.Text = "Shortcut Float";
-            icon.Visible = true;
             icon.Icon = SystemIcons.Information;
             icon.DoubleClick += Icon_DoubleClick;
         }
@@ -54,7 +53,10 @@ namespace ShortcutFloat.WPF.Services
         private void SettingsItem_Click(object sender, EventArgs e) =>
             ShowSettings(this, new());
 
-        public void Close() =>
-            icon.Visible = false;
+        public void Start() =>
+            icon.Visible = true;
+
+        public void Stop() =>
+            icon.Dispose();
     }
 }

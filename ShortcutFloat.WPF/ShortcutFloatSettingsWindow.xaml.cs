@@ -33,6 +33,18 @@ namespace ShortcutFloat.WPF
 
             InitializeComponent();
             DataContext = ViewModel;
+
+            ViewModel.NewConfigurationRequested += (sender, e) =>
+            {
+                var newConfig = ShowShortcutConfigurationWindow(new(new()));
+                if (newConfig != null) e.ViewModel = newConfig;
+            };
+
+            ViewModel.EditConfigurationRequested += (sender, e) =>
+            {
+                var editConfig = ShowShortcutConfigurationWindow(ViewModel.SelectedConfiguration);
+                if (editConfig != null) e.ViewModel = editConfig;
+            };
         }
 
         private void EditDefaultConfigurationButton_Click(object sender, RoutedEventArgs e)
@@ -44,6 +56,19 @@ namespace ShortcutFloat.WPF
 
             if (shrtCfgWin.ShowDialog() != true) return;
             ViewModel.DefaultConfiguration.Model = shrtCfgWin.ViewModel.Model;
+        }
+
+        private ShortcutConfigurationViewModel ShowShortcutConfigurationWindow(ShortcutConfigurationViewModel vm)
+        {
+            var shrtCfgWin = new ShortcutConfigurationWindow(vm.DeepClone())
+            {
+                Owner = this
+            };
+
+            if (shrtCfgWin.ShowDialog() != true)
+                return null;
+            else
+                return shrtCfgWin.ViewModel;
         }
     }
 }

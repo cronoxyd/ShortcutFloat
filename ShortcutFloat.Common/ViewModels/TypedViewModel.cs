@@ -2,7 +2,7 @@
 
 namespace ShortcutFloat.Common.ViewModels
 {
-    public class TypedViewModel<T> : ViewModel, ITypedViewModel<T> where T : class, new()
+    public class TypedViewModel<T> : ViewModel, ITypedViewModel<T> where T : class
     {
         public T Model { get; set; }
 

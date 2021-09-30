@@ -4,9 +4,8 @@ using System.Windows.Input;
 
 namespace ShortcutFloat.Common.ViewModels.Actions
 {
-    public class ActionDefinitionViewModel : ViewModel, IActionDefinitionViewModel
+    public abstract class ActionDefinitionViewModel : TypedViewModel<ActionDefinition>, IActionDefinitionViewModel
     {
-        public IActionDefinition Model { get; set; }
 
         public string Name { get => Model.Name; set => Model.Name = value; }
 
@@ -14,10 +13,8 @@ namespace ShortcutFloat.Common.ViewModels.Actions
 
         public ICommand SendCommand { get; }
 
-        public ActionDefinitionViewModel(IActionDefinition Model) : base()
+        public ActionDefinitionViewModel(ActionDefinition Model) : base(Model)
         {
-            this.Model = Model;
-
             SendCommand = new RelayCommand(
                 () => SendKeys.Send(ToSendKeysString()),
                 () => true
@@ -25,9 +22,8 @@ namespace ShortcutFloat.Common.ViewModels.Actions
         }
     }
 
-    public interface IActionDefinitionViewModel : IViewModel
+    public interface IActionDefinitionViewModel : ITypedViewModel<ActionDefinition>
     {
-        public IActionDefinition Model { get; set; }
         public string Name { get; set; }
         public string ToSendKeysString();
         public ICommand SendCommand { get; }

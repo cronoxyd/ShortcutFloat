@@ -1,6 +1,7 @@
 ﻿using ShortcutFloat.Common.Runtime;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -13,7 +14,7 @@ namespace ShortcutFloat.WPF.Services
         private bool _running = false;
         public bool Running => _running;
 
-        public event ForegroundWindowChangedEventHandler ForegroundWindowChanged;
+        public event ForegroundWindowChangedEventHandler ForegroundWindowChanged = (sender, e) => { };
 
         private void MonitorLoop()
         {
@@ -29,7 +30,7 @@ namespace ShortcutFloat.WPF.Services
                     (foregroundWindowText != lastForegroundWindowText && lastForegroundWindowText != null) ||
                     (foregroundWindowHandle != lastForegroundWindowHandle && lastForegroundWindowHandle != null)
                    )
-                    ForegroundWindowChanged(this, new(foregroundWindowHandle, foregroundWindowText));
+                    ForegroundWindowChanged(this, new(foregroundWindowHandle));
 
                 lastForegroundWindowHandle = foregroundWindowHandle;
                 lastForegroundWindowText = foregroundWindowText;
@@ -42,7 +43,7 @@ namespace ShortcutFloat.WPF.Services
         {
             if (!Running)
             {
-                (new Thread(MonitorLoop)).Start();
+                new Thread(MonitorLoop).Start();
                 _running = true;
             }
         }
@@ -59,11 +60,15 @@ namespace ShortcutFloat.WPF.Services
         {
             public IntPtr WindowHandle { get; }
             public string WindowText { get; }
+            public Process WindowProcess { get; }
 
-            public ForegroundWindowChangedEventArgs(IntPtr handle, string text)
+            public ForegroundWindowChangedEventArgs(IntPtr handle)
             {
                 WindowHandle = handle;
-                WindowText = text;
+                WindowText = InteropServices.GetWindowTitle(handle);
+
+                InteropServices.GetWindowThreadProcessId(handle, out uint procId);
+                WindowProcess = Process.GetProcessById(procId);
             }
         }
     }
