@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -40,7 +41,7 @@ namespace ShortcutFloat.WPF.Services
 
             icon.ContextMenuStrip = iconContextMenuStrip;
             icon.Text = "Shortcut Float";
-            icon.Icon = SystemIcons.Information;
+            icon.Icon = Properties.Resources.ShortcutFloatIcon;
             icon.DoubleClick += Icon_DoubleClick;
         }
 
