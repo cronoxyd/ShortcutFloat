@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Extensions;
+using AnyClone;
 
 namespace ShortcutFloat.WPF
 {
@@ -24,32 +25,23 @@ namespace ShortcutFloat.WPF
     {
         public ShortcutFloatSettingsViewModel ViewModel { get; set; }
 
-        public ShortcutFloatSettingsForm(ShortcutFloatSettingsViewModel ViewModel = null)
+        public ShortcutFloatSettingsForm(ShortcutFloatSettings Model = null)
         {
-            if (ViewModel != null)
-                this.ViewModel = ViewModel;
+            if (Model != null)
+                ViewModel = new(Model);
             else
-                this.ViewModel = new(new ShortcutFloatSettings());
+                ViewModel = new(new ShortcutFloatSettings());
 
             InitializeComponent();
             DataContext = ViewModel;
 
-            ViewModel.NewConfigurationRequested += (sender, e) =>
-            {
-                var newConfig = ShowShortcutConfigurationWindow(new(new()));
-                if (newConfig != null) e.ViewModel = newConfig;
-            };
-
-            ViewModel.EditConfigurationRequested += (sender, e) =>
-            {
-                var editConfig = ShowShortcutConfigurationWindow(ViewModel.SelectedConfiguration);
-                if (editConfig != null) e.ViewModel = editConfig;
-            };
+            ViewModel.NewConfigurationRequested += (sender, e) => e.Model = ShowShortcutConfigurationWindow();
+            ViewModel.EditConfigurationRequested += (sender, e) => e.Model = ShowShortcutConfigurationWindow(e.Model);
         }
 
         private void EditDefaultConfigurationButton_Click(object sender, RoutedEventArgs e)
         {
-            var shrtCfgWin = new ShortcutConfigurationWindow(ViewModel.DefaultConfiguration.DeepClone())
+            var shrtCfgWin = new ShortcutConfigurationWindow(ViewModel.DefaultConfiguration.Model.Clone())
             {
                 Owner = this
             };
@@ -58,17 +50,20 @@ namespace ShortcutFloat.WPF
             ViewModel.DefaultConfiguration.Model = shrtCfgWin.ViewModel.Model;
         }
 
-        private ShortcutConfigurationViewModel ShowShortcutConfigurationWindow(ShortcutConfigurationViewModel vm)
+        private ShortcutConfiguration ShowShortcutConfigurationWindow(ShortcutConfiguration model = null)
         {
-            var shrtCfgWin = new ShortcutConfigurationWindow(vm.DeepClone())
-            {
-                Owner = this
-            };
+            var shrtCfgWin = new ShortcutConfigurationWindow(model?.Clone()) { Owner = this };
 
             if (shrtCfgWin.ShowDialog() != true)
                 return null;
             else
-                return shrtCfgWin.ViewModel;
+                return shrtCfgWin.ViewModel.Model;
+        }
+
+        private void ConfigurationsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ViewModel.EditConfigurationCommand.CanExecute(null))
+                ViewModel.EditConfigurationCommand.Execute(null);
         }
     }
 }

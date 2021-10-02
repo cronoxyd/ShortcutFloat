@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Drawing;
 
 namespace ShortcutFloat.Common.Models
 {
@@ -10,5 +7,7 @@ namespace ShortcutFloat.Common.Models
     {
         public ShortcutTarget Target { get; set; } = new();
         public List<ShortcutDefinition> ShortcutDefinitions { get; set; } = new();
+        public PointF? FloatWindowLocation { get; set; } = null;
+        public bool Enabled { get; set; } = true;
     }
 }

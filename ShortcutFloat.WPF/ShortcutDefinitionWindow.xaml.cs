@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ShortcutFloat.Common.Models;
+using ShortcutFloat.Common.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +21,23 @@ namespace ShortcutFloat.WPF
     /// </summary>
     public partial class ShortcutDefinitionWindow : Window
     {
-        public ShortcutDefinitionWindow()
+        public ShortcutDefinitionViewModel ViewModel { get; set; }
+
+        public ShortcutDefinitionWindow(ShortcutDefinition Model)
         {
+            if (Model != null)
+                ViewModel = new(Model);
+            else
+                ViewModel = new(new());
+
             InitializeComponent();
+            DataContext = ViewModel;
         }
+
+        private void SaveButton_Click(object sender, RoutedEventArgs e) =>
+            DialogResult = true;
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e) =>
+            DialogResult = false;
     }
 }

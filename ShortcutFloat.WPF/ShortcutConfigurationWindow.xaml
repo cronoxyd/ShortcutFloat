@@ -5,12 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShortcutFloat.WPF" 
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common" 
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutConfigurationViewModel}"
         mc:Ignorable="d"
         Title="ShortcutConfigurationWindow" 
         Height="350" Width="500" 
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner">
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Style="{DynamicResource CustomWindowStyle}">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -29,18 +31,28 @@
                 </Grid.RowDefinitions>
                 <Label Content="Window title:" VerticalContentAlignment="Center"/>
                 <Label Content="Process name:" Grid.Row="1" VerticalContentAlignment="Center"/>
-                <TextBox Grid.Column="1" Text="{Binding Path=Target.WindowTitle}"/>
+                <TextBox Grid.Column="1" Text="{Binding Path=Target.WindowText}"/>
                 <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Path=Target.ProcessName}"/>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Shortcut definition" Grid.Row="1">
-            <ListBox ItemsSource="{Binding Path=ShortcutDefinitionsView}">
-                <ListBox.ItemTemplate>
-                    <DataTemplate DataType="{x:Type viewmodels:ShortcutDefinitionViewModel}">
-                        <Label Content="{Binding Path=Name}"/>
-                    </DataTemplate>
-                </ListBox.ItemTemplate>
-            </ListBox>
+        <GroupBox Header="Shortcut definitions" Grid.Row="1">
+            <DockPanel>
+                <ToolBar DockPanel.Dock="Top" ToolBarTray.IsLocked="True">
+                    <Button Content="Add" Command="{Binding Path=AddShortcutDefinitionCommand}"/>
+                    <Button Content="Edit" Command="{Binding Path=EditShortcutDefinitionCommand}"/>
+                    <Button Content="Remove" Command="{Binding Path=RemoveShortcutDefinitionCommand}"/>
+                    <Separator/>
+                    <Button Content="Move up" Command="{Binding Path=MoveShortcutDefinitionUpCommand}"/>
+                    <Button Content="Move down" Command="{Binding Path=MoveShortcutDefinitionDownCommand}"/>
+                </ToolBar>
+                <ListBox x:Name="ShortcutDefinitionsListBox" ItemsSource="{Binding Path=ShortcutDefinitionsView}" SelectedItem="{Binding Path=SelectedShortcutDefinition}" MouseDoubleClick="ShortcutDefinitionsListBox_MouseDoubleClick">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate DataType="{x:Type viewmodels:ShortcutDefinitionViewModel}">
+                            <Label Content="{Binding Path=Name}"/>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </DockPanel>
         </GroupBox>
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
             <StackPanel.Resources>
@@ -49,8 +61,8 @@
                     <Setter Property="MinWidth" Value="75"/>
                 </Style>
             </StackPanel.Resources>
-            <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click"/>
-            <Button x:Name="SaveButton" Content="Save" Click="SaveButton_Click"/>
+            <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click" IsCancel="True"/>
+            <Button x:Name="SaveButton" Content="Save" Click="SaveButton_Click" IsDefault="True"/>
         </StackPanel>
     </Grid>
 </Window>

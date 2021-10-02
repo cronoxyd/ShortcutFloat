@@ -6,9 +6,12 @@
         xmlns:local="clr-namespace:ShortcutFloat.WPF"
         xmlns:actions="clr-namespace:ShortcutFloat.Common.Models.Actions;assembly=ShortcutFloat.Common"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
-        xmlns:input="clr-namespace:System.Windows.Input;assembly=netstandard"
+        xmlns:input="clr-namespace:System.Windows.Input;assembly=netstandard" 
+        xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common" 
+        d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutDefinitionViewModel}"
         mc:Ignorable="d"
-        Title="ShortcutDefinitionWindow" Height="350" Width="500">
+        Title="ShortcutDefinitionWindow" Height="350" Width="500" WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Style="{DynamicResource CustomWindowStyle}">
     <Window.Resources>
         <ObjectDataProvider x:Key="ModifierKeysEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
             <ObjectDataProvider.MethodParameters>
@@ -38,28 +41,47 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <Label Content="Name:"/>
-            <TextBox Grid.Column="1"/>
+            <TextBox Grid.Column="1" Text="{Binding Path=Name}"/>
         </Grid>
 
         <GroupBox Grid.Row="1" Header="Actions">
             <DockPanel>
-                <ToolBar DockPanel.Dock="Top">
-                    <Button Content="New"/>
-                    <Button Content="Remove"/>
+                <ToolBar DockPanel.Dock="Top" ToolBarTray.IsLocked="True">
+                    <Button Content="New" Command="{Binding Path=NewActionCommand}"/>
+                    <Button Content="Remove" Command="{Binding Path=RemoveActionCommand}"/>
+                    <Separator/>
+                    <Button Content="Move up" Command="{Binding Path=MoveActionUpCommand}"/>
+                    <Button Content="Move down" Command="{Binding Path=MoveActionDownCommand}"/>
                 </ToolBar>
-                <ListBox>
+                <ListBox ItemsSource="{Binding Path=ActionsView}" HorizontalContentAlignment="Stretch" SelectedItem="{Binding Path=SelectedAction}">
+                    <ListBox.Resources>
+                        <Style TargetType="ComboBox">
+                            <Setter Property="MinWidth" Value="75"/>
+                        </Style>
+                    </ListBox.Resources>
+                    
                     <ListBox.ItemTemplate>
                         <DataTemplate DataType="{x:Type actions:KeystrokeDefinition}">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                    <ColumnDefinition/>
-                                </Grid.ColumnDefinitions>
-                                <ComboBox ItemsSource="{Binding Source={StaticResource ModifierKeysEnum}}"/>
-                                <Label Content="+" Grid.Column="1"/>
-                                <ComboBox ItemsSource="{Binding Source={StaticResource KeysEnum}}" Grid.Column="2"/>
-                            </Grid>
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Content="Name:"/>
+                                    <TextBox Grid.Column="1" Text="{Binding Path=Name}"/>
+                                </Grid>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <ComboBox ItemsSource="{Binding Source={StaticResource ModifierKeysEnum}}" SelectedItem="{Binding Path=ModifierKey}"/>
+                                    <Label Content="+" Grid.Column="1"/>
+                                    <ComboBox Grid.Column="2" ItemsSource="{Binding Source={StaticResource KeysEnum}}" SelectedItem="{Binding Path=Key}"/>
+                                </Grid>
+                            </StackPanel>
                         </DataTemplate>
                     </ListBox.ItemTemplate>
                 </ListBox>
@@ -67,8 +89,14 @@
         </GroupBox>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Content="Cancel"/>
-            <Button Content="Save"/>
+            <StackPanel.Resources>
+                <Style TargetType="Button">
+                    <Setter Property="Padding" Value="5,5,5,5"/>
+                    <Setter Property="MinWidth" Value="75"/>
+                </Style>
+            </StackPanel.Resources>
+            <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click"/>
+            <Button x:Name="SaveButton" Content="Save" Click="SaveButton_Click"/>
         </StackPanel>
     </Grid>
 </Window>

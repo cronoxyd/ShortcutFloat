@@ -12,7 +12,7 @@ namespace ShortcutFloat.Common.ViewModels.Actions
     public class KeystrokeDefinitionViewModel : ActionDefinitionViewModel
     {
         public new KeystrokeDefinition Model { get => base.Model as KeystrokeDefinition; set => base.Model = value; }
-        public ModifierKeys? ModifierKeys { get => Model.ModifierKeys; set => Model.ModifierKeys = value; }
+        public ModifierKeys? ModifierKey { get => Model.ModifierKey; set => Model.ModifierKey = value; }
         public Key? Key { get => Model.Key; set => Model.Key = value; }
 
         public KeystrokeDefinitionViewModel([NotNull] KeystrokeDefinition Model) : base(Model) { }

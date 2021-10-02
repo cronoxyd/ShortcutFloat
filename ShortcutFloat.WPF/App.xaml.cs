@@ -1,14 +1,17 @@
-﻿using PropertyChanged;
+﻿using Newtonsoft.Json;
+using PropertyChanged;
 using ShortcutFloat.Common.Models;
+using ShortcutFloat.Common.Runtime;
 using ShortcutFloat.WPF.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Data;
+using System.Diagnostics;
+using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
@@ -18,8 +21,7 @@ namespace ShortcutFloat.WPF
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
-    [AddINotifyPropertyChangedInterface]
-    public partial class App : Application, INotifyPropertyChanged
+    public partial class App : Application
     {
         public static string SettingsFilePath => Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
@@ -31,17 +33,14 @@ namespace ShortcutFloat.WPF
         private EnvironmentMonitor EnvironmentMonitor { get; } = new();
         private TrayService TrayService { get; } = new();
         private ShortcutFloatSettingsForm SettingsForm { get; set; } = null;
-        private FloatWindow FloatWindow { get; set; } = null;
+        private FloatWindow FloatWindow { get; set; }
         private ShortcutConfiguration ActiveConfiguration { get; set; } = null;
-
-        public event PropertyChangedEventHandler PropertyChanged;
+        private IntPtr? TargetWindowHandle { get; set; } = null;
+        private Process CurrentProcess => Process.GetCurrentProcess();
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(SettingsFilePath));
-
-            if (File.Exists(SettingsFilePath))
-                Settings = JsonSerializer.Deserialize<ShortcutFloatSettings>(File.ReadAllText(SettingsFilePath));
+            LoadSettings();
 
             EnvironmentMonitor.ForegroundWindowChanged += EnvironmentMonitor_ForegroundWindowChanged;
 
@@ -50,31 +49,22 @@ namespace ShortcutFloat.WPF
 
             TrayService.ShowSettings += TrayService_ShowSettings;
             TrayService.Quit += TrayService_Quit;
-
-            PropertyChanged += App_PropertyChanged;
-        }
-
-        private void App_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            switch (e.PropertyName)
-            {
-                case nameof(ActiveConfiguration):
-                    {
-
-                        break;
-                    }
-            }
         }
 
         private void EnvironmentMonitor_ForegroundWindowChanged(object sender, EnvironmentMonitor.ForegroundWindowChangedEventArgs e)
         {
+            // Ignore own process
+            if (e.WindowProcess.ProcessName == CurrentProcess.ProcessName) return;
+
             ShortcutConfiguration matchingConfiguration = null;
 
             foreach (var config in Settings.ShortcutConfigurations)
             {
+                if (!config.Enabled) continue;
+
                 if (IsNotEmptyAndValidRegex(config.Target.WindowText))
                 {
-                    if (Regex.IsMatch(e.WindowText, config.Target.WindowText))
+                    if (Regex.IsMatch(e.WindowText, config.Target.WindowText, RegexOptions.IgnoreCase))
                     {
                         matchingConfiguration = config;
                         break;
@@ -83,16 +73,67 @@ namespace ShortcutFloat.WPF
 
                 if (IsNotEmptyAndValidRegex(config.Target.ProcessName))
                 {
-                    if (Regex.IsMatch(e.WindowProcess.ProcessName, config.Target.ProcessName))
+                    if (Regex.IsMatch(e.WindowProcess.ProcessName, config.Target.ProcessName, RegexOptions.IgnoreCase))
                     {
                         matchingConfiguration = config;
                         break;
                     }
                 }
             }
+
+            if (matchingConfiguration != null)
+                TargetWindowHandle = e.WindowHandle;
+
+            ActiveConfiguration = matchingConfiguration;
+            OnActiveConfigurationChanged();
         }
 
-        private bool IsNotEmptyAndValidRegex(string input)
+        private void OnActiveConfigurationChanged()
+        {
+            if (ActiveConfiguration == null)
+            {
+                if (FloatWindow != null)
+                    Dispatcher.Invoke(() => {
+                        FloatWindow.Close();
+                        FloatWindow = null;
+                    });
+            }
+            else if (FloatWindow == null)
+            {
+                Dispatcher.Invoke(() =>
+                {
+                    FloatWindow = new(ActiveConfiguration);
+                    FloatWindow.SendKeysRequested += FloatWindow_SendKeysRequested;
+                    FloatWindow.LocationChanged += FloatWindow_LocationChanged;
+
+                    if (ActiveConfiguration.FloatWindowLocation != null)
+                    {
+                        FloatWindow.Left = ActiveConfiguration.FloatWindowLocation.Value.X;
+                        FloatWindow.Top = ActiveConfiguration.FloatWindowLocation.Value.Y;
+                    }
+
+                    FloatWindow.Show();
+                });
+
+                if (TargetWindowHandle != null)
+                    InteropServices.SetForegroundWindow(TargetWindowHandle.Value);
+            }
+        }
+
+        private void FloatWindow_LocationChanged(object sender, EventArgs e)
+        {
+            if (FloatWindow == null) return;
+            ActiveConfiguration.FloatWindowLocation = new PointF((float)FloatWindow.Left, (float)FloatWindow.Top);
+        }
+
+        private void FloatWindow_SendKeysRequested(object sender, Common.ViewModels.SendKeysEventArgs e)
+        {
+            if (TargetWindowHandle == null) return;
+            InteropServices.SetForegroundWindow(TargetWindowHandle.Value);
+            System.Windows.Forms.SendKeys.SendWait(e.SendKeysString);
+        }
+
+        private static bool IsNotEmptyAndValidRegex(string input)
         {
             if (string.IsNullOrEmpty(input)) return false;
 
@@ -118,14 +159,39 @@ namespace ShortcutFloat.WPF
 
         protected override void OnExit(ExitEventArgs e)
         {
-            File.WriteAllText(SettingsFilePath, JsonSerializer.Serialize(Settings));
+            SaveSettings();
+        }
+
+        private void LoadSettings()
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(SettingsFilePath));
+
+            if (File.Exists(SettingsFilePath))
+            {
+                var json = File.ReadAllText(SettingsFilePath);
+
+                if (File.Exists(SettingsFilePath))
+                    Settings = JsonConvert.DeserializeObject<ShortcutFloatSettings>(json, new JsonSerializerSettings
+                    {
+                        TypeNameHandling = TypeNameHandling.Auto
+                    });
+            }
+        }
+
+        public void SaveSettings()
+        {
+            string json = JsonConvert.SerializeObject(Settings, Formatting.Indented, new JsonSerializerSettings
+            {
+                TypeNameHandling = TypeNameHandling.Auto
+            });
+            File.WriteAllText(SettingsFilePath, json);
         }
 
         private void TrayService_ShowSettings(object sender, EventArgs e)
         {
             if (SettingsForm == null)
             {
-                SettingsForm = new(new(Settings));
+                SettingsForm = new(Settings);
                 SettingsForm.Closed += (object sender, EventArgs e) => { SettingsForm = null; };
                 SettingsForm.Show();
             } else

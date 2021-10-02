@@ -18,10 +18,10 @@ namespace ShortcutFloat.Common.ViewModels
 
         public ICommand NewConfigurationCommand { get; }
         public ICommand EditConfigurationCommand { get; }
-        public ICommand DeleteConfigurationCommand { get; }
+        public ICommand RemoveConfigurationCommand { get; }
 
-        public event ShortcutConfigurationViewModelHandler NewConfigurationRequested = (sender, e) => { };
-        public event ShortcutConfigurationViewModelHandler EditConfigurationRequested = (sender, e) => { };
+        public event ShortcutConfigurationModelHandler NewConfigurationRequested = (sender, e) => { };
+        public event ShortcutConfigurationModelHandler EditConfigurationRequested = (sender, e) => { };
 
         public ShortcutFloatSettingsViewModel(ShortcutFloatSettings Model) : base(Model)
         {
@@ -35,9 +35,9 @@ namespace ShortcutFloat.Common.ViewModels
             NewConfigurationCommand = new RelayCommand(
                 () =>
                 {
-                    var e = new ShortcutConfigurationViewModelEventArgs();
+                    var e = new ModelEventArgs<ShortcutConfiguration>();
                     NewConfigurationRequested(this, e);
-                    if (e.ViewModel != null) ShortcutConfigurations.Add(e.ViewModel);
+                    if (e.Model != null) ShortcutConfigurations.Add(new(e.Model));
                 },
                 () => true
             );
@@ -45,19 +45,20 @@ namespace ShortcutFloat.Common.ViewModels
             EditConfigurationCommand = new RelayCommand(
                 () =>
                 {
-                    var e = new ShortcutConfigurationViewModelEventArgs(SelectedConfiguration);
+                    var e = new ModelEventArgs<ShortcutConfiguration>(SelectedConfiguration.Model);
                     EditConfigurationRequested(this, e);
-                    if (e.ViewModel != null)
+                    if (e.Model != null)
                     {
                         ShortcutConfigurations.Remove(SelectedConfiguration);
-                        ShortcutConfigurations.Add(e.ViewModel);
-                        SelectedConfiguration = e.ViewModel;
+                        var vm = new ShortcutConfigurationViewModel(e.Model);
+                        ShortcutConfigurations.Add(vm);
+                        SelectedConfiguration = vm;
                     }
                 },
                 () => SelectedConfiguration != null
             );
 
-            DeleteConfigurationCommand = new RelayCommand(
+            RemoveConfigurationCommand = new RelayCommand(
                 () => ShortcutConfigurations.Remove(SelectedConfiguration),
                 () => SelectedConfiguration != null
             );
@@ -69,15 +70,6 @@ namespace ShortcutFloat.Common.ViewModels
             Model.ShortcutConfigurations.AddRange(ShortcutConfigurations.Select(cfg => cfg.Model));
         }
 
-        public delegate void ShortcutConfigurationViewModelHandler(object sender, ShortcutConfigurationViewModelEventArgs e);
-
-        public class ShortcutConfigurationViewModelEventArgs : EventArgs
-        {
-            public ShortcutConfigurationViewModel ViewModel { get; set; } = null;
-
-            public ShortcutConfigurationViewModelEventArgs(ShortcutConfigurationViewModel vm) => ViewModel = vm;
-            public ShortcutConfigurationViewModelEventArgs(ShortcutConfiguration m) => ViewModel = new(m);
-            public ShortcutConfigurationViewModelEventArgs() { }
-        }
+        public delegate void ShortcutConfigurationModelHandler(object sender, ModelEventArgs<ShortcutConfiguration> e);
     }
 }

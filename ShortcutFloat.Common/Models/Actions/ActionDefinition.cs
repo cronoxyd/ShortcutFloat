@@ -10,12 +10,12 @@ namespace ShortcutFloat.Common.Models.Actions
     {
         public string Name { get; set; }
 
-        public abstract string ToSendKeysString();
+        public abstract string GetSendKeysString();
     }
 
     public interface IActionDefinition
     {
         public string Name { get; set; }
-        public string ToSendKeysString();
+        public string GetSendKeysString();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using AnyClone;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using ShortcutFloat.Common.Extensions;
 using System;
 using System.Collections.Generic;
@@ -15,7 +16,15 @@ namespace ShortcutFloat.Tests.Common.Extensions
         public void TestDeepClone()
         {
             TestClass1 Reference = new() { FieldMember = "ghi", TestString = ".NET" };
-            TestClass1 Difference = Reference.DeepClone();
+            Reference.TestEvent += (sender, e) => Console.WriteLine("Test event");
+
+            IsTrue(Reference.RaiseEvent);
+
+            TestClass1 Difference = Reference.Clone();
+
+            IsTrue(Reference.RaiseEvent);
+
+            Reference.RaiseEvent();
 
             Difference.StringMember = "jkl";
             Difference.IntegerMember = 456;
@@ -37,6 +46,19 @@ namespace ShortcutFloat.Tests.Common.Extensions
             public int IntegerMember { get; set; } = 123;
             public TestClass2 ReferenceMember { get; set; } = new();
             public string FieldMember = "";
+            public event EventHandler TestEvent;
+            public bool RaiseEvent()
+            {
+                try
+                {
+                    TestEvent(this, new());
+                    return true;
+
+                } catch
+                {
+                    return false;
+                }
+            }
         }
 
         [Serializable]
@@ -44,6 +66,11 @@ namespace ShortcutFloat.Tests.Common.Extensions
         {
             public double DoubleMember { get; set; } = 1.23;
             public string StringMember { get; set; } = "def";
+        }
+        public static void IsTrue(Func<bool> func)
+        {
+            var result = func();
+            Assert.IsTrue(result);
         }
     }
 }

@@ -68,7 +68,7 @@ namespace ShortcutFloat.WPF.Services
                 WindowText = InteropServices.GetWindowTitle(handle);
 
                 InteropServices.GetWindowThreadProcessId(handle, out uint procId);
-                WindowProcess = Process.GetProcessById(procId);
+                WindowProcess = Process.GetProcessById((int)procId);
             }
         }
     }

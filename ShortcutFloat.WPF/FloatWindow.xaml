@@ -12,16 +12,20 @@
         SizeToContent="WidthAndHeight" 
         Topmost="True" 
         WindowStyle="ToolWindow" 
-        ResizeMode="NoResize">
+        ResizeMode="NoResize" ShowInTaskbar="False"
+        Style="{DynamicResource CustomWindowStyle}">
     <Grid>
-        <StackPanel Orientation="Horizontal">
-            <ItemsControl ItemsSource="{Binding Path=ShortcutDefinitions}">
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate>
-                        <Button Content="{Binding Path=Name}" Padding="25,25,25,25"/>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </StackPanel>
+        <ItemsControl ItemsSource="{Binding Path=ShortcutDefinitions}">
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                    <Button Content="{Binding Path=Name}" Command="{Binding Path=SendCommand}" Padding="25,20,25,20"/>
+                </DataTemplate>
+            </ItemsControl.ItemTemplate>
+        </ItemsControl>
     </Grid>
 </Window>

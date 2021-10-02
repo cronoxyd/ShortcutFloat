@@ -18,7 +18,7 @@ namespace ShortcutFloat.Common.Models.Actions
             this.Content = Content;
         }
 
-        public override string ToSendKeysString()
+        public override string GetSendKeysString()
         {
             throw new NotImplementedException();
         }

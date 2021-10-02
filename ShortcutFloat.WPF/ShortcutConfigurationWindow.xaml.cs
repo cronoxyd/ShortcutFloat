@@ -1,7 +1,10 @@
-﻿using ShortcutFloat.Common.Models;
+﻿using AnyClone;
+using ShortcutFloat.Common.Extensions;
+using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,15 +26,18 @@ namespace ShortcutFloat.WPF
     {
         public ShortcutConfigurationViewModel ViewModel { get; set; }
 
-        public ShortcutConfigurationWindow(ShortcutConfigurationViewModel ViewModel = null)
+        public ShortcutConfigurationWindow(ShortcutConfiguration Model = null)
         {
-            if (ViewModel != null)
-                this.ViewModel = ViewModel;
+            if (Model != null)
+                ViewModel = new(Model);
             else
-                this.ViewModel = new(new ShortcutConfiguration());
+                ViewModel = new(new ShortcutConfiguration());
 
             InitializeComponent();
             DataContext = ViewModel;
+
+            ViewModel.NewShortcutDefinitionRequested += (sender, e) => e.Model = ShowShortcutDefinitionWindow();
+            ViewModel.EditShortcutDefinitionRequested += (sender, e) => e.Model = ShowShortcutDefinitionWindow(e.Model);
         }
 
         private void SaveButton_Click(object sender, RoutedEventArgs e)
@@ -44,6 +50,23 @@ namespace ShortcutFloat.WPF
         {
             DialogResult = false;
             Close();
+        }
+
+        private ShortcutDefinition ShowShortcutDefinitionWindow(ShortcutDefinition m = null)
+        {
+            var mClone = m?.Clone();
+            var win = new ShortcutDefinitionWindow(mClone) { Owner = this };
+
+            if (win.ShowDialog() == true) 
+                return win.ViewModel.Model;
+            else 
+                return null;
+        }
+
+        private void ShortcutDefinitionsListBox_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (ViewModel.EditShortcutDefinitionCommand.CanExecute(null))
+                ViewModel.EditShortcutDefinitionCommand.Execute(null);
         }
     }
 }
