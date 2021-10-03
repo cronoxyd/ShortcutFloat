@@ -5,6 +5,7 @@ namespace ShortcutFloat.Common.Models
     public class ShortcutFloatSettings
     {
         public bool UseDefaultConfiguration { get; set; } = false;
+        public bool StickyFloatWindow { get; set; } = false;
         public ShortcutConfiguration DefaultConfiguration { get; set; } = new();
         public List<ShortcutConfiguration> ShortcutConfigurations { get; set; } = new();
     }

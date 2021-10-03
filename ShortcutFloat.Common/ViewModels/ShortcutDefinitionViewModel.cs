@@ -13,11 +13,12 @@ namespace ShortcutFloat.Common.ViewModels
     public class ShortcutDefinitionViewModel : TypedViewModel<ShortcutDefinition>
     {
         public string Name { get => Model.Name; set => Model.Name = value; }
-        public ObservableCollection<IActionDefinitionViewModel> Actions { get; }
+        public ObservableCollection<IActionDefinitionViewModel> Actions { get; } = new();
         public ICollectionView ActionsView { get; }
         public IActionDefinitionViewModel SelectedAction { get; set; } = null;
 
-        public ICommand NewActionCommand { get; }
+        public ICommand NewKeystrokeCommand { get; }
+        public ICommand NewTextblockCommand { get; }
         public ICommand RemoveActionCommand { get; }
         public ICommand SendCommand { get; }
         public ICommand MoveActionUpCommand { get; }
@@ -27,15 +28,17 @@ namespace ShortcutFloat.Common.ViewModels
 
         public ShortcutDefinitionViewModel(ShortcutDefinition Model) : base(Model)
         {
-            Actions = new(Model.Actions.Select(act => act switch
+            foreach (IActionDefinition act in Model.Actions)
             {
-                KeystrokeDefinition => new KeystrokeDefinitionViewModel(act as KeystrokeDefinition),
-                _ => throw new NotImplementedException()
-            }).ToList());
+                IActionDefinitionViewModel vm = (act switch
+                {
+                    KeystrokeDefinition => new KeystrokeDefinitionViewModel(act as KeystrokeDefinition),
+                    TextblockDefintion => new TextblockDefinitionViewModel(act as TextblockDefintion),
+                    _ => throw new NotImplementedException()
+                });
 
-            foreach (var vm in Actions)
-            {
                 vm.PropertyChanged += (sender, e) => UpdateActions();
+                Actions.Add(vm);
             }
 
             ActionsView = CollectionViewSource.GetDefaultView(Actions);
@@ -51,8 +54,13 @@ namespace ShortcutFloat.Common.ViewModels
                 () => true
             );
 
-            NewActionCommand = new RelayCommand(
+            NewKeystrokeCommand = new RelayCommand(
                 () => Actions.Add(new KeystrokeDefinitionViewModel(new())),
+                () => true
+            );
+
+            NewTextblockCommand = new RelayCommand(
+                () => Actions.Add(new TextblockDefinitionViewModel(new())),
                 () => true
             );
 

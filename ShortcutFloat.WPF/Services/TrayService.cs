@@ -12,10 +12,10 @@ namespace ShortcutFloat.WPF.Services
 {
     public class TrayService
     {
-        private NotifyIcon icon { get; }
-        private ContextMenuStrip iconContextMenuStrip { get; } 
-        private ToolStripMenuItem settingsItem { get; }
-        private ToolStripMenuItem quitItem { get; }
+        private NotifyIcon Icon { get; }
+        private ContextMenuStrip IconContextMenuStrip { get; } 
+        private ToolStripMenuItem SettingsItem { get; }
+        private ToolStripMenuItem QuitItem { get; }
 
         public event EventHandler ShowSettings;
         public event EventHandler Quit;
@@ -26,23 +26,23 @@ namespace ShortcutFloat.WPF.Services
             Application.SetCompatibleTextRenderingDefault(true);
             Application.SetHighDpiMode(HighDpiMode.PerMonitor);
 
-            icon = new();
-            iconContextMenuStrip = new();
-            settingsItem = new();
-            quitItem = new();
+            Icon = new();
+            IconContextMenuStrip = new();
+            SettingsItem = new();
+            QuitItem = new();
 
-            settingsItem.Text = "Settings";
-            settingsItem.Click += SettingsItem_Click;
-            iconContextMenuStrip.Items.Add(settingsItem);
+            SettingsItem.Text = "Settings";
+            SettingsItem.Click += SettingsItem_Click;
+            IconContextMenuStrip.Items.Add(SettingsItem);
 
-            quitItem.Text = "Quit";
-            quitItem.Click += QuitItem_Click;
-            iconContextMenuStrip.Items.Add(quitItem);
+            QuitItem.Text = "Quit";
+            QuitItem.Click += QuitItem_Click;
+            IconContextMenuStrip.Items.Add(QuitItem);
 
-            icon.ContextMenuStrip = iconContextMenuStrip;
-            icon.Text = "Shortcut Float";
-            icon.Icon = Properties.Resources.ShortcutFloatIcon;
-            icon.DoubleClick += Icon_DoubleClick;
+            Icon.ContextMenuStrip = IconContextMenuStrip;
+            Icon.Text = "Shortcut Float";
+            Icon.Icon = Properties.Resources.ShortcutFloatIcon;
+            Icon.DoubleClick += Icon_DoubleClick;
         }
 
         private void Icon_DoubleClick(object sender, EventArgs e) =>
@@ -55,9 +55,9 @@ namespace ShortcutFloat.WPF.Services
             ShowSettings(this, new());
 
         public void Start() =>
-            icon.Visible = true;
+            Icon.Visible = true;
 
         public void Stop() =>
-            icon.Dispose();
+            Icon.Dispose();
     }
 }

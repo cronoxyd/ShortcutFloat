@@ -23,7 +23,7 @@
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
                 <DataTemplate>
-                    <Button Content="{Binding Path=Name}" Command="{Binding Path=SendCommand}" Padding="25,20,25,20"/>
+                    <Button Content="{Binding Path=Name}" Command="{Binding Path=SendCommand}" Padding="20,15,20,15"/>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

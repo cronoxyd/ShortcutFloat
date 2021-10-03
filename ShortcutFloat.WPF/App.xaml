@@ -4,9 +4,28 @@
              xmlns:local="clr-namespace:ShortcutFloat.WPF"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="Margin" Value="0,5,0,5"/>
+        </Style>
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Padding" Value="5,5,5,5"/>
             <Setter Property="MinWidth" Value="75"/>
         </Style>
+        <Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="true">
+                    <Setter Property="ToolTip"
+                        Value="{Binding RelativeSource={x:Static RelativeSource.Self},
+                        Path=(Validation.Errors)/ErrorContent}"/>
+                </Trigger>
+            </Style.Triggers>
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <ControlTemplate x:Key="validationTemplate">
+            <DockPanel>
+                <AdornedElementPlaceholder/>
+                <TextBlock Foreground="Red" FontSize="20" FontWeight="Bold">!</TextBlock>
+            </DockPanel>
+        </ControlTemplate>
     </Application.Resources>
 </Application>

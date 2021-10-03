@@ -34,15 +34,40 @@ namespace ShortcutFloat.WPF
         private TrayService TrayService { get; } = new();
         private ShortcutFloatSettingsForm SettingsForm { get; set; } = null;
         private FloatWindow FloatWindow { get; set; }
+        private bool FloatWindowActive => FloatWindow?.IsVisible ?? false;
         private ShortcutConfiguration ActiveConfiguration { get; set; } = null;
         private IntPtr? TargetWindowHandle { get; set; } = null;
-        private Process CurrentProcess => Process.GetCurrentProcess();
+        private static Process CurrentProcess { get; } = Process.GetCurrentProcess();
+        private Rectangle MaxScreenBounds { get; } = GetMaxScreenBounds();
+        private bool FloatWindowPositionSemaphone { get; set; } = false;
+
+        protected static Rectangle GetMaxScreenBounds()
+        {
+            int? minLeft = null;
+            int? minTop = null;
+            int? maxRight = null;
+            int? maxBottom = null;
+
+            foreach (var screen in System.Windows.Forms.Screen.AllScreens)
+            {
+                if (minLeft == null || screen.Bounds.Left < minLeft) minLeft = screen.Bounds.Left;
+                if (minTop == null || screen.Bounds.Top < minTop) minTop = screen.Bounds.Top;
+                if (maxRight == null || screen.Bounds.Right > maxRight) maxRight = screen.Bounds.Right;
+                if (maxBottom == null || screen.Bounds.Bottom > maxBottom) maxBottom = screen.Bounds.Bottom;
+            }
+
+            return new(
+                minLeft.Value, minTop.Value,
+                maxRight.Value - minLeft.Value, maxBottom.Value - minTop.Value
+            );
+        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
             LoadSettings();
 
             EnvironmentMonitor.ForegroundWindowChanged += EnvironmentMonitor_ForegroundWindowChanged;
+            EnvironmentMonitor.ForegroundWindowBoundsChanged += EnvironmentMonitor_ForegroundWindowBoundsChanged;
 
             EnvironmentMonitor.Start();
             TrayService.Start();
@@ -51,10 +76,35 @@ namespace ShortcutFloat.WPF
             TrayService.Quit += TrayService_Quit;
         }
 
+        private void EnvironmentMonitor_ForegroundWindowBoundsChanged(object sender, EnvironmentMonitor.ForegroundWindowBoundsChangedEventArgs e)
+        {
+            if (!FloatWindowActive) return;
+            if (!ActiveConfiguration?.StickyFloatWindow ?? !Settings.StickyFloatWindow) return;
+            // Ignore own process
+            if (EnvironmentMonitor.ForegroundWindowProcess.Id == CurrentProcess.Id) return;
+            Dispatcher.Invoke(PositionFloatWindow);
+        }
+
+        private void PositionFloatWindow()
+        {
+            FloatWindowPositionSemaphone = true;
+            FloatWindow.Left = Math.Clamp(
+                EnvironmentMonitor.ForegroundWindowBounds.Value.X + ActiveConfiguration.FloatWindowOffset.Value.X,
+                MaxScreenBounds.X,
+                MaxScreenBounds.Right - FloatWindow.Width
+            );
+            FloatWindow.Top = Math.Clamp(
+                EnvironmentMonitor.ForegroundWindowBounds.Value.Y + ActiveConfiguration.FloatWindowOffset.Value.Y,
+                MaxScreenBounds.Y,
+                MaxScreenBounds.Bottom - FloatWindow.Height
+            );
+            FloatWindowPositionSemaphone = false;
+        }
+
         private void EnvironmentMonitor_ForegroundWindowChanged(object sender, EnvironmentMonitor.ForegroundWindowChangedEventArgs e)
         {
             // Ignore own process
-            if (e.WindowProcess.ProcessName == CurrentProcess.ProcessName) return;
+            if (e.WindowProcess.Id == CurrentProcess.Id) return;
 
             ShortcutConfiguration matchingConfiguration = null;
 
@@ -64,7 +114,7 @@ namespace ShortcutFloat.WPF
 
                 if (IsNotEmptyAndValidRegex(config.Target.WindowText))
                 {
-                    if (Regex.IsMatch(e.WindowText, config.Target.WindowText, RegexOptions.IgnoreCase))
+                    if (Regex.IsMatch(e.WindowText ?? string.Empty, config.Target.WindowText, RegexOptions.IgnoreCase))
                     {
                         matchingConfiguration = config;
                         break;
@@ -73,7 +123,7 @@ namespace ShortcutFloat.WPF
 
                 if (IsNotEmptyAndValidRegex(config.Target.ProcessName))
                 {
-                    if (Regex.IsMatch(e.WindowProcess.ProcessName, config.Target.ProcessName, RegexOptions.IgnoreCase))
+                    if (Regex.IsMatch(e.WindowProcess.ProcessName ?? string.Empty, config.Target.ProcessName, RegexOptions.IgnoreCase))
                     {
                         matchingConfiguration = config;
                         break;
@@ -93,7 +143,8 @@ namespace ShortcutFloat.WPF
             if (ActiveConfiguration == null)
             {
                 if (FloatWindow != null)
-                    Dispatcher.Invoke(() => {
+                    Dispatcher.Invoke(() =>
+                    {
                         FloatWindow.Close();
                         FloatWindow = null;
                     });
@@ -106,11 +157,8 @@ namespace ShortcutFloat.WPF
                     FloatWindow.SendKeysRequested += FloatWindow_SendKeysRequested;
                     FloatWindow.LocationChanged += FloatWindow_LocationChanged;
 
-                    if (ActiveConfiguration.FloatWindowLocation != null)
-                    {
-                        FloatWindow.Left = ActiveConfiguration.FloatWindowLocation.Value.X;
-                        FloatWindow.Top = ActiveConfiguration.FloatWindowLocation.Value.Y;
-                    }
+                    if (ActiveConfiguration.FloatWindowOffset != null)
+                        PositionFloatWindow();
 
                     FloatWindow.Show();
                 });
@@ -122,8 +170,16 @@ namespace ShortcutFloat.WPF
 
         private void FloatWindow_LocationChanged(object sender, EventArgs e)
         {
+            Debug.Assert(ActiveConfiguration.FloatWindowOffset != PointF.Empty);
+            if (FloatWindowPositionSemaphone) return;
             if (FloatWindow == null) return;
-            ActiveConfiguration.FloatWindowLocation = new PointF((float)FloatWindow.Left, (float)FloatWindow.Top);
+            Debug.WriteLine($"Float window position: {{{FloatWindow.Left}, {FloatWindow.Top}}}");
+            Debug.WriteLine($"Foreground window bounds: {EnvironmentMonitor.ForegroundWindowBounds}");
+            ActiveConfiguration.FloatWindowOffset = new PointF(
+                (float)(FloatWindow.Left - EnvironmentMonitor.ForegroundWindowBounds.Value.X),
+                (float)(FloatWindow.Top - EnvironmentMonitor.ForegroundWindowBounds.Value.Y)
+            );
+            Debug.WriteLine($"Float window offset changed: {ActiveConfiguration.FloatWindowOffset}");
         }
 
         private void FloatWindow_SendKeysRequested(object sender, Common.ViewModels.SendKeysEventArgs e)
@@ -164,27 +220,39 @@ namespace ShortcutFloat.WPF
 
         private void LoadSettings()
         {
-            Directory.CreateDirectory(Path.GetDirectoryName(SettingsFilePath));
-
-            if (File.Exists(SettingsFilePath))
+            try
             {
-                var json = File.ReadAllText(SettingsFilePath);
+                Directory.CreateDirectory(Path.GetDirectoryName(SettingsFilePath));
 
                 if (File.Exists(SettingsFilePath))
-                    Settings = JsonConvert.DeserializeObject<ShortcutFloatSettings>(json, new JsonSerializerSettings
-                    {
-                        TypeNameHandling = TypeNameHandling.Auto
-                    });
+                {
+                    var json = File.ReadAllText(SettingsFilePath);
+
+                    if (File.Exists(SettingsFilePath))
+                        Settings = JsonConvert.DeserializeObject<ShortcutFloatSettings>(json, new JsonSerializerSettings
+                        {
+                            TypeNameHandling = TypeNameHandling.Auto
+                        });
+                }
+            } catch
+            {
+                MessageBox.Show("Failed to load settings", "Shortcut Float", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         public void SaveSettings()
         {
-            string json = JsonConvert.SerializeObject(Settings, Formatting.Indented, new JsonSerializerSettings
+            try
             {
-                TypeNameHandling = TypeNameHandling.Auto
-            });
-            File.WriteAllText(SettingsFilePath, json);
+                string json = JsonConvert.SerializeObject(Settings, Formatting.Indented, new JsonSerializerSettings
+                {
+                    TypeNameHandling = TypeNameHandling.Auto
+                });
+                File.WriteAllText(SettingsFilePath, json);
+            } catch
+            {
+                MessageBox.Show("Failed to save settings", "Shortcut Float", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void TrayService_ShowSettings(object sender, EventArgs e)
@@ -194,7 +262,8 @@ namespace ShortcutFloat.WPF
                 SettingsForm = new(Settings);
                 SettingsForm.Closed += (object sender, EventArgs e) => { SettingsForm = null; };
                 SettingsForm.Show();
-            } else
+            }
+            else
             {
                 _ = SettingsForm.Activate();
             }

@@ -25,6 +25,7 @@ namespace ShortcutFloat.WPF
     public partial class ShortcutConfigurationWindow : Window
     {
         public ShortcutConfigurationViewModel ViewModel { get; set; }
+        public bool SpecificFieldsEnabled { get; set; } = true;
 
         public ShortcutConfigurationWindow(ShortcutConfiguration Model = null)
         {

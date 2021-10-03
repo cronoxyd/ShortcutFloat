@@ -7,7 +7,8 @@ namespace ShortcutFloat.Common.Models
     {
         public ShortcutTarget Target { get; set; } = new();
         public List<ShortcutDefinition> ShortcutDefinitions { get; set; } = new();
-        public PointF? FloatWindowLocation { get; set; } = null;
+        public PointF? FloatWindowOffset { get; set; } = null;
         public bool Enabled { get; set; } = true;
+        public bool? StickyFloatWindow { get; set; } = null;
     }
 }

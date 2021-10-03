@@ -7,11 +7,12 @@
         xmlns:actions="clr-namespace:ShortcutFloat.Common.Models.Actions;assembly=ShortcutFloat.Common"
         xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:input="clr-namespace:System.Windows.Input;assembly=netstandard" 
-        xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common" 
+        xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common"
+        xmlns:actionviewmodels="clr-namespace:ShortcutFloat.Common.ViewModels.Actions;assembly=ShortcutFloat.Common"
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutDefinitionViewModel}"
         mc:Ignorable="d"
-        Title="Shortcut definition" Height="350" Width="500" WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Style="{DynamicResource CustomWindowStyle}">
+        Title="Shortcut definition" Height="350" Width="500" 
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
     <Window.Resources>
         <ObjectDataProvider x:Key="ModifierKeysEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
             <ObjectDataProvider.MethodParameters>
@@ -25,7 +26,7 @@
             </ObjectDataProvider.MethodParameters>
         </ObjectDataProvider>
     </Window.Resources>
-    <Grid>
+    <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
@@ -46,22 +47,24 @@
 
         <GroupBox Grid.Row="1" Header="Actions">
             <DockPanel>
-                <ToolBar DockPanel.Dock="Top" ToolBarTray.IsLocked="True">
-                    <Button Content="New" Command="{Binding Path=NewActionCommand}"/>
-                    <Button Content="Remove" Command="{Binding Path=RemoveActionCommand}"/>
-                    <Separator/>
-                    <Button Content="Move up" Command="{Binding Path=MoveActionUpCommand}"/>
-                    <Button Content="Move down" Command="{Binding Path=MoveActionDownCommand}"/>
-                </ToolBar>
+                <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
+                    <ToolBar>
+                        <Button Content="Add keystroke" Command="{Binding Path=NewKeystrokeCommand}"/>
+                        <Button Content="Add text block" Command="{Binding Path=NewTextblockCommand}"/>
+                        <Separator/>
+                        <Button Content="Remove" Command="{Binding Path=RemoveActionCommand}"/>
+                        <Separator/>
+                        <Button Content="Move up" Command="{Binding Path=MoveActionUpCommand}"/>
+                        <Button Content="Move down" Command="{Binding Path=MoveActionDownCommand}"/>
+                    </ToolBar>
+                </ToolBarTray>
                 <ListBox ItemsSource="{Binding Path=ActionsView}" HorizontalContentAlignment="Stretch" SelectedItem="{Binding Path=SelectedAction}">
                     <ListBox.Resources>
                         <Style TargetType="ComboBox">
                             <Setter Property="MinWidth" Value="75"/>
                         </Style>
-                    </ListBox.Resources>
-                    
-                    <ListBox.ItemTemplate>
-                        <DataTemplate DataType="{x:Type actions:KeystrokeDefinition}">
+                        
+                        <DataTemplate DataType="{x:Type actionviewmodels:KeystrokeDefinitionViewModel}">
                             <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
@@ -83,7 +86,21 @@
                                 </Grid>
                             </StackPanel>
                         </DataTemplate>
-                    </ListBox.ItemTemplate>
+
+                        <DataTemplate DataType="{x:Type actionviewmodels:TextblockDefinitionViewModel}">
+                            <StackPanel>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition/>
+                                    </Grid.ColumnDefinitions>
+                                    <Label Content="Name:"/>
+                                    <TextBox Grid.Column="1" Text="{Binding Path=Name}"/>
+                                </Grid>
+                                <TextBox MinHeight="50" AcceptsReturn="True" AcceptsTab="True" Text="{Binding Path=Content}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListBox.Resources>
                 </ListBox>
             </DockPanel>
         </GroupBox>

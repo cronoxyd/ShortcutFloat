@@ -20,7 +20,24 @@ namespace ShortcutFloat.Common.Models.Actions
 
         public override string GetSendKeysString()
         {
-            throw new NotImplementedException();
+            var retVal = string.Empty;
+            for (int i = 0; i < Content.Length; i++)
+                retVal += EscapeForSendKeys(Content[i]);
+
+            return retVal;
+        }
+
+        private string EscapeForSendKeys(char chr)
+        {
+            string EncloseChars = "+^%~()[]";
+            if (EncloseChars.Contains(chr))
+                return $"{{{chr}}}";
+            else if (chr == '{')
+                return "{{}";
+            else if (chr == '}')
+                return "{}}";
+            else
+                return chr.ToString();
         }
     }
 }

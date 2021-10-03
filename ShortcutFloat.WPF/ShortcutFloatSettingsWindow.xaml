@@ -7,31 +7,40 @@
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common" 
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutFloatSettingsViewModel}"
         mc:Ignorable="d"
-        Title="Shotcut Float settings" Height="300" Width="450" WindowStartupLocation="CenterScreen" Icon="/Resources/ShortcutFloatIcon.ico"
-        Style="{DynamicResource CustomWindowStyle}">
-    <Grid>
+        Title="Shotcut Float settings" Height="400" Width="550" 
+        WindowStartupLocation="CenterScreen" Icon="/Resources/ShortcutFloatIcon.ico">
+    <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <GroupBox Header="General">
-            <StackPanel HorizontalAlignment="Left">
+        <GroupBox Header="General" HorizontalContentAlignment="Stretch">
+            <StackPanel>
                 <StackPanel.Resources>
-                    <Style TargetType="Control">
+                    <Style TargetType="{x:Type FrameworkElement}">
                         <Setter Property="Margin" Value="5,5,5,5"/>
                     </Style>
                 </StackPanel.Resources>
-                <CheckBox Content="Use default configuration" IsChecked="{Binding Path=UseDefaultConfiguration}"/>
-                <Button x:Name="EditDefaultConfigurationButton" Content="Edit default configuration..." Click="EditDefaultConfigurationButton_Click"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <CheckBox Content="Use default configuration" IsChecked="{Binding Path=UseDefaultConfiguration}"/>
+                    <Button x:Name="EditDefaultConfigurationButton" Content="Edit default configuration..." Click="EditDefaultConfigurationButton_Click" Grid.Column="1"/>
+                </Grid>
+                <CheckBox Content="Sticky float window" IsChecked="{Binding Path=StickyFloatWindow}"/>
             </StackPanel>
         </GroupBox>
         <GroupBox Header="Configurations" Grid.Row="1">
             <DockPanel>
-                <ToolBar ToolBarTray.IsLocked="True" DockPanel.Dock="Top">
-                    <Button x:Name="NewConfigurationMenuItem" Content="New" Command="{Binding Path=NewConfigurationCommand}"/>
-                    <Button x:Name="EditConfigurationMenuItem" Content="Edit" Command="{Binding Path=EditConfigurationCommand}"/>
-                    <Button x:Name="RemoveConfigurationMenuItem" Content="Remove" Command="{Binding Path=RemoveConfigurationCommand}"/>
-                </ToolBar>
+                <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
+                    <ToolBar>
+                        <Button x:Name="NewConfigurationMenuItem" Content="New" Command="{Binding Path=NewConfigurationCommand}"/>
+                        <Button x:Name="EditConfigurationMenuItem" Content="Edit" Command="{Binding Path=EditConfigurationCommand}"/>
+                        <Button x:Name="RemoveConfigurationMenuItem" Content="Remove" Command="{Binding Path=RemoveConfigurationCommand}"/>
+                    </ToolBar>
+                </ToolBarTray>
                 <ListBox x:Name="ConfigurationsListBox" ItemsSource="{Binding Path=ShortcutConfigurationsView}" 
                          Grid.Row="1" SelectedItem="{Binding Path=SelectedConfiguration}" 
                          HorizontalContentAlignment="Stretch" MouseDoubleClick="ConfigurationsListBox_MouseDoubleClick" >
@@ -52,11 +61,11 @@
                                         <RowDefinition/>
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
-                                    <Label Content="Process name:"/>
-                                    <Label Content="Window text:" Grid.Row="1"/>
-                                    
-                                    <Label Content="{Binding Path=Target.ProcessName}" Grid.Column="1"/>
-                                    <Label Content="{Binding Path=Target.WindowText}" Grid.Row="1" Grid.Column="1"/>
+                                    <Label Content="Window text:"/>
+                                    <Label Content="Process name:" Grid.Row="1"/>
+
+                                    <Label Content="{Binding Path=Target.WindowText}" Grid.Column="1"/>
+                                    <Label Content="{Binding Path=Target.ProcessName}" Grid.Column="1" Grid.Row="1"/>
                                 </Grid>
                             </Grid>
                         </DataTemplate>

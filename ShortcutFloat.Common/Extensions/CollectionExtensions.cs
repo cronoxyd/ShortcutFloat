@@ -29,5 +29,15 @@ namespace ShortcutFloat.Common.Extensions
             foreach (var itm in items)
                 target.Add(itm);
         }
+
+        public static void Replace<T>(this IList<T> source, T oldItem, T newItem)
+        {
+            var originalIndex = source.IndexOf(oldItem);
+            if (originalIndex < 0)
+                throw new ArgumentException($"{nameof(source)} does not contain {nameof(oldItem)}");
+
+            source.Remove(oldItem);
+            source.Insert(originalIndex, newItem);
+        }
     }
 }

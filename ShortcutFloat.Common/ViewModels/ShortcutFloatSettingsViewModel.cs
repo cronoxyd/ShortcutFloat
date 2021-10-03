@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Data;
 using System.Windows.Input;
+using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
 
 namespace ShortcutFloat.Common.ViewModels
@@ -11,6 +12,7 @@ namespace ShortcutFloat.Common.ViewModels
     public class ShortcutFloatSettingsViewModel : TypedViewModel<ShortcutFloatSettings>
     {
         public bool UseDefaultConfiguration { get => Model.UseDefaultConfiguration; set => Model.UseDefaultConfiguration = value; }
+        public bool StickyFloatWindow { get => Model.StickyFloatWindow; set => Model.StickyFloatWindow = value; }
         public ShortcutConfigurationViewModel DefaultConfiguration { get; }
         public ObservableCollection<ShortcutConfigurationViewModel> ShortcutConfigurations { get; }
         public ICollectionView ShortcutConfigurationsView { get; }
@@ -49,9 +51,8 @@ namespace ShortcutFloat.Common.ViewModels
                     EditConfigurationRequested(this, e);
                     if (e.Model != null)
                     {
-                        ShortcutConfigurations.Remove(SelectedConfiguration);
                         var vm = new ShortcutConfigurationViewModel(e.Model);
-                        ShortcutConfigurations.Add(vm);
+                        ShortcutConfigurations.Replace(SelectedConfiguration, vm);
                         SelectedConfiguration = vm;
                     }
                 },

@@ -17,6 +17,7 @@ namespace ShortcutFloat.Common.ViewModels
         public ICollectionView ShortcutDefinitionsView { get; }
         public ShortcutDefinitionViewModel SelectedShortcutDefinition { get; set; } = null;
         public bool Enabled { get => Model.Enabled; set => Model.Enabled = value; }
+        public bool? StickFloatWindow { get => Model.StickyFloatWindow; set => Model.StickyFloatWindow = value; }
 
         public ICommand AddShortcutDefinitionCommand { get; }
         public ICommand EditShortcutDefinitionCommand { get; }
@@ -50,9 +51,8 @@ namespace ShortcutFloat.Common.ViewModels
                     EditShortcutDefinitionRequested(this, e);
                     if (e.Model != null)
                     {
-                        ShortcutDefinitions.Remove(SelectedShortcutDefinition);
                         var vm = new ShortcutDefinitionViewModel(e.Model);
-                        ShortcutDefinitions.Add(vm);
+                        ShortcutDefinitions.Replace(SelectedShortcutDefinition, vm);
                         SelectedShortcutDefinition = vm;
                     }
 
