@@ -53,6 +53,14 @@
         </GroupBox>
         <StackPanel Grid.Row="1">
             <CheckBox IsChecked="{Binding Path=StickFloatWindow}" IsThreeState="True" Content="Sticky float window"/>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Label Content="Float window position:"/>
+                <ComboBox SelectedItem="{Binding Path=FloatWindowPositionReference}" ItemsSource="{Binding Source={StaticResource WindowPositionEnum}}" Grid.Column="1"/>
+            </Grid>
         </StackPanel>
         <GroupBox Header="Shortcut definitions" Grid.Row="2">
             <DockPanel>

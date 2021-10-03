@@ -30,6 +30,14 @@
                     <Button x:Name="EditDefaultConfigurationButton" Content="Edit default configuration..." Click="EditDefaultConfigurationButton_Click" Grid.Column="1"/>
                 </Grid>
                 <CheckBox Content="Sticky float window" IsChecked="{Binding Path=StickyFloatWindow}"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Float window position:"/>
+                    <ComboBox SelectedItem="{Binding Path=FloatWindowPositionReference}" ItemsSource="{Binding Source={StaticResource WindowPositionEnum}}" Grid.Column="1"/>
+                </Grid>                
             </StackPanel>
         </GroupBox>
         <GroupBox Header="Configurations" Grid.Row="1">

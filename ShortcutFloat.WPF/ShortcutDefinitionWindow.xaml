@@ -5,7 +5,6 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShortcutFloat.WPF"
         xmlns:actions="clr-namespace:ShortcutFloat.Common.Models.Actions;assembly=ShortcutFloat.Common"
-        xmlns:sys="clr-namespace:System;assembly=mscorlib"
         xmlns:input="clr-namespace:System.Windows.Input;assembly=netstandard" 
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common"
         xmlns:actionviewmodels="clr-namespace:ShortcutFloat.Common.ViewModels.Actions;assembly=ShortcutFloat.Common"
@@ -13,19 +12,6 @@
         mc:Ignorable="d"
         Title="Shortcut definition" Height="350" Width="500" 
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
-    <Window.Resources>
-        <ObjectDataProvider x:Key="ModifierKeysEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="ModifierKeys"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-
-        <ObjectDataProvider x:Key="KeysEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
-            <ObjectDataProvider.MethodParameters>
-                <x:Type TypeName="Key"/>
-            </ObjectDataProvider.MethodParameters>
-        </ObjectDataProvider>
-    </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

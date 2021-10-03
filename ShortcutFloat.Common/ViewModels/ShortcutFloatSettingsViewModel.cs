@@ -17,6 +17,7 @@ namespace ShortcutFloat.Common.ViewModels
         public ObservableCollection<ShortcutConfigurationViewModel> ShortcutConfigurations { get; }
         public ICollectionView ShortcutConfigurationsView { get; }
         public ShortcutConfigurationViewModel SelectedConfiguration { get; set; } = null;
+        public FloatWindowPositionReference FloatWindowPositionReference { get => Model.FloatWindowPositionReference; set => Model.FloatWindowPositionReference = value; }
 
         public ICommand NewConfigurationCommand { get; }
         public ICommand EditConfigurationCommand { get; }

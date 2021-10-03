@@ -3,6 +3,7 @@ using ShortcutFloat.Common.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Drawing;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Windows.Data;
@@ -18,6 +19,9 @@ namespace ShortcutFloat.Common.ViewModels
         public ShortcutDefinitionViewModel SelectedShortcutDefinition { get; set; } = null;
         public bool Enabled { get => Model.Enabled; set => Model.Enabled = value; }
         public bool? StickFloatWindow { get => Model.StickyFloatWindow; set => Model.StickyFloatWindow = value; }
+        public FloatWindowPositionReference? FloatWindowPositionReference { get => Model.FloatWindowPositionReference; set => Model.FloatWindowPositionReference = value; }
+        public PointF FloatWindowAbsoluteOffset { get => Model.FloatWindowAbsoluteOffset; set => Model.FloatWindowAbsoluteOffset = value; }
+        public PointF FloatWindowRelativeOffset { get => Model.FloatWindowRelativeOffset; set => Model.FloatWindowRelativeOffset = value; }
 
         public ICommand AddShortcutDefinitionCommand { get; }
         public ICommand EditShortcutDefinitionCommand { get; }
