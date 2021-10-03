@@ -43,6 +43,8 @@ namespace ShortcutFloat.WPF.Services
             Icon.Text = "Shortcut Float";
             Icon.Icon = Properties.Resources.ShortcutFloatIcon;
             Icon.DoubleClick += Icon_DoubleClick;
+
+            Icon.ShowBalloonTip(1000, "Shortcut Float", "Shortcut Float is running", ToolTipIcon.Info);
         }
 
         private void Icon_DoubleClick(object sender, EventArgs e) =>
