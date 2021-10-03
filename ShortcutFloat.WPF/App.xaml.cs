@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using PropertyChanged;
 using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Runtime;
@@ -143,21 +143,18 @@ namespace ShortcutFloat.WPF
             if (ActiveConfiguration == null)
             {
                 if (FloatWindow != null)
-                    Dispatcher.Invoke(() =>
-                    {
-                        FloatWindow.Close();
-                        FloatWindow = null;
-                    });
+                    CloseFloat();
             }
-            else if (FloatWindow == null)
+            else 
             {
                 Dispatcher.Invoke(() =>
                 {
+                    CloseFloat();
+
                     FloatWindow = new(ActiveConfiguration);
                     FloatWindow.SendKeysRequested += FloatWindow_SendKeysRequested;
                     FloatWindow.LocationChanged += FloatWindow_LocationChanged;
 
-                    if (ActiveConfiguration.FloatWindowOffset != null)
                         PositionFloatWindow();
 
                     FloatWindow.Show();
@@ -166,6 +163,17 @@ namespace ShortcutFloat.WPF
                 if (TargetWindowHandle != null)
                     InteropServices.SetForegroundWindow(TargetWindowHandle.Value);
             }
+        }
+
+        private void CloseFloat()
+        {
+            if (FloatWindow == null) return;
+
+            Dispatcher.Invoke(() =>
+            {
+                FloatWindow.Close();
+                FloatWindow = null;
+            });
         }
 
         private void FloatWindow_LocationChanged(object sender, EventArgs e)
