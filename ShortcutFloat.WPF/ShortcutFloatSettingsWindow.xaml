@@ -7,7 +7,7 @@
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common" 
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutFloatSettingsViewModel}"
         mc:Ignorable="d"
-        Title="Shotcut Float settings" Height="300" Width="450" WindowStartupLocation="CenterScreen" Icon="/ShortcutFloatIcon.ico"
+        Title="Shotcut Float settings" Height="300" Width="450" WindowStartupLocation="CenterScreen" Icon="/Resources/ShortcutFloatIcon.ico"
         Style="{DynamicResource CustomWindowStyle}">
     <Grid>
         <Grid.RowDefinitions>

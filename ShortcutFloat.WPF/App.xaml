@@ -4,18 +4,9 @@
              xmlns:local="clr-namespace:ShortcutFloat.WPF"
              ShutdownMode="OnExplicitShutdown">
     <Application.Resources>
-        <!--<Style TargetType="Button">
-            --><!--<Setter Property="Margin" Value="3,3,3,3"/>--><!--
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Padding" Value="5,5,5,5"/>
             <Setter Property="MinWidth" Value="75"/>
         </Style>
-        <Style TargetType="Window">
-            <Setter Property="Padding" Value="5,5,5,5"/>
-        </Style>
-        <Image x:Key="ShortcutFloatIcon" Source="/Resources/ShortcutFloatIcon.ico"/>-->
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="Themes/DarkTheme.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
     </Application.Resources>
 </Application>

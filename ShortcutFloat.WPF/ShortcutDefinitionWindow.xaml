@@ -10,7 +10,7 @@
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common" 
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutDefinitionViewModel}"
         mc:Ignorable="d"
-        Title="ShortcutDefinitionWindow" Height="350" Width="500" WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
+        Title="Shortcut definition" Height="350" Width="500" WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
         Style="{DynamicResource CustomWindowStyle}">
     <Window.Resources>
         <ObjectDataProvider x:Key="ModifierKeysEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
@@ -89,12 +89,6 @@
         </GroupBox>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <StackPanel.Resources>
-                <Style TargetType="Button">
-                    <Setter Property="Padding" Value="5,5,5,5"/>
-                    <Setter Property="MinWidth" Value="75"/>
-                </Style>
-            </StackPanel.Resources>
             <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click"/>
             <Button x:Name="SaveButton" Content="Save" Click="SaveButton_Click"/>
         </StackPanel>

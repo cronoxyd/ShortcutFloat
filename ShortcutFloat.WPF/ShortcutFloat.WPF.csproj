@@ -11,7 +11,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <None Remove="ShortcutFloatIcon.ico" />
+	  <None Remove="Resources\ShortcutFloatIcon.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -24,7 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <Resource Include="ShortcutFloatIcon.ico" />
+	  <Resource Include="Resources\ShortcutFloatIcon.ico" />
 	</ItemGroup>
 
 	<ItemGroup>
