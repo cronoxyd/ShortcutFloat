@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using PropertyChanged;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
@@ -80,8 +80,6 @@ namespace ShortcutFloat.WPF
         {
             if (!FloatWindowActive) return;
             if (!ActiveConfiguration?.StickyFloatWindow ?? !Settings.StickyFloatWindow) return;
-            // Ignore own process
-            if (EnvironmentMonitor.ForegroundWindowProcess.Id == EnvironmentMonitor.CurrentProcess.Id) return;
 
             Debug.WriteLine($"Foreground window bounds changed:\n\t{e.WindowBounds}\n\t(Δ {e.Delta})");
 
