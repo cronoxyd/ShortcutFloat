@@ -1,4 +1,4 @@
-﻿using ShortcutFloat.Common.Runtime;
+using ShortcutFloat.Common.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -14,12 +14,39 @@ namespace ShortcutFloat.WPF.Services
     public class EnvironmentMonitor
     {
         private bool _running = false;
+
+        /// <summary>
+        /// Whether the <see cref="EnvironmentMonitor"/> is currently running.
+        /// </summary>
+        /// <seealso cref="Start"/>
+        /// <seealso cref="Stop"/>
         public bool Running => _running;
+
+        /// <summary>
+        /// The text in the title bar of the current foreground window.
+        /// </summary>
         public string ForegroundWindowText { get; private set; } = null;
+
+        /// <summary>
+        /// The handle of the current foreground window.
+        /// </summary>
         public IntPtr? ForegroundWindowHandle { get; private set; } = null;
+
+        /// <summary>
+        /// The bounds of the current foreground window.
+        /// </summary>
         public Rectangle? ForegroundWindowBounds { get; private set; } = null;
+
+        /// <summary>
+        /// The process of the current foreground window.
+        /// </summary>
         public Process ForegroundWindowProcess { get; private set; } = null;
-        private static Process CurrentProcess { get; } = Process.GetCurrentProcess();
+
+        /// <summary>
+        /// The process of this application (will be used e.g. for <see cref="IgnoreCurrentProcess"/>).
+        /// </summary>
+        public static Process CurrentProcess { get; } = Process.GetCurrentProcess();
+
 
         public event ForegroundWindowChangedEventHandler ForegroundWindowChanged = (sender, e) => { };
         public event ForegroundWindowBoundsChangedEventHandler ForegroundWindowBoundsChanged = (sender, e) => { };
@@ -62,6 +89,9 @@ namespace ShortcutFloat.WPF.Services
             }
         }
 
+        /// <summary>
+        /// Starts the monitor loop.
+        /// </summary>
         public void Start()
         {
             if (!Running)
@@ -71,6 +101,9 @@ namespace ShortcutFloat.WPF.Services
             }
         }
 
+        /// <summary>
+        /// Stops the monitor loop.
+        /// </summary>
         public void Stop()
         {
             if (Running)
