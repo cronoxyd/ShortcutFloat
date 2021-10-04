@@ -1,4 +1,4 @@
-using ShortcutFloat.Common.Runtime;
+﻿using ShortcutFloat.Common.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -47,6 +47,20 @@ namespace ShortcutFloat.WPF.Services
         /// </summary>
         public static Process CurrentProcess { get; } = Process.GetCurrentProcess();
 
+        /// <summary>
+        /// Specifies whether to not raise changed events when the foreground process id is 0.
+        /// </summary>
+        public bool IgnoreIdleProcess { get; set; } = true;
+
+        /// <summary>
+        /// Specifies whether to not raise changed events when the foreground process id is that of the current process.
+        /// </summary>
+        public bool IgnoreCurrentProcess { get; set; } = true;
+
+        /// <summary>
+        /// Specifies whether to not raise changed events when the handle of the foreground window is zero.
+        /// </summary>
+        public bool IgnoreZeroHandle { get; set; } = true;
 
         public event ForegroundWindowChangedEventHandler ForegroundWindowChanged = (sender, e) => { };
         public event ForegroundWindowBoundsChangedEventHandler ForegroundWindowBoundsChanged = (sender, e) => { };
@@ -60,23 +74,38 @@ namespace ShortcutFloat.WPF.Services
             while (Running)
             {
                 var currentForegroundWindowHandle = InteropServices.GetForegroundWindow();
-                InteropServices.GetWindowThreadProcessId(currentForegroundWindowHandle, out uint currentForegroundWindowProcessId);
-                if (currentForegroundWindowProcessId == CurrentProcess.Id)
+                _ = InteropServices.GetWindowThreadProcessId(currentForegroundWindowHandle, out uint currentForegroundWindowProcessId);
+
+                // Ignore current process
+                if (IgnoreCurrentProcess && currentForegroundWindowProcessId == CurrentProcess.Id)
+                    continue;
+
+                // Ignore "Idle" process
+                if (IgnoreIdleProcess && currentForegroundWindowProcessId == 0)
+                    continue;
+
+                if (IgnoreZeroHandle && currentForegroundWindowHandle == IntPtr.Zero)
                     continue;
 
                 ForegroundWindowHandle = currentForegroundWindowHandle;
                 ForegroundWindowText = InteropServices.GetActiveWindowTitle();
-                InteropServices.GetWindowThreadProcessId(ForegroundWindowHandle.Value, out uint procId);
+                _ = InteropServices.GetWindowThreadProcessId(ForegroundWindowHandle.Value, out uint procId);
                 ForegroundWindowProcess = Process.GetProcessById((int)procId);
 
-                InteropServices.GetWindowRect(ForegroundWindowHandle.Value, out RECT foregroundWindowRect);
+                _ = InteropServices.GetWindowRect(ForegroundWindowHandle.Value, out RECT foregroundWindowRect);
                 ForegroundWindowBounds = foregroundWindowRect.ToRectangle();
 
-                if (
-                    (ForegroundWindowText != lastForegroundWindowText && lastForegroundWindowText != null) ||
-                    (ForegroundWindowHandle != lastForegroundWindowHandle && lastForegroundWindowHandle != null)
-                )
+                if (ForegroundWindowText != lastForegroundWindowText && lastForegroundWindowText != null)
+                {
+                    Debug.WriteLine($"Foreground window text changed (\"{lastForegroundWindowText}\" -> \"{ForegroundWindowText}\")");
                     ForegroundWindowChanged(this, new(ForegroundWindowHandle.Value));
+                }
+
+                if (ForegroundWindowHandle != lastForegroundWindowHandle && lastForegroundWindowHandle != null)
+                {
+                    Debug.WriteLine($"Foreground window handle changed (\"{lastForegroundWindowHandle}\" -> \"{ForegroundWindowHandle}\")");
+                    ForegroundWindowChanged(this, new(ForegroundWindowHandle.Value));
+                }
 
                 if (lastWindowRects.ContainsKey(ForegroundWindowHandle.Value) && !foregroundWindowRect.Equals(lastWindowRects[ForegroundWindowHandle.Value]))
                     ForegroundWindowBoundsChanged(this, new(foregroundWindowRect.ToRectangle(), lastWindowRects[ForegroundWindowHandle.Value].ToRectangle()));
@@ -123,7 +152,7 @@ namespace ShortcutFloat.WPF.Services
                 WindowHandle = handle;
                 WindowText = InteropServices.GetWindowTitle(handle);
 
-                InteropServices.GetWindowThreadProcessId(handle, out uint procId);
+                _ = InteropServices.GetWindowThreadProcessId(handle, out uint procId);
                 WindowProcess = Process.GetProcessById((int)procId);
             }
         }
