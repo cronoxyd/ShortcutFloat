@@ -136,8 +136,9 @@ namespace ShortcutFloat.WPF
                     MaxScreenBounds.Bottom - FloatWindow.Height
                 )
             );
-
+#if DEBUG
             var isClamped = clampedPosition != newPosition;
+#endif
             var currentDpi = VisualTreeHelper.GetDpi(FloatWindow);
 
             PointF scaledPosition = new(
@@ -145,10 +146,11 @@ namespace ShortcutFloat.WPF
                 (float)(clampedPosition.Y / currentDpi.DpiScaleY)
             );
 
+#if DEBUG
             var isScaled = clampedPosition != scaledPosition;
 
             Debug.WriteLine($"New float window position:\n\t{scaledPosition} ({(isClamped ? "clamped" : "not clamped")}, {(isScaled ? "scaled" : "not scaled")})");
-
+#endif
 
             FloatWindow.Left = scaledPosition.X;
             FloatWindow.Top = scaledPosition.Y;
