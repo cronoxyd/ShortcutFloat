@@ -336,7 +336,8 @@ namespace ShortcutFloat.WPF
                             TypeNameHandling = TypeNameHandling.Auto
                         });
                 }
-            } catch
+            }
+            catch
             {
                 MessageBox.Show("Failed to load settings", "Shortcut Float", MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -351,7 +352,8 @@ namespace ShortcutFloat.WPF
                     TypeNameHandling = TypeNameHandling.Auto
                 });
                 File.WriteAllText(SettingsFilePath, json);
-            } catch
+            }
+            catch
             {
                 MessageBox.Show("Failed to save settings", "Shortcut Float", MessageBoxButton.OK, MessageBoxImage.Error);
             }
