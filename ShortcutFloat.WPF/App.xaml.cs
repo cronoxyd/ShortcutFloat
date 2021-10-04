@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using PropertyChanged;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
@@ -16,6 +16,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace ShortcutFloat.WPF
 {
@@ -83,7 +84,7 @@ namespace ShortcutFloat.WPF
             if (EnvironmentMonitor.ForegroundWindowProcess.Id == EnvironmentMonitor.CurrentProcess.Id) return;
 
             Debug.WriteLine($"Foreground window bounds changed:\n\t{e.WindowBounds}\n\t(Δ {e.Delta})");
-            
+
             Dispatcher.Invoke(PositionFloatWindow);
         }
 
@@ -97,9 +98,10 @@ namespace ShortcutFloat.WPF
                 return;
             }
 
-            PointF? newPosition = null;
             FloatWindowPositionReference positionReference = ActiveConfiguration.FloatWindowPositionReference == null ? Settings.FloatWindowPositionReference : ActiveConfiguration.FloatWindowPositionReference.Value;
 
+
+            PointF? newPosition;
             switch (positionReference)
             {
                 default:
@@ -118,31 +120,40 @@ namespace ShortcutFloat.WPF
                             EnvironmentMonitor.ForegroundWindowBounds.Value.Y + (EnvironmentMonitor.ForegroundWindowBounds.Value.Height / 2)
                         );
 
-                        //PointF newFloatWindowRelativeCenter = ForegroundWindowRelativeCenter.Add(ActiveConfiguration.FloatWindowRelativeOffset);
-                        //PointF newFloatWindowCenter = GetAbsoluteScreenPosition(newFloatWindowRelativeCenter);
-
-                        //newPosition = new(
-                        //    (float)(newFloatWindowCenter.X - (FloatWindow.Width / 2)),
-                        //    (float)(newFloatWindowCenter.Y - (FloatWindow.Height / 2))
-                        //);
-
                         newPosition = ForegroundWindowRelativeCenter.Add(ActiveConfiguration.FloatWindowRelativeOffset);
 
                         break;
                     }
             }
 
+            PointF clampedPosition = new(
+                (float)Math.Clamp(
+                    newPosition.Value.X,
+                    MaxScreenBounds.X,
+                    MaxScreenBounds.Right - FloatWindow.Width
+                ),
+                (float)Math.Clamp(
+                    newPosition.Value.Y,
+                    MaxScreenBounds.Y,
+                    MaxScreenBounds.Bottom - FloatWindow.Height
+                )
+            );
 
-            FloatWindow.Left = Math.Clamp(
-                newPosition.Value.X,
-                MaxScreenBounds.X,
-                MaxScreenBounds.Right - FloatWindow.Width
+            var isClamped = clampedPosition != newPosition;
+            var currentDpi = VisualTreeHelper.GetDpi(FloatWindow);
+
+            PointF scaledPosition = new(
+                (float)(clampedPosition.X / currentDpi.DpiScaleX),
+                (float)(clampedPosition.Y / currentDpi.DpiScaleY)
             );
-            FloatWindow.Top = Math.Clamp(
-                newPosition.Value.Y,
-                MaxScreenBounds.Y,
-                MaxScreenBounds.Bottom - FloatWindow.Height
-            );
+
+            var isScaled = clampedPosition != scaledPosition;
+
+            Debug.WriteLine($"New float window position:\n\t{scaledPosition} ({(isClamped ? "clamped" : "not clamped")}, {(isScaled ? "scaled" : "not scaled")})");
+
+
+            FloatWindow.Left = scaledPosition.X;
+            FloatWindow.Top = scaledPosition.Y;
 
 
             FloatWindowPositionSemaphore = false;
@@ -181,22 +192,24 @@ namespace ShortcutFloat.WPF
                 }
             }
 
-            if (matchingConfiguration != null)
-                TargetWindowHandle = e.WindowHandle;
-
-            ActiveConfiguration = matchingConfiguration;
-            OnActiveConfigurationChanged();
+            if (ActiveConfiguration != matchingConfiguration)
+            {
+                ActiveConfiguration = matchingConfiguration;
+                OnActiveConfigurationChanged();
+            }
         }
 
         private void OnActiveConfigurationChanged()
         {
             if (ActiveConfiguration == null)
             {
+                Debug.WriteLine($"Active configuration null");
                 if (FloatWindow != null)
                     CloseFloat();
             }
-            else 
+            else
             {
+                Debug.WriteLine($"Active configuration changed:\n\tWindow text:\t{ActiveConfiguration.Target.WindowText}\n\tProcess name:\t{ActiveConfiguration.Target.ProcessName}");
                 Dispatcher.Invoke(() =>
                 {
                     CloseFloat();
@@ -239,7 +252,11 @@ namespace ShortcutFloat.WPF
             Debug.WriteLine($"Float window position: {{{FloatWindow.Left}, {FloatWindow.Top}}}");
             Debug.WriteLine($"Foreground window bounds: {EnvironmentMonitor.ForegroundWindowBounds}");
 
-            PointF FloatWindowPosition = new((float)FloatWindow.Left, (float)FloatWindow.Top);
+            var currentDpi = VisualTreeHelper.GetDpi(FloatWindow);
+            PointF FloatWindowPosition = new(
+                (float)(FloatWindow.Left * currentDpi.DpiScaleX), 
+                (float)(FloatWindow.Top * currentDpi.DpiScaleY)
+            );
 
             // Absolute
 
