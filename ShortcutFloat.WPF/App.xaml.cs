@@ -268,20 +268,22 @@ namespace ShortcutFloat.WPF
 
         public PointF GetRelativeScreenPosition(PointF input) =>
             new(
-                (float)map(input.X, MaxScreenBounds.Left, MaxScreenBounds.Right, 0, 1),
-                (float)map(input.Y, MaxScreenBounds.Top, MaxScreenBounds.Bottom, 0, 1)
+                (float)Map(input.X, MaxScreenBounds.Left, MaxScreenBounds.Right, 0, 1),
+                (float)Map(input.Y, MaxScreenBounds.Top, MaxScreenBounds.Bottom, 0, 1)
             );
 
         public PointF GetAbsoluteScreenPosition(PointF input) =>
             new(
-                (float)map(input.X, 0, 1, MaxScreenBounds.Left, MaxScreenBounds.Right),
-                (float)map(input.Y, 0, 1, MaxScreenBounds.Top, MaxScreenBounds.Bottom)
+                Map(input.X, 0, 1, MaxScreenBounds.Left, MaxScreenBounds.Right),
+                Map(input.Y, 0, 1, MaxScreenBounds.Top, MaxScreenBounds.Bottom)
             );
 
-        static long map(long x, long in_min, long in_max, long out_min, long out_max) =>
+        static long Map(long x, long in_min, long in_max, long out_min, long out_max) =>
             (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 
-        static double map(double x, double in_min, double in_max, double out_min, double out_max) =>
+        static double Map(double x, double in_min, double in_max, double out_min, double out_max) =>
+            (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+        static float Map(float x, float in_min, float in_max, float out_min, float out_max) =>
             (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 
         private void FloatWindow_SendKeysRequested(object sender, Common.ViewModels.SendKeysEventArgs e)
