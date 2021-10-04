@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using PropertyChanged;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
@@ -37,8 +37,6 @@ namespace ShortcutFloat.WPF
         private FloatWindow FloatWindow { get; set; }
         private bool FloatWindowActive => FloatWindow?.IsVisible ?? false;
         private ShortcutConfiguration ActiveConfiguration { get; set; } = null;
-        private IntPtr? TargetWindowHandle { get; set; } = null;
-        private static Process CurrentProcess { get; } = Process.GetCurrentProcess();
         private Rectangle MaxScreenBounds { get; } = GetMaxScreenBounds();
         private bool FloatWindowPositionSemaphore { get; set; } = false;
 
@@ -82,7 +80,9 @@ namespace ShortcutFloat.WPF
             if (!FloatWindowActive) return;
             if (!ActiveConfiguration?.StickyFloatWindow ?? !Settings.StickyFloatWindow) return;
             // Ignore own process
-            if (EnvironmentMonitor.ForegroundWindowProcess.Id == CurrentProcess.Id) return;
+            if (EnvironmentMonitor.ForegroundWindowProcess.Id == EnvironmentMonitor.CurrentProcess.Id) return;
+
+            Debug.WriteLine($"Foreground window bounds changed:\n\t{e.WindowBounds}\n\t(Δ {e.Delta})");
             
             Dispatcher.Invoke(PositionFloatWindow);
         }
@@ -151,7 +151,10 @@ namespace ShortcutFloat.WPF
         private void EnvironmentMonitor_ForegroundWindowChanged(object sender, EnvironmentMonitor.ForegroundWindowChangedEventArgs e)
         {
             // Ignore own process
-            if (e.WindowProcess.Id == CurrentProcess.Id) return;
+            if (e.WindowProcess.Id == EnvironmentMonitor.CurrentProcess.Id) return;
+            // Ignore "Idle" process
+            if (e.WindowProcess.Id == 0) return;
+            Debug.WriteLine($"Foreground window changed\n\tWindow text:\t\"{e.WindowText}\"\n\tProcess:\t\t\"{e.WindowProcess.ProcessName}\" ({e.WindowProcess.Id})");
 
             ShortcutConfiguration matchingConfiguration = null;
 
@@ -207,8 +210,8 @@ namespace ShortcutFloat.WPF
                     FloatWindow.Show();
                 });
 
-                if (TargetWindowHandle != null)
-                    InteropServices.SetForegroundWindow(TargetWindowHandle.Value);
+                if (EnvironmentMonitor.ForegroundWindowHandle != null)
+                    InteropServices.SetForegroundWindow(EnvironmentMonitor.ForegroundWindowHandle.Value);
             }
         }
 
@@ -283,8 +286,8 @@ namespace ShortcutFloat.WPF
 
         private void FloatWindow_SendKeysRequested(object sender, Common.ViewModels.SendKeysEventArgs e)
         {
-            if (TargetWindowHandle == null) return;
-            InteropServices.SetForegroundWindow(TargetWindowHandle.Value);
+            if (EnvironmentMonitor.ForegroundWindowHandle == null) return;
+            InteropServices.SetForegroundWindow(EnvironmentMonitor.ForegroundWindowHandle.Value);
             System.Windows.Forms.SendKeys.SendWait(e.SendKeysString);
         }
 
