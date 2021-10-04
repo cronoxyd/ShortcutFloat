@@ -10,8 +10,7 @@
         Title="Shortcut configuration" 
         Height="350" Width="500" 
         ResizeMode="NoResize"
-        WindowStartupLocation="CenterOwner" ShowInTaskbar="False"
-        Style="{DynamicResource CustomWindowStyle}">
+        WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

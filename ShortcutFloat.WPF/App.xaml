@@ -5,14 +5,162 @@
              xmlns:models="clr-namespace:ShortcutFloat.Common.Models;assembly=ShortcutFloat.Common"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              ShutdownMode="OnExplicitShutdown">
-    <Application.Resources>
+    <Application.Resources>            
+        <SolidColorBrush x:Key="MDSignature" Color="#DC0000"/>
+
+
+        <SolidColorBrush x:Key="PrimaryTextColor" Color="#FFF"/>
+
+        <SolidColorBrush x:Key="MDShade30" Color="#1E1E1E"/>
+        <SolidColorBrush x:Key="MDShade37" Color="#252526"/>
+        <SolidColorBrush x:Key="MDShade51" Color="#333333"/>
+        <SolidColorBrush x:Key="MDShade65" Color="#414141"/>
+        <SolidColorBrush x:Key="MDShade90" Color="#5A5A5A"/>
+        <SolidColorBrush x:Key="MDShade133" Color="#858585"/>
+
+        <SolidColorBrush x:Key="MDTeal" Color="#30A695"/>
+        <SolidColorBrush x:Key="MDDarkTeal" Color="#0D806E"/>
+
+        <SolidColorBrush x:Key="MDLime" Color="#30A632"/>
+        <SolidColorBrush x:Key="MDDarkLime" Color="#0D800E"/>
+
+        <SolidColorBrush x:Key="MDAdditional221" Color="#3056A6"/>
+        <SolidColorBrush x:Key="MDDarkAdditional221" Color="#0D4380"/>
+
+        <SolidColorBrush x:Key="MDAdditional271" Color="#6D30A6"/>
+        <SolidColorBrush x:Key="MDDarkAdditional271" Color="#480D80"/>
+
+        <SolidColorBrush x:Key="MDAdditional312" Color="#A6307D"/>
+        <SolidColorBrush x:Key="MDDarkAdditional312" Color="#800D58"/>
+
+        <Style TargetType="{x:Type Window}">
+            <Setter Property="Background" Value="{StaticResource MDShade30}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="AllowsTransparency" Value="True"/>
+        </Style>
+
+        <Style TargetType="{x:Type Grid}">
+            <Setter Property="Background" Value="{StaticResource MDShade30}"/>
+        </Style>
+
+        <Style TargetType="{x:Type StackPanel}">
+            <Setter Property="Background" Value="{StaticResource MDShade30}"/>
+        </Style>
+
         <Style TargetType="{x:Type CheckBox}">
             <Setter Property="Margin" Value="0,5,0,5"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
         </Style>
+
+        <Style TargetType="{x:Type ListBox}">
+            <Setter Property="Background" Value="{StaticResource MDShade37}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+        </Style>
+
+        <Style TargetType="{x:Type ToolBarTray}">
+            <Setter Property="Background" Value="{StaticResource MDShade37}"/>
+            <Setter Property="IsLocked" Value="True"/>
+        </Style>
+
+        <Style TargetType="{x:Type ComboBox}">
+            <Setter Property="Background" Value="{StaticResource MDShade37}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+        </Style>
+
+        <Style TargetType="{x:Type ToolBar}">
+            <Setter Property="Background" Value="{StaticResource MDShade51}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+        </Style>
+
+        <Style TargetType="{x:Type GroupBox}">
+            <Style.Resources>
+                <ResourceDictionary />
+            </Style.Resources>
+            <Setter Property="Border.BorderBrush" Value="{StaticResource MDSignature}"/>
+            <Setter Property="Background" Value="{StaticResource MDShade30}"/>
+            <Setter Property="Border.BorderThickness" Value="1"/>
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="GroupBox">
+                        <Grid SnapsToDevicePixels="True" Margin="0,5,0,5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="6" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="6" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                                <RowDefinition Height="6" />
+                            </Grid.RowDefinitions>
+                            <Border BorderThickness="{TemplateBinding Border.BorderThickness}" CornerRadius="4,4,4,4" 
+                                    BorderBrush="#00FFFFFF" Background="{TemplateBinding Panel.Background}" 
+                                    Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="4" Grid.RowSpan="3" />
+                            <ContentPresenter Content="{TemplateBinding ContentControl.Content}" 
+                                              ContentTemplate="{TemplateBinding ContentControl.ContentTemplate}" 
+                                              ContentStringFormat="{TemplateBinding ContentControl.ContentStringFormat}" 
+                                              Margin="{TemplateBinding Control.Padding}" 
+                                              SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}" 
+                                              Grid.Column="1" Grid.Row="2" Grid.ColumnSpan="2" />
+                            <Border BorderThickness="{TemplateBinding Border.BorderThickness}" CornerRadius="4,4,4,4" 
+                                    BorderBrush="Transparent" OpacityMask="{x:Null}" Grid.Row="1" Grid.ColumnSpan="4" 
+                                    Grid.RowSpan="3">
+                                <Border BorderThickness="{TemplateBinding Border.BorderThickness}" CornerRadius="3,3,3,3" 
+                                        BorderBrush="{TemplateBinding Border.BorderBrush}">
+                                    <Border BorderThickness="{TemplateBinding Border.BorderThickness}" 
+                                            CornerRadius="2,2,2,2" BorderBrush="Transparent" />
+                                </Border>
+                            </Border>
+                            <Border Padding="3,1,3,0" Name="Header" Grid.Column="1" Grid.Row="0" Grid.RowSpan="2" Background="{TemplateBinding Background}">
+                                <ContentPresenter RecognizesAccessKey="True" 
+                                                  Content="{TemplateBinding HeaderedContentControl.Header}" 
+                                                  ContentTemplate="{TemplateBinding HeaderedContentControl.HeaderTemplate}"
+                                                  ContentStringFormat="{TemplateBinding HeaderedContentControl.HeaderStringFormat}" 
+                                                  ContentSource="Header" 
+                                                  SnapsToDevicePixels="{TemplateBinding UIElement.SnapsToDevicePixels}"/>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Padding" Value="5,5,5,5"/>
             <Setter Property="MinWidth" Value="75"/>
+            <Setter Property="Background" Value="{StaticResource MDShade37}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Margin}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource MDSignature}"/>
+                </Trigger>
+            </Style.Triggers>
         </Style>
+
+        <Style x:Key="{x:Static ToolBar.ButtonStyleKey}" TargetType="Button">
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+        </Style>
+
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Background" Value="{StaticResource MDShade37}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+        </Style>
+
+        <Style TargetType="{x:Type Label}">
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+        </Style>
+
         <Style x:Key="textBoxInError" TargetType="{x:Type TextBox}">
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="true">
@@ -23,13 +171,14 @@
             </Style.Triggers>
             <Setter Property="Margin" Value="5"/>
         </Style>
+
         <ControlTemplate x:Key="validationTemplate">
             <DockPanel>
                 <AdornedElementPlaceholder/>
                 <TextBlock Foreground="Red" FontSize="20" FontWeight="Bold">!</TextBlock>
             </DockPanel>
         </ControlTemplate>
-        
+
         <ObjectDataProvider x:Key="ModifierKeysEnum" MethodName="GetValues" ObjectType="{x:Type sys:Enum}">
             <ObjectDataProvider.MethodParameters>
                 <x:Type TypeName="ModifierKeys"/>
