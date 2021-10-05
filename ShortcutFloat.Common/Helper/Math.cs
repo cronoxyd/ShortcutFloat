@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ShortcutFloat.WPF.Helper
+namespace ShortcutFloat.Common.Helper
 {
-    public class Math
+    public static class Math
     {
         public static long Map(long x, long in_min, long in_max, long out_min, long out_max) =>
             (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;

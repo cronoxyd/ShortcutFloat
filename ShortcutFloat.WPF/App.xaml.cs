@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using PropertyChanged;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Runtime;
 using ShortcutFloat.Common.Services;
+using ShortcutFloat.Common.Helper;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -285,14 +286,14 @@ namespace ShortcutFloat.WPF
 
         public PointF GetRelativeScreenPosition(PointF input) =>
             new(
-                (float)Helper.Math.Map(input.X, MaxScreenBounds.Left, MaxScreenBounds.Right, 0, 1),
-                (float)Helper.Math.Map(input.Y, MaxScreenBounds.Top, MaxScreenBounds.Bottom, 0, 1)
+                Common.Helper.Math.Map(input.X, MaxScreenBounds.Left, MaxScreenBounds.Right, 0, 1),
+                Common.Helper.Math.Map(input.Y, MaxScreenBounds.Top, MaxScreenBounds.Bottom, 0, 1)
             );
 
         public PointF GetAbsoluteScreenPosition(PointF input) =>
             new(
-                Helper.Math.Map(input.X, 0, 1, MaxScreenBounds.Left, MaxScreenBounds.Right),
-                Helper.Math.Map(input.Y, 0, 1, MaxScreenBounds.Top, MaxScreenBounds.Bottom)
+                Common.Helper.Math.Map(input.X, 0, 1, MaxScreenBounds.Left, MaxScreenBounds.Right),
+                Common.Helper.Math.Map(input.Y, 0, 1, MaxScreenBounds.Top, MaxScreenBounds.Bottom)
             );
 
         private void FloatWindow_SendKeysRequested(object sender, Common.ViewModels.SendKeysEventArgs e)
