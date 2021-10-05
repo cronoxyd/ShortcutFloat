@@ -55,17 +55,19 @@
                 </TextBox>
             </Grid>
         </GroupBox>
-        <StackPanel Grid.Row="1" IsEnabled="{Binding Path=IsDefaultConfiguration, Converter={StaticResource UnaryBooleanConverter}}">
-            <CheckBox IsChecked="{Binding Path=IsDefaultConfiguration, Converter={StaticResource UnaryBooleanConverter}}" IsThreeState="True" Content="Sticky float window"/>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Label Content="Float window position:"/>
-                <ComboBox SelectedItem="{Binding Path=FloatWindowPositionReference}" ItemsSource="{Binding Source={StaticResource WindowPositionEnum}}" Grid.Column="1"/>
-            </Grid>
-        </StackPanel>
+        <GroupBox Header="Float window positioning" Grid.Row="1" IsEnabled="{Binding Path=IsDefaultConfiguration, Converter={StaticResource UnaryBooleanConverter}}">
+            <StackPanel>
+                <CheckBox IsChecked="{Binding Path=IsDefaultConfiguration, Converter={StaticResource UnaryBooleanConverter}}" IsThreeState="True" Content="Sticky float window"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Float window position:"/>
+                    <ComboBox SelectedItem="{Binding Path=FloatWindowPositionReference}" ItemsSource="{Binding Source={StaticResource WindowPositionEnum}}" Grid.Column="1"/>
+                </Grid>
+            </StackPanel>
+        </GroupBox>
         <GroupBox Header="Shortcut definitions" Grid.Row="2">
             <DockPanel>
                 <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
