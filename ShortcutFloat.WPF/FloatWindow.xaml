@@ -12,8 +12,29 @@
         SizeToContent="WidthAndHeight" 
         Topmost="True" 
         WindowStyle="ToolWindow" 
-        ResizeMode="NoResize" ShowInTaskbar="False"
-        Style="{DynamicResource CustomWindowStyle}">
+        ResizeMode="NoResize" ShowInTaskbar="False">
+    <Window.Resources>
+        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+            <Setter Property="Padding" Value="5,5,5,5"/>
+            <Setter Property="MinWidth" Value="75"/>
+            <Setter Property="Background" Value="{StaticResource MDShade37}"/>
+            <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Margin}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="{StaticResource MDSignature}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
     <Grid>
         <ItemsControl ItemsSource="{Binding Path=ShortcutDefinitions}">
             <ItemsControl.ItemsPanel>
