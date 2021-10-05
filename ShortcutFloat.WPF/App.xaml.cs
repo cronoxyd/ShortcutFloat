@@ -18,6 +18,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
+using System.Threading;
 
 namespace ShortcutFloat.WPF
 {
@@ -41,8 +42,13 @@ namespace ShortcutFloat.WPF
         private ShortcutConfiguration ActiveConfiguration { get; set; } = null;
         private bool FloatWindowPositionSemaphore { get; set; } = false;
 
+        static Mutex singleInstanceMutex = new(true, "{CB0AF771-688C-474E-9403-456586DE2823}");
+
         protected override void OnStartup(StartupEventArgs e)
         {
+            if (!singleInstanceMutex.WaitOne(TimeSpan.Zero, true))
+                Environment.Exit(1);
+
             LoadSettings();
 
             EnvironmentMonitor.ForegroundWindowChanged += EnvironmentMonitor_ForegroundWindowChanged;
