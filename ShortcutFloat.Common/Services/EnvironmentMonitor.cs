@@ -1,4 +1,4 @@
-using ShortcutFloat.Common.Runtime;
+﻿using ShortcutFloat.Common.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -62,6 +62,9 @@ namespace ShortcutFloat.Common.Services
         /// </summary>
         public bool IgnoreZeroHandle { get; set; } = true;
 
+        public bool IgnoreOutOfBounds { get; set; } = true;
+
+        public int OutOfBoundsTolerance { get; set; } = 2000;
 
         public Rectangle MaxScreenBounds { get; } = GetMaxScreenBounds();
 
@@ -98,6 +101,17 @@ namespace ShortcutFloat.Common.Services
                 _ = InteropServices.GetWindowRect(ForegroundWindowHandle.Value, out RECT foregroundWindowRect);
                 ForegroundWindowBounds = foregroundWindowRect.ToRectangle();
 
+                if (IgnoreOutOfBounds && (
+                    foregroundWindowRect.Top < (MaxScreenBounds.Top - OutOfBoundsTolerance) ||
+                    foregroundWindowRect.Right > (MaxScreenBounds.Right + OutOfBoundsTolerance) ||
+                    foregroundWindowRect.Bottom > (MaxScreenBounds.Bottom + OutOfBoundsTolerance) ||
+                    foregroundWindowRect.Left < (MaxScreenBounds.Left - OutOfBoundsTolerance)
+                ))
+                {
+                    Debug.WriteLine($"Ignore out-of-bounds foreground rect\n\t{{Left = {foregroundWindowRect.Left}, Top = {foregroundWindowRect.Top}, Right = {foregroundWindowRect.Right}, Bottom = {foregroundWindowRect.Bottom}}}");
+                    continue;
+                }
+
                 if (ForegroundWindowText != lastForegroundWindowText && lastForegroundWindowText != null)
                 {
                     Debug.WriteLine($"Foreground window text changed (\"{lastForegroundWindowText}\" -> \"{ForegroundWindowText}\")");
@@ -111,7 +125,10 @@ namespace ShortcutFloat.Common.Services
                 }
 
                 if (lastWindowRects.ContainsKey(ForegroundWindowHandle.Value) && !foregroundWindowRect.Equals(lastWindowRects[ForegroundWindowHandle.Value]))
-                    ForegroundWindowBoundsChanged(this, new(foregroundWindowRect.ToRectangle(), lastWindowRects[ForegroundWindowHandle.Value].ToRectangle()));
+                {
+                    var lastWindowRect = lastWindowRects[ForegroundWindowHandle.Value].ToRectangle();
+                    ForegroundWindowBoundsChanged(this, new(foregroundWindowRect.ToRectangle(), lastWindowRect));
+                }
 
                 lastForegroundWindowHandle = ForegroundWindowHandle;
                 lastForegroundWindowText = ForegroundWindowText;
