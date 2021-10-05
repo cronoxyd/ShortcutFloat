@@ -3,7 +3,7 @@ using PropertyChanged;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Runtime;
-using ShortcutFloat.WPF.Services;
+using ShortcutFloat.Common.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ShortcutFloat.WPF.Services
+namespace ShortcutFloat.Common.Services
 {
     public class TrayService
     {
