@@ -39,29 +39,7 @@ namespace ShortcutFloat.WPF
         private FloatWindow FloatWindow { get; set; }
         private bool FloatWindowActive => FloatWindow?.IsVisible ?? false;
         private ShortcutConfiguration ActiveConfiguration { get; set; } = null;
-        private Rectangle MaxScreenBounds { get; } = GetMaxScreenBounds();
         private bool FloatWindowPositionSemaphore { get; set; } = false;
-
-        protected static Rectangle GetMaxScreenBounds()
-        {
-            int? minLeft = null;
-            int? minTop = null;
-            int? maxRight = null;
-            int? maxBottom = null;
-
-            foreach (var screen in System.Windows.Forms.Screen.AllScreens)
-            {
-                if (minLeft == null || screen.Bounds.Left < minLeft) minLeft = screen.Bounds.Left;
-                if (minTop == null || screen.Bounds.Top < minTop) minTop = screen.Bounds.Top;
-                if (maxRight == null || screen.Bounds.Right > maxRight) maxRight = screen.Bounds.Right;
-                if (maxBottom == null || screen.Bounds.Bottom > maxBottom) maxBottom = screen.Bounds.Bottom;
-            }
-
-            return new(
-                minLeft.Value, minTop.Value,
-                maxRight.Value - minLeft.Value, maxBottom.Value - minTop.Value
-            );
-        }
 
         protected override void OnStartup(StartupEventArgs e)
         {
@@ -128,13 +106,13 @@ namespace ShortcutFloat.WPF
             PointF clampedPosition = new(
                 (float)System.Math.Clamp(
                     newPosition.Value.X,
-                    MaxScreenBounds.X,
-                    MaxScreenBounds.Right - FloatWindow.Width
+                    EnvironmentMonitor.MaxScreenBounds.X,
+                    EnvironmentMonitor.MaxScreenBounds.Right - FloatWindow.Width
                 ),
                 (float)System.Math.Clamp(
                     newPosition.Value.Y,
-                    MaxScreenBounds.Y,
-                    MaxScreenBounds.Bottom - FloatWindow.Height
+                    EnvironmentMonitor.MaxScreenBounds.Y,
+                    EnvironmentMonitor.MaxScreenBounds.Bottom - FloatWindow.Height
                 )
             );
 #if DEBUG
@@ -254,6 +232,7 @@ namespace ShortcutFloat.WPF
             Debug.WriteLine($"Foreground window bounds: {EnvironmentMonitor.ForegroundWindowBounds}");
 
             var currentDpi = VisualTreeHelper.GetDpi(FloatWindow);
+
             PointF FloatWindowPosition = new(
                 (float)(FloatWindow.Left * currentDpi.DpiScaleX),
                 (float)(FloatWindow.Top * currentDpi.DpiScaleY)
@@ -286,14 +265,14 @@ namespace ShortcutFloat.WPF
 
         public PointF GetRelativeScreenPosition(PointF input) =>
             new(
-                Common.Helper.Math.Map(input.X, MaxScreenBounds.Left, MaxScreenBounds.Right, 0, 1),
-                Common.Helper.Math.Map(input.Y, MaxScreenBounds.Top, MaxScreenBounds.Bottom, 0, 1)
+                Common.Helper.Math.Map(input.X, EnvironmentMonitor.MaxScreenBounds.Left, EnvironmentMonitor.MaxScreenBounds.Right, 0, 1),
+                Common.Helper.Math.Map(input.Y, EnvironmentMonitor.MaxScreenBounds.Top, EnvironmentMonitor.MaxScreenBounds.Bottom, 0, 1)
             );
 
         public PointF GetAbsoluteScreenPosition(PointF input) =>
             new(
-                Common.Helper.Math.Map(input.X, 0, 1, MaxScreenBounds.Left, MaxScreenBounds.Right),
-                Common.Helper.Math.Map(input.Y, 0, 1, MaxScreenBounds.Top, MaxScreenBounds.Bottom)
+                Common.Helper.Math.Map(input.X, 0, 1, EnvironmentMonitor.MaxScreenBounds.Left, EnvironmentMonitor.MaxScreenBounds.Right),
+                Common.Helper.Math.Map(input.Y, 0, 1, EnvironmentMonitor.MaxScreenBounds.Top, EnvironmentMonitor.MaxScreenBounds.Bottom)
             );
 
         private void FloatWindow_SendKeysRequested(object sender, Common.ViewModels.SendKeysEventArgs e)

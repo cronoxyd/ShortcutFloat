@@ -1,4 +1,4 @@
-﻿using ShortcutFloat.Common.Runtime;
+using ShortcutFloat.Common.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -61,6 +61,9 @@ namespace ShortcutFloat.Common.Services
         /// Specifies whether to not raise changed events when the handle of the foreground window is zero.
         /// </summary>
         public bool IgnoreZeroHandle { get; set; } = true;
+
+
+        public Rectangle MaxScreenBounds { get; } = GetMaxScreenBounds();
 
         public event ForegroundWindowChangedEventHandler ForegroundWindowChanged = (sender, e) => { };
         public event ForegroundWindowBoundsChangedEventHandler ForegroundWindowBoundsChanged = (sender, e) => { };
@@ -172,6 +175,26 @@ namespace ShortcutFloat.Common.Services
                 );
                 WindowBounds = bounds;
             }
+        }
+        public static Rectangle GetMaxScreenBounds()
+        {
+            int? minLeft = null;
+            int? minTop = null;
+            int? maxRight = null;
+            int? maxBottom = null;
+
+            foreach (var screen in System.Windows.Forms.Screen.AllScreens)
+            {
+                if (minLeft == null || screen.Bounds.Left < minLeft) minLeft = screen.Bounds.Left;
+                if (minTop == null || screen.Bounds.Top < minTop) minTop = screen.Bounds.Top;
+                if (maxRight == null || screen.Bounds.Right > maxRight) maxRight = screen.Bounds.Right;
+                if (maxBottom == null || screen.Bounds.Bottom > maxBottom) maxBottom = screen.Bounds.Bottom;
+            }
+
+            return new(
+                minLeft.Value, minTop.Value,
+                maxRight.Value - minLeft.Value, maxBottom.Value - minTop.Value
+            );
         }
     }
 }
