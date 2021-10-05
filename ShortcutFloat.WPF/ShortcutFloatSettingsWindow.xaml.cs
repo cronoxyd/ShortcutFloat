@@ -41,7 +41,7 @@ namespace ShortcutFloat.WPF
 
         private void EditDefaultConfigurationButton_Click(object sender, RoutedEventArgs e)
         {
-            var shrtCfgWin = new ShortcutConfigurationWindow(ViewModel.DefaultConfiguration.Model.Clone())
+            var shrtCfgWin = new ShortcutConfigurationWindow(ViewModel.DefaultConfiguration.Model.Clone(), true)
             {
                 Owner = this
             };

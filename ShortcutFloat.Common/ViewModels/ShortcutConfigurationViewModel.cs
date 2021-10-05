@@ -22,6 +22,7 @@ namespace ShortcutFloat.Common.ViewModels
         public FloatWindowPositionReference? FloatWindowPositionReference { get => Model.FloatWindowPositionReference; set => Model.FloatWindowPositionReference = value; }
         public PointF FloatWindowAbsoluteOffset { get => Model.FloatWindowAbsoluteOffset; set => Model.FloatWindowAbsoluteOffset = value; }
         public PointF FloatWindowRelativeOffset { get => Model.FloatWindowRelativeOffset; set => Model.FloatWindowRelativeOffset = value; }
+        public bool IsDefaultConfiguration { get; set; } = false;
 
         public ICommand AddShortcutDefinitionCommand { get; }
         public ICommand EditShortcutDefinitionCommand { get; }

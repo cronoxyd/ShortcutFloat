@@ -4,6 +4,7 @@ using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -25,14 +26,15 @@ namespace ShortcutFloat.WPF
     public partial class ShortcutConfigurationWindow : Window
     {
         public ShortcutConfigurationViewModel ViewModel { get; set; }
-        public bool SpecificFieldsEnabled { get; set; } = true;
 
-        public ShortcutConfigurationWindow(ShortcutConfiguration Model = null)
+        public ShortcutConfigurationWindow(ShortcutConfiguration Model = null, bool IsDefaultConfiguration = false)
         {
             if (Model != null)
                 ViewModel = new(Model);
             else
                 ViewModel = new(new ShortcutConfiguration());
+
+            ViewModel.IsDefaultConfiguration = IsDefaultConfiguration;
 
             InitializeComponent();
             DataContext = ViewModel;

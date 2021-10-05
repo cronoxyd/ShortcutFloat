@@ -34,6 +34,7 @@ namespace ShortcutFloat.Common.ViewModels
             ShortcutConfigurations.CollectionChanged += ShortcutConfigurations_CollectionChanged;
 
             DefaultConfiguration = new(this.Model.DefaultConfiguration);
+            DefaultConfiguration.PropertyChanged += DefaultConfiguration_PropertyChanged;
 
             NewConfigurationCommand = new RelayCommand(
                 () =>
@@ -64,6 +65,18 @@ namespace ShortcutFloat.Common.ViewModels
                 () => ShortcutConfigurations.Remove(SelectedConfiguration),
                 () => SelectedConfiguration != null
             );
+        }
+
+        private void DefaultConfiguration_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case nameof(ShortcutConfigurationViewModel.Model):
+                    {
+                        Model.DefaultConfiguration = DefaultConfiguration.Model;
+                        break;
+                    }
+            }
         }
 
         private void ShortcutConfigurations_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)

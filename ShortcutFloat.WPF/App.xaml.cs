@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using PropertyChanged;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
@@ -177,6 +177,9 @@ namespace ShortcutFloat.WPF
                 }
             }
 
+            if (Settings.UseDefaultConfiguration && matchingConfiguration == null)
+                matchingConfiguration = Settings.DefaultConfiguration;
+
             if (ActiveConfiguration != matchingConfiguration)
             {
                 ActiveConfiguration = matchingConfiguration;
@@ -186,9 +189,9 @@ namespace ShortcutFloat.WPF
 
         private void OnActiveConfigurationChanged()
         {
-            if (ActiveConfiguration == null)
+            if (ActiveConfiguration == null || ActiveConfiguration.ShortcutDefinitions.Count < 1)
             {
-                Debug.WriteLine($"Active configuration null");
+                Debug.WriteLine($"Active configuration null or no shortcuts defined");
                 if (FloatWindow != null)
                     CloseFloat();
             }
@@ -219,7 +222,7 @@ namespace ShortcutFloat.WPF
 
             Dispatcher.Invoke(() =>
             {
-                FloatWindow.Close();
+                FloatWindow?.Close();
                 FloatWindow = null;
             });
         }
@@ -361,7 +364,10 @@ namespace ShortcutFloat.WPF
             if (SettingsForm == null)
             {
                 SettingsForm = new(Settings);
-                SettingsForm.Closed += (object sender, EventArgs e) => { SettingsForm = null; };
+                SettingsForm.Closed += (object sender, EventArgs e) => { 
+                    SettingsForm = null;
+                    OnActiveConfigurationChanged();
+                };
                 SettingsForm.Show();
             }
             else
