@@ -1,4 +1,4 @@
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using PropertyChanged;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
@@ -126,12 +126,12 @@ namespace ShortcutFloat.WPF
             }
 
             PointF clampedPosition = new(
-                (float)Math.Clamp(
+                (float)System.Math.Clamp(
                     newPosition.Value.X,
                     MaxScreenBounds.X,
                     MaxScreenBounds.Right - FloatWindow.Width
                 ),
-                (float)Math.Clamp(
+                (float)System.Math.Clamp(
                     newPosition.Value.Y,
                     MaxScreenBounds.Y,
                     MaxScreenBounds.Bottom - FloatWindow.Height
@@ -255,7 +255,7 @@ namespace ShortcutFloat.WPF
 
             var currentDpi = VisualTreeHelper.GetDpi(FloatWindow);
             PointF FloatWindowPosition = new(
-                (float)(FloatWindow.Left * currentDpi.DpiScaleX), 
+                (float)(FloatWindow.Left * currentDpi.DpiScaleX),
                 (float)(FloatWindow.Top * currentDpi.DpiScaleY)
             );
 
