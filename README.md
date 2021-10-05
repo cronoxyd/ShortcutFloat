@@ -7,7 +7,7 @@ Shortcut Float is a utility program that displays a pinned (TopMost) window over
 ## Installing Shortcut Float
 ### Requirements
 * Windows 10 (although this is a soft requirement, Shortcut Float will probably still work on older editions of Windows but that is untested)
-* .NET 5+ Runtime (the installer should handle this though)
+* [.NET 5+ Runtime](https://dotnet.microsoft.com/download) (the installer should handle this though)
 
 ### Installation
 Download the latest release from the _Releases_ page, extract the `*.zip` and run `setup.exe`.
@@ -26,7 +26,6 @@ Configurations target windows with specific titles and/or processes with specifi
 
 Both fields support regular expressions and the expression has to be valid in order to save the configuration.
 
-> [!IMPORTANT]
 > Do not include the extension of the process as seen in the Task Manager (mostly `*.exe`).
 
 Here are some examples:
