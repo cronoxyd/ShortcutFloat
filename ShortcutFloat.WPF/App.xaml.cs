@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using PropertyChanged;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
@@ -42,11 +42,11 @@ namespace ShortcutFloat.WPF
         private ShortcutConfiguration ActiveConfiguration { get; set; } = null;
         private bool FloatWindowPositionSemaphore { get; set; } = false;
 
-        static Mutex singleInstanceMutex = new(true, "{CB0AF771-688C-474E-9403-456586DE2823}");
+        static Mutex SingleInstanceMutex = new(true, "{CB0AF771-688C-474E-9403-456586DE2823}");
 
         protected override void OnStartup(StartupEventArgs e)
         {
-            if (!singleInstanceMutex.WaitOne(TimeSpan.Zero, true))
+            if (!SingleInstanceMutex.WaitOne(TimeSpan.Zero, true))
                 Environment.Exit(1);
 
             LoadSettings();
