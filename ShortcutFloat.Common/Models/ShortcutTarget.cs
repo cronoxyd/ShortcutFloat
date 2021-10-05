@@ -3,6 +3,6 @@
     public class ShortcutTarget
     {
         public string WindowText { get; set; } = string.Empty;
-        public string ProcessName { get; set; } = "explorer";
+        public string ProcessName { get; set; } = string.Empty;
     }
 }
