@@ -82,3 +82,4 @@ The Name you can assign a shortcut definition will be the text of the button in 
 * Investigate deeper interop (such as reacting to a targeted window being in a specific state like the user having selected a brush tool in a image editor)
 * Investigate the feasibility of re-implementing the UI in UWP
 * Implement more options for showing the float window (such as only being "armed" when the computer is in tablet mode or only showing the window when a button is held on the stylus)
+* Improve UX when using a stylus (mouse hover effect of touch hangs around because of virtual mouse)
