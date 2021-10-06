@@ -18,10 +18,12 @@ namespace ShortcutFloat.Common.ViewModels
         public ICollectionView ShortcutDefinitionsView { get; }
         public ShortcutDefinitionViewModel SelectedShortcutDefinition { get; set; } = null;
         public bool Enabled { get => Model.Enabled; set => Model.Enabled = value; }
-        public bool? StickFloatWindow { get => Model.StickyFloatWindow; set => Model.StickyFloatWindow = value; }
+        public bool? StickyFloatWindow { get => Model.StickyFloatWindow; set => Model.StickyFloatWindow = value; }
         public FloatWindowPositionReference? FloatWindowPositionReference { get => Model.FloatWindowPositionReference; set => Model.FloatWindowPositionReference = value; }
         public PointF FloatWindowAbsoluteOffset { get => Model.FloatWindowAbsoluteOffset; set => Model.FloatWindowAbsoluteOffset = value; }
         public PointF FloatWindowRelativeOffset { get => Model.FloatWindowRelativeOffset; set => Model.FloatWindowRelativeOffset = value; }
+        public int? FloatWindowGridColumns { get => Model.FloatWindowGridColumns; set => Model.FloatWindowGridColumns = value; }
+        public int? FloatWindowGridRows { get => Model.FloatWindowGridRows; set => Model.FloatWindowGridRows = value; }
         public bool IsDefaultConfiguration { get; set; } = false;
 
         public ICommand AddShortcutDefinitionCommand { get; }
@@ -29,6 +31,7 @@ namespace ShortcutFloat.Common.ViewModels
         public ICommand RemoveShortcutDefinitionCommand { get; }
         public ICommand MoveShortcutDefinitionUpCommand { get; }
         public ICommand MoveShortcutDefinitionDownCommand { get; }
+        public ICommand NullFloatWindowPositionReference { get; }
 
         public event ShortcutDefinitionModelEventHandler NewShortcutDefinitionRequested = (sender, e) => { };
         public event ShortcutDefinitionModelEventHandler EditShortcutDefinitionRequested = (sender, e) => { };
@@ -94,6 +97,11 @@ namespace ShortcutFloat.Common.ViewModels
                     if (SelectedShortcutDefinition == null) return false;
                     return ShortcutDefinitions.IndexOf(SelectedShortcutDefinition) > 0;
                 }
+            );
+
+            NullFloatWindowPositionReference = new RelayCommand(
+                () => FloatWindowPositionReference = null,
+                () => true
             );
         }
 

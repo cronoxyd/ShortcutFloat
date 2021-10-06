@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Threading;
+using AnyClone;
 
 namespace ShortcutFloat.WPF
 {
@@ -202,7 +203,15 @@ namespace ShortcutFloat.WPF
                 {
                     CloseFloat();
 
-                    FloatWindow = new(ActiveConfiguration);
+                    var floatWindowConfig = ActiveConfiguration.Clone();
+
+                    if (floatWindowConfig.FloatWindowGridColumns == null)
+                        floatWindowConfig.FloatWindowGridColumns = Settings.FloatWindowGridColumns;
+
+                    if (floatWindowConfig.FloatWindowGridRows == null)
+                        floatWindowConfig.FloatWindowGridRows = Settings.FloatWindowGridRows;
+
+                    FloatWindow = new(floatWindowConfig);
                     FloatWindow.SendKeysRequested += FloatWindow_SendKeysRequested;
                     FloatWindow.LocationChanged += FloatWindow_LocationChanged;
 
