@@ -1,4 +1,4 @@
-using AnyClone;
+﻿using AnyClone;
 using Newtonsoft.Json;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
@@ -363,6 +363,7 @@ namespace ShortcutFloat.WPF
                 SettingsForm.Closed += (object sender, EventArgs e) => { 
                     SettingsForm = null;
                     OnActiveConfigurationChanged();
+                    SaveSettings();
                 };
                 SettingsForm.Show();
             }
