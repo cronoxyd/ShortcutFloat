@@ -1,25 +1,17 @@
-﻿using Newtonsoft.Json;
-using PropertyChanged;
+using AnyClone;
+using Newtonsoft.Json;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Runtime;
 using ShortcutFloat.Common.Services;
-using ShortcutFloat.Common.Helper;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
-using System.Threading;
-using AnyClone;
 
 namespace ShortcutFloat.WPF
 {
