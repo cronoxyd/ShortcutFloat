@@ -256,11 +256,6 @@ namespace ShortcutFloat.WPF
 
             // Relative
 
-            //PointF FloatWindowRelativeCenter = GetRelativeScreenPosition(new(
-            //    (float)(FloatWindow.Left + (FloatWindow.Width / 2)), 
-            //    (float)(FloatWindow.Top + (FloatWindow.Height / 2))
-            //));
-
             PointF ForegroundWindowCenter = new(
                 EnvironmentMonitor.ForegroundWindowBounds.Value.X + (EnvironmentMonitor.ForegroundWindowBounds.Value.Width / 2),
                 EnvironmentMonitor.ForegroundWindowBounds.Value.Y + (EnvironmentMonitor.ForegroundWindowBounds.Value.Height / 2)
