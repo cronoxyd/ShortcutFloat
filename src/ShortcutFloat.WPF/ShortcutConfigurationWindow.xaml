@@ -10,8 +10,7 @@
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutConfigurationViewModel}"
         mc:Ignorable="d"
         Title="Shortcut configuration" 
-        Height="350" Width="500" 
-        ResizeMode="NoResize"
+        Height="450" Width="500"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
     <Window.Resources>
         <data:UnaryBooleanConverter x:Key="UnaryBooleanConverter"/>
