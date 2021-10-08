@@ -12,51 +12,57 @@ namespace ShortcutFloat.Common.ViewModels.Actions
     public class KeystrokeDefinitionViewModel : ActionDefinitionViewModel
     {
         public new KeystrokeDefinition Model { get => base.Model as KeystrokeDefinition; set => base.Model = value; }
-        public ModifierKeys? ModifierKeys { get => Model.ModifierKeys; set => Model.ModifierKeys = value; }
+
+        public ModifierKeys ModifierKeys { get => Model.ModifierKeys; set => Model.ModifierKeys = value; }
+
         public bool ModifierCtrl
         {
-            get => ModifierKeys.Value.HasFlag(System.Windows.Input.ModifierKeys.Control);
+            get => ModifierKeys.HasFlag(ModifierKeys.Control);
             set
             {
                 if (value)
-                    ModifierKeys |= System.Windows.Input.ModifierKeys.Control;
+                    ModifierKeys |= ModifierKeys.Control;
                 else
-                    ModifierKeys &= ~System.Windows.Input.ModifierKeys.Control;
+                    ModifierKeys &= ~ModifierKeys.Control;
             }
         }
+
         public bool ModifierShift
         {
-            get => ModifierKeys.Value.HasFlag(System.Windows.Input.ModifierKeys.Shift);
+            get => ModifierKeys.HasFlag(ModifierKeys.Shift);
             set
             {
                 if (value)
-                    ModifierKeys |= System.Windows.Input.ModifierKeys.Shift;
+                    ModifierKeys |= ModifierKeys.Shift;
                 else
-                    ModifierKeys &= ~System.Windows.Input.ModifierKeys.Shift;
+                    ModifierKeys &= ~ModifierKeys.Shift;
             }
         }
+
         public bool ModifierAlt
         {
-            get => ModifierKeys.Value.HasFlag(System.Windows.Input.ModifierKeys.Alt);
+            get => ModifierKeys.HasFlag(ModifierKeys.Alt);
             set
             {
                 if (value)
-                    ModifierKeys |= System.Windows.Input.ModifierKeys.Alt;
+                    ModifierKeys |= ModifierKeys.Alt;
                 else
-                    ModifierKeys &= ~System.Windows.Input.ModifierKeys.Alt;
+                    ModifierKeys &= ~ModifierKeys.Alt;
             }
         }
+
         public bool ModifierWindows
         {
-            get => ModifierKeys.Value.HasFlag(System.Windows.Input.ModifierKeys.Windows);
+            get => ModifierKeys.HasFlag(ModifierKeys.Windows);
             set
             {
                 if (value)
-                    ModifierKeys |= System.Windows.Input.ModifierKeys.Windows;
+                    ModifierKeys |= ModifierKeys.Windows;
                 else
-                    ModifierKeys &= ~System.Windows.Input.ModifierKeys.Windows;
+                    ModifierKeys &= ~ModifierKeys.Windows;
             }
         }
+
         public Key? Key { get => Model.Key; set => Model.Key = value; }
 
         public KeystrokeDefinitionViewModel([NotNull] KeystrokeDefinition Model) : base(Model) { }

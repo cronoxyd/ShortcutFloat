@@ -5,7 +5,7 @@ namespace ShortcutFloat.Common.Models.Actions
 {
     public class KeystrokeDefinition : ActionDefinition
     {
-        public ModifierKeys? ModifierKeys { get; set; } = null;
+        public ModifierKeys ModifierKeys { get; set; } = ModifierKeys.None;
         public Key? Key { get; set; } = null;
 
         public KeystrokeDefinition() { }
@@ -16,7 +16,7 @@ namespace ShortcutFloat.Common.Models.Actions
             this.Key = Key;
         }
 
-        public KeystrokeDefinition(string Name, ModifierKeys? ModifierKey, Key? Key)
+        public KeystrokeDefinition(string Name, ModifierKeys ModifierKey, Key? Key)
         {
             this.Name = Name;
             this.ModifierKeys = ModifierKey;
