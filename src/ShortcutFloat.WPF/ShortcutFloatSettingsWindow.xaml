@@ -86,8 +86,8 @@
                                     <Label Content="Window text:"/>
                                     <Label Content="Process name:" Grid.Row="1"/>
 
-                                    <Label Content="{Binding Path=Target.WindowText}" Grid.Column="1"/>
-                                    <Label Content="{Binding Path=Target.ProcessName}" Grid.Column="1" Grid.Row="1"/>
+                                    <Label Content="{Binding Path=Target.WindowText}" Grid.Column="1" FontFamily="Consolas"/>
+                                    <Label Content="{Binding Path=Target.ProcessName}" Grid.Column="1" Grid.Row="1" FontFamily="Consolas"/>
                                 </Grid>
                             </Grid>
                         </DataTemplate>
