@@ -80,6 +80,10 @@ namespace ShortcutFloat.Common.Services
         /// </summary>
         public Rectangle MaxScreenBounds { get; } = GetMaxScreenBounds();
 
+        /// <summary>
+        /// Specifies the interval at which the environment is inspected in milliseconds.
+        /// </summary>
+        int MonitorIntervalMilliseconds { get; set; } = 10;
         public event ForegroundWindowChangedEventHandler ForegroundWindowChanged = (sender, e) => { };
         public event ForegroundWindowBoundsChangedEventHandler ForegroundWindowBoundsChanged = (sender, e) => { };
 
@@ -146,7 +150,8 @@ namespace ShortcutFloat.Common.Services
                 lastForegroundWindowText = ForegroundWindowText;
                 lastWindowRects[ForegroundWindowHandle.Value] = foregroundWindowRect;
 
-                Thread.Sleep(10);
+                Thread.Sleep(MonitorIntervalMilliseconds);
+            }
             }
         }
 
