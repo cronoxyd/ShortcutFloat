@@ -1,3 +1,4 @@
+using ShortcutFloat.Common.Models.Triggers;
 using System.Collections.Generic;
 using System.Drawing;
 

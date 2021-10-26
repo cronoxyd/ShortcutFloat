@@ -1,6 +1,7 @@
 ﻿using AnyClone;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
+using ShortcutFloat.Common.Models.Triggers;
 using ShortcutFloat.Common.ViewModels;
 using System;
 using System.Collections.Generic;
