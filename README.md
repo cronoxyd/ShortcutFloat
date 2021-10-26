@@ -65,7 +65,7 @@ You can enable the _Sticky float window_ option so that the window will always f
 
 #### Defining shortcuts
 The shortcut definitions will then actually show up in the float window with the name you configured. Use the actions in the _Shortcut definitions_ sections to add, edit, remove and move the definitions. A definition can have multiple actions, such as:
-* A Keystroke action which consists of a modifier key (`Ctrl`, `Alt`, `Shift` or `Win`) and a action key (all other keys), both optional,
+* A Keystroke action which consists of modifier keys (`Ctrl`, `Alt` or `Shift`) and a action key (all other keys), both optional,
 * A Textblock action which simply sends all characters to the targeted window.
 The Name you can assign a shortcut definition will be the text of the button in the float window. The name of each action is purely for your reference and will not be used otherwise.
 
@@ -82,3 +82,4 @@ The Name you can assign a shortcut definition will be the text of the button in 
 * Investigate deeper interop (such as reacting to a targeted window being in a specific state like the user having selected a brush tool in a image editor)
 * Investigate the feasibility of re-implementing the UI in UWP
 * Implement more options for showing the float window (such as only being "armed" when the computer is in tablet mode or only showing the window when a button is held on the stylus)
+* Improve UX when using a stylus (mouse hover effect of touch hangs around because of virtual mouse)

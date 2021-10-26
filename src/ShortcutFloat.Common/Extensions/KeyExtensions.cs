@@ -15,6 +15,10 @@ namespace ShortcutFloat.Common.Extensions
 
             return key.Value.ToSendKeysString();
         }
+
+        public static string ToSendKeysString(this IEnumerable<Key> keys) =>
+            string.Join(string.Empty, keys.Select((key) => key.ToSendKeysString()).NotNullOrEmpty());
+
         public static string ToSendKeysString(this Key key) =>
             key switch
             {
@@ -78,13 +82,16 @@ namespace ShortcutFloat.Common.Extensions
             return keys.Value.ToSendKeysString();
         }
 
-        public static string ToSendKeysString(this ModifierKeys keys)
+        public static string ToSendKeysString(this ModifierKeys keys) =>
+            keys.ToKeys().ToSendKeysString();
+
+        public static IEnumerable<Key> ToKeys(this ModifierKeys keys)
         {
-            var retVal = "";
-            if (keys.HasFlag(ModifierKeys.Control)) retVal += Key.LeftCtrl.ToSendKeysString();
-            if (keys.HasFlag(ModifierKeys.Shift)) retVal += Key.LeftShift.ToSendKeysString();
-            if (keys.HasFlag(ModifierKeys.Alt)) retVal += Key.LeftAlt.ToSendKeysString();
-            if (keys.HasFlag(ModifierKeys.Windows)) retVal += Key.LWin.ToSendKeysString();
+            var retVal = new List<Key>();
+            if (keys.HasFlag(ModifierKeys.Control)) retVal.Add(Key.LeftCtrl);
+            if (keys.HasFlag(ModifierKeys.Shift)) retVal.Add(Key.LeftShift);
+            if (keys.HasFlag(ModifierKeys.Alt)) retVal.Add(Key.LeftAlt);
+            if (keys.HasFlag(ModifierKeys.Windows)) retVal.Add(Key.LWin);
 
             return retVal;
         }

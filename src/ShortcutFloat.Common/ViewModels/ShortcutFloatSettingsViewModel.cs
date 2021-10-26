@@ -18,6 +18,8 @@ namespace ShortcutFloat.Common.ViewModels
         public ICollectionView ShortcutConfigurationsView { get; }
         public ShortcutConfigurationViewModel SelectedConfiguration { get; set; } = null;
         public FloatWindowPositionReference FloatWindowPositionReference { get => Model.FloatWindowPositionReference; set => Model.FloatWindowPositionReference = value; }
+        public int FloatWindowGridColumns { get => Model.FloatWindowGridColumns; set => Model.FloatWindowGridColumns = value; }
+        public int FloatWindowGridRows { get => Model.FloatWindowGridRows; set => Model.FloatWindowGridRows = value; }
 
         public ICommand NewConfigurationCommand { get; }
         public ICommand EditConfigurationCommand { get; }

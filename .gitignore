@@ -151,6 +151,9 @@ coverage*.info
 *.coverage
 *.coveragexml
 
+# Visual Studio performance profiler reports
+*.diagsession
+
 # NCrunch
 _NCrunch_*
 .*crunch*.local.xml

@@ -1,24 +1,17 @@
-﻿using Newtonsoft.Json;
-using PropertyChanged;
+﻿using AnyClone;
+using Newtonsoft.Json;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Runtime;
 using ShortcutFloat.Common.Services;
-using ShortcutFloat.Common.Helper;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Configuration;
-using System.Data;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows;
 using System.Windows.Media;
-using System.Threading;
 
 namespace ShortcutFloat.WPF
 {
@@ -202,7 +195,15 @@ namespace ShortcutFloat.WPF
                 {
                     CloseFloat();
 
-                    FloatWindow = new(ActiveConfiguration);
+                    var floatWindowConfig = ActiveConfiguration.Clone();
+
+                    if (floatWindowConfig.FloatWindowGridColumns == null)
+                        floatWindowConfig.FloatWindowGridColumns = Settings.FloatWindowGridColumns;
+
+                    if (floatWindowConfig.FloatWindowGridRows == null)
+                        floatWindowConfig.FloatWindowGridRows = Settings.FloatWindowGridRows;
+
+                    FloatWindow = new(floatWindowConfig);
                     FloatWindow.SendKeysRequested += FloatWindow_SendKeysRequested;
                     FloatWindow.LocationChanged += FloatWindow_LocationChanged;
 
@@ -254,11 +255,6 @@ namespace ShortcutFloat.WPF
             ActiveConfiguration.FloatWindowAbsoluteOffset = AbsoluteOffset;
 
             // Relative
-
-            //PointF FloatWindowRelativeCenter = GetRelativeScreenPosition(new(
-            //    (float)(FloatWindow.Left + (FloatWindow.Width / 2)), 
-            //    (float)(FloatWindow.Top + (FloatWindow.Height / 2))
-            //));
 
             PointF ForegroundWindowCenter = new(
                 EnvironmentMonitor.ForegroundWindowBounds.Value.X + (EnvironmentMonitor.ForegroundWindowBounds.Value.Width / 2),
@@ -367,6 +363,7 @@ namespace ShortcutFloat.WPF
                 SettingsForm.Closed += (object sender, EventArgs e) => { 
                     SettingsForm = null;
                     OnActiveConfigurationChanged();
+                    SaveSettings();
                 };
                 SettingsForm.Show();
             }

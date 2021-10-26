@@ -61,14 +61,24 @@
                                     <TextBox Grid.Column="1" Text="{Binding Path=Name}"/>
                                 </Grid>
                                 <Grid>
+                                    <Grid.Resources>
+                                        <Style TargetType="{x:Type CheckBox}">
+                                            <Setter Property="Margin" Value="5,5,5,5"/>
+                                            <Setter Property="VerticalAlignment" Value="Center"/>
+                                        </Style>
+                                    </Grid.Resources>
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <ComboBox ItemsSource="{Binding Source={StaticResource ModifierKeysEnum}}" SelectedItem="{Binding Path=ModifierKey}"/>
-                                    <Label Content="+" Grid.Column="1"/>
-                                    <ComboBox Grid.Column="2" ItemsSource="{Binding Source={StaticResource KeysEnum}}" SelectedItem="{Binding Path=Key}"/>
+                                    <CheckBox Content="Ctrl" IsChecked="{Binding Path=ModifierCtrl}" Grid.Column="0"/>
+                                    <CheckBox Content="Alt" IsChecked="{Binding Path=ModifierAlt}" Grid.Column="1"/>
+                                    <CheckBox Content="Shift" IsChecked="{Binding Path=ModifierShift}" Grid.Column="2"/>
+                                    <Label Content="+" Grid.Column="3"/>
+                                    <ComboBox Grid.Column="4" ItemsSource="{Binding Source={StaticResource KeysEnum}}" SelectedItem="{Binding Path=Key}"/>
                                 </Grid>
                             </StackPanel>
                         </DataTemplate>

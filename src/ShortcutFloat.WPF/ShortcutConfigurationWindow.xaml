@@ -6,12 +6,11 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common"
         xmlns:c="clr-namespace:ShortcutFloat.WPF.Windows.Controls"
-        xmlns:data="clr-namespace:ShortcutFloat.WPF.Windows.Data"
+        xmlns:data="clr-namespace:ShortcutFloat.WPF.Windows.Data" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutConfigurationViewModel}"
         mc:Ignorable="d"
         Title="Shortcut configuration" 
-        Height="350" Width="500" 
-        ResizeMode="NoResize"
+        Height="450" Width="500"
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
     <Window.Resources>
         <data:UnaryBooleanConverter x:Key="UnaryBooleanConverter"/>
@@ -57,14 +56,30 @@
         </GroupBox>
         <GroupBox Header="Float window positioning" Grid.Row="1" IsEnabled="{Binding Path=IsDefaultConfiguration, Converter={StaticResource UnaryBooleanConverter}}">
             <StackPanel>
-                <CheckBox IsChecked="{Binding Path=IsDefaultConfiguration, Converter={StaticResource UnaryBooleanConverter}}" IsThreeState="True" Content="Sticky float window"/>
+                <CheckBox IsChecked="{Binding Path=StickyFloatWindow}" IsThreeState="True" Content="Sticky float window"/>
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto"/>
                         <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Float window position:"/>
-                    <ComboBox SelectedItem="{Binding Path=FloatWindowPositionReference}" ItemsSource="{Binding Source={StaticResource WindowPositionEnum}}" Grid.Column="1"/>
+                    <ComboBox SelectedItem="{Binding Path=FloatWindowPositionReference}" 
+                              Grid.Column="1"
+                              ItemsSource="{Binding Source={StaticResource WindowPositionEnum}}"/>
+                    <Button Content="Set inherit" Command="{Binding Path=NullFloatWindowPositionReference}" Grid.Column="2" Margin="5,0,0,0"/>
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Columns:"/>
+                    <xctk:IntegerUpDown Value="{Binding Path=FloatWindowGridColumns}" Grid.Column="1" Watermark="(Inherit)" Minimum="0"/>
+                    <Label Content="Rows:" Grid.Column="2"/>
+                    <xctk:IntegerUpDown Value="{Binding Path=FloatWindowGridRows}" Grid.Column="3" Watermark="(Inherit)" Minimum="0"/>
                 </Grid>
             </StackPanel>
         </GroupBox>

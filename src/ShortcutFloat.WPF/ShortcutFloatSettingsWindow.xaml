@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShortcutFloat.WPF" 
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common" 
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutFloatSettingsViewModel}"
         mc:Ignorable="d"
         Title="Shotcut Float settings" Height="400" Width="550" 
@@ -36,8 +37,21 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Float window position:"/>
-                    <ComboBox SelectedItem="{Binding Path=FloatWindowPositionReference}" ItemsSource="{Binding Source={StaticResource WindowPositionEnum}}" Grid.Column="1"/>
-                </Grid>                
+                    <ComboBox SelectedItem="{Binding Path=FloatWindowPositionReference}" 
+                              ItemsSource="{Binding Source={StaticResource WindowPositionEnum}}" Grid.Column="1"/>
+                </Grid>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Label Content="Columns:"/>
+                    <xctk:IntegerUpDown Value="{Binding Path=FloatWindowGridColumns}" Grid.Column="1" Minimum="0"/>
+                    <Label Content="Rows:" Grid.Column="2"/>
+                    <xctk:IntegerUpDown Value="{Binding Path=FloatWindowGridRows}" Grid.Column="3" Minimum="0"/>                    
+                </Grid>
             </StackPanel>
         </GroupBox>
         <GroupBox Header="Configurations" Grid.Row="1">
@@ -72,8 +86,8 @@
                                     <Label Content="Window text:"/>
                                     <Label Content="Process name:" Grid.Row="1"/>
 
-                                    <Label Content="{Binding Path=Target.WindowText}" Grid.Column="1"/>
-                                    <Label Content="{Binding Path=Target.ProcessName}" Grid.Column="1" Grid.Row="1"/>
+                                    <Label Content="{Binding Path=Target.WindowText}" Grid.Column="1" FontFamily="Consolas"/>
+                                    <Label Content="{Binding Path=Target.ProcessName}" Grid.Column="1" Grid.Row="1" FontFamily="Consolas"/>
                                 </Grid>
                             </Grid>
                         </DataTemplate>

@@ -11,8 +11,9 @@
         Height="450" Width="800" 
         SizeToContent="WidthAndHeight" 
         Topmost="True" 
-        WindowStyle="ToolWindow" 
-        ResizeMode="NoResize" ShowInTaskbar="False">
+        WindowStyle="ToolWindow"
+        ResizeMode="NoResize"
+        ShowInTaskbar="False" Background="{StaticResource MDShade30}">
     <Window.Resources>
         <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Padding" Value="5,5,5,5"/>
@@ -22,7 +23,7 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" BorderThickness="1">
                             <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Margin}"/>
                         </Border>
                     </ControlTemplate>
@@ -39,7 +40,9 @@
         <ItemsControl ItemsSource="{Binding Path=ShortcutDefinitions}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
+                    <UniformGrid 
+                        Columns="{Binding Path=DataContext.FloatWindowGridColumns, RelativeSource={RelativeSource AncestorType=Window}}" 
+                        Rows="{Binding Path=DataContext.FloatWindowGridRows, RelativeSource={RelativeSource AncestorType=Window}}"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
