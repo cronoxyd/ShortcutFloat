@@ -1,4 +1,4 @@
-﻿using ShortcutFloat.Common.Runtime;
+using ShortcutFloat.Common.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -62,10 +62,22 @@ namespace ShortcutFloat.Common.Services
         /// </summary>
         public bool IgnoreZeroHandle { get; set; } = true;
 
+        /// <summary>
+        /// Specifies whether to ignore window positions that are out of the <see cref="MaxScreenBounds"/>
+        /// </summary>
+        /// <remarks>
+        /// Use <see cref="OutOfBoundsTolerance"/> to configure the tolerance.
+        /// </remarks>
         public bool IgnoreOutOfBounds { get; set; } = true;
 
+        /// <summary>
+        /// Specifies the number of pixels for which an out-of-bounds window is still considered in-bounds.
+        /// </summary>
         public int OutOfBoundsTolerance { get; set; } = 2000;
 
+        /// <summary>
+        /// Returns the maximum screen bounds, as if all screens form one large screen.
+        /// </summary>
         public Rectangle MaxScreenBounds { get; } = GetMaxScreenBounds();
 
         public event ForegroundWindowChangedEventHandler ForegroundWindowChanged = (sender, e) => { };
