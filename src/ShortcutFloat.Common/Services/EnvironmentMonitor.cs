@@ -1,4 +1,4 @@
-using ShortcutFloat.Common.Runtime;
+﻿using ShortcutFloat.Common.Runtime;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Input;
 
 namespace ShortcutFloat.Common.Services
 {
@@ -84,10 +85,19 @@ namespace ShortcutFloat.Common.Services
         /// Specifies the interval at which the environment is inspected in milliseconds.
         /// </summary>
         int MonitorIntervalMilliseconds { get; set; } = 10;
+
+        private IntPtr? LowLevelKeyboardHookHandle { get; set; } = null;
+        private IntPtr? LowLevelMouseHookHandle { get; set; } = null;
+
         public event ForegroundWindowChangedEventHandler ForegroundWindowChanged = (sender, e) => { };
         public event ForegroundWindowBoundsChangedEventHandler ForegroundWindowBoundsChanged = (sender, e) => { };
 
-        private void MonitorLoop()
+        public event KeyEventHandler KeyDown = (sender, e) => Debug.WriteLine($"Key down: {e.Key}");
+        public event KeyEventHandler KeyUp = (sender, e) => Debug.WriteLine($"Key up: {e.Key}");
+        public event MouseButtonEventHandler MouseDown = (sender, e) => Debug.WriteLine($"Mouse down: {e.Button}");
+        public event MouseButtonEventHandler MouseUp = (sender, e) => Debug.WriteLine($"Mouse up: {e.Button}");
+
+        private void WindowMonitorLoop()
         {
             IntPtr? lastForegroundWindowHandle = null;
             string lastForegroundWindowText = null;
@@ -152,7 +162,114 @@ namespace ShortcutFloat.Common.Services
 
                 Thread.Sleep(MonitorIntervalMilliseconds);
             }
+        }
+
+        /// <remarks>
+        /// Delegate is assigned to a variable to prevent garbage collector cleanup
+        /// </remarks>
+        private InteropServices.LowLevelKeyboardProc LowLevelKeyboardDelegate { get; set; } = null;
+
+        /// <remarks>
+        /// Delegate is assigned to a variable to prevent garbage collector cleanup
+        /// </remarks>
+        private InteropServices.LowLevelMouseProc LowLevelMouseDelegate { get; set; } = null;
+
+        private void SetupInputMonitor()
+        {
+            LowLevelKeyboardDelegate = new(LowLevelKeyboardProc);
+            LowLevelMouseDelegate = new(LowLevelMouseProc);
+
+            LowLevelKeyboardHookHandle = InteropServices.SetWindowsHookEx(HookType.WH_KEYBOARD_LL, LowLevelKeyboardDelegate, IntPtr.Zero, 0);
+            LowLevelMouseHookHandle = InteropServices.SetWindowsHookEx(HookType.WH_MOUSE_LL, LowLevelMouseDelegate, IntPtr.Zero, 0);
+        }
+
+        private void DisposeInputMonitor()
+        {
+            if (LowLevelKeyboardHookHandle != null)
+                InteropServices.UnhookWindowsHookEx(LowLevelKeyboardHookHandle.Value);
+            else
+                Debug.Fail("Handle of low-level keyboard hook was unset");
+
+            if (LowLevelMouseHookHandle != null)
+                InteropServices.UnhookWindowsHookEx(LowLevelMouseHookHandle.Value);
+            else
+                Debug.Fail("Handle of low-level mouse hook was unset");
+        }
+
+        private IntPtr LowLevelKeyboardProc(int code, WM wParam, KBDLLHOOKSTRUCT lParam)
+        {
+            // TODO: Implement handling of keyboard event
+            // See: https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644985(v=vs.85)
+
+            Key? key = ((VirtualKeyCode)lParam.vkCode).ToKey();
+
+            if (key != null)
+            {
+                KeyEventHandler eventHandler = null;
+                KeyStates states = KeyStates.None;
+
+                switch (wParam)
+                {
+                    case WM.KEYDOWN or WM.SYSKEYDOWN:
+                        eventHandler = KeyDown;
+                        states |= KeyStates.Down;
+                        break;
+                    case WM.KEYUP or WM.SYSKEYUP:
+                        eventHandler = KeyUp;
+                        break;
+                }
+
+                if (eventHandler == null)
+                    Debug.Fail("Failed to compose event for keyboard hook");
+
+                var e = new KeyEventArgs(key.Value, states, lParam.time);
+                eventHandler(this, e);
             }
+
+            return InteropServices.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
+        }
+
+        private IntPtr LowLevelMouseProc(int code, WM wParam, MSLLHOOKSTRUCT lParam)
+        {
+            MouseButton? mouseButton = wParam switch
+            {
+                WM.LBUTTONDOWN or WM.LBUTTONUP => MouseButton.Left,
+                WM.RBUTTONDOWN or WM.RBUTTONUP => MouseButton.Right,
+                WM.XBUTTONDOWN or WM.XBUTTONUP => (lParam.mouseData >> 16) switch {
+                    0x0001 => MouseButton.XButton1,
+                    0x0002 => MouseButton.XButton2,
+                    _ => null
+                },
+
+                _ => null
+            };
+
+            if (mouseButton != null)
+            {
+                MouseButtonEventHandler eventHandler = null;
+                MouseButtonState? state = null;
+
+                switch (wParam)
+                {
+                    
+                    case WM.LBUTTONDOWN or WM.RBUTTONDOWN or WM.XBUTTONDOWN:
+                        state = MouseButtonState.Pressed;
+                        eventHandler = MouseDown;
+                        break;
+                    case WM.LBUTTONUP or WM.RBUTTONUP or WM.XBUTTONUP:
+                        state = MouseButtonState.Released;
+                        eventHandler = MouseUp;
+                        break;
+                }
+
+                if (eventHandler == null || state == null)
+                    Debug.Fail("Failed to compose event for mouse hook");
+
+                var e = new MouseButtonEventArgs(mouseButton.Value, state.Value, lParam.time);
+                eventHandler(this, e);
+            }
+
+            return InteropServices.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
 
         /// <summary>
@@ -162,7 +279,9 @@ namespace ShortcutFloat.Common.Services
         {
             if (!Running)
             {
-                new Thread(MonitorLoop).Start();
+                new Thread(WindowMonitorLoop).Start();
+                // new Thread(KeyboardMonitorLoop).Start();
+                SetupInputMonitor();
                 _running = true;
             }
         }
@@ -174,6 +293,8 @@ namespace ShortcutFloat.Common.Services
         {
             if (Running)
                 _running = false;
+
+            DisposeInputMonitor();
         }
 
         public delegate void ForegroundWindowChangedEventHandler(object sender, ForegroundWindowChangedEventArgs e);
@@ -210,6 +331,39 @@ namespace ShortcutFloat.Common.Services
                 WindowBounds = bounds;
             }
         }
+
+        public delegate void KeyEventHandler(object sender, KeyEventArgs e);
+
+        public class KeyEventArgs : EventArgs
+        {
+            KeyStates States { get; }
+            public Key Key { get; }
+            public uint Timestamp { get; }
+
+            public KeyEventArgs(Key Key, KeyStates states, uint timestamp)
+            {
+                this.Key = Key;
+                States = states;
+                Timestamp = timestamp;
+            }
+        }
+
+        public delegate void MouseButtonEventHandler(object sender, MouseButtonEventArgs e);
+
+        public class MouseButtonEventArgs : EventArgs
+        {
+            public MouseButton Button { get; }
+            public MouseButtonState State { get; }
+            public uint Timestamp { get; set; }
+
+            public MouseButtonEventArgs(MouseButton mouseButton, MouseButtonState state, uint timestamp)
+            {
+                Button = mouseButton;
+                State = state;
+                Timestamp = timestamp;
+            }
+        }
+
         public static Rectangle GetMaxScreenBounds()
         {
             int? minLeft = null;
@@ -231,4 +385,5 @@ namespace ShortcutFloat.Common.Services
             );
         }
     }
+
 }
