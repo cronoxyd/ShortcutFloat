@@ -310,13 +310,13 @@ namespace ShortcutFloat.WPF
 
         private void TrayService_Quit(object sender, EventArgs e)
         {
-            TrayService.Stop();
-            EnvironmentMonitor.Stop();
             Current.Shutdown();
         }
 
         protected override void OnExit(ExitEventArgs e)
         {
+            TrayService.Stop();
+            EnvironmentMonitor.Stop();
             SaveSettings();
         }
 
