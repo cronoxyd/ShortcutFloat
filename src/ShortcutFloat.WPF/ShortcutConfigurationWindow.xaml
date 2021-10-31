@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common"
         xmlns:c="clr-namespace:ShortcutFloat.WPF.Windows.Controls"
-        xmlns:data="clr-namespace:ShortcutFloat.WPF.Windows.Data" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:data="clr-namespace:ShortcutFloat.WPF.Windows.Data" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:Controls="clr-namespace:ShortcutFloat.WPF.Controls"
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutConfigurationViewModel}"
         mc:Ignorable="d"
         Title="Shortcut configuration" 
@@ -77,9 +77,12 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Columns:"/>
-                    <xctk:IntegerUpDown Value="{Binding Path=FloatWindowGridColumns}" Grid.Column="1" Watermark="(Inherit)" Minimum="0"/>
+
+                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="1" Value="{Binding Path=FloatWindowGridColumns}" 
+                                            NullPlaceholder="(Inherit)"/>
                     <Label Content="Rows:" Grid.Column="2"/>
-                    <xctk:IntegerUpDown Value="{Binding Path=FloatWindowGridRows}" Grid.Column="3" Watermark="(Inherit)" Minimum="0"/>
+                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="3" Value="{Binding Path=FloatWindowGridRows}" 
+                                            NullPlaceholder="(Inherit)"/>
                 </Grid>
             </StackPanel>
         </GroupBox>
