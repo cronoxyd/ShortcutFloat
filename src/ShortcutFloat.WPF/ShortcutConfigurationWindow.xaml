@@ -14,6 +14,7 @@
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
     <Window.Resources>
         <data:UnaryBooleanConverter x:Key="UnaryBooleanConverter"/>
+        <data:NOPValueConverter x:Key="NOPValueConverter"/>
     </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -78,11 +79,13 @@
                     </Grid.ColumnDefinitions>
                     <Label Content="Columns:"/>
 
-                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="1" Value="{Binding Path=FloatWindowGridColumns}" 
-                                            NullPlaceholder="(Inherit)"/>
+                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="1" 
+                                            Value="{Binding Path=FloatWindowGridColumns, Converter={StaticResource NOPValueConverter}}" 
+                                            NullPlaceholder="(Inherit)" AllowNull="True"/>
                     <Label Content="Rows:" Grid.Column="2"/>
-                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="3" Value="{Binding Path=FloatWindowGridRows}" 
-                                            NullPlaceholder="(Inherit)"/>
+                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="3" 
+                                            Value="{Binding Path=FloatWindowGridRows, Converter={StaticResource NOPValueConverter}}" 
+                                            NullPlaceholder="(Inherit)" AllowNull="True"/>
                 </Grid>
             </StackPanel>
         </GroupBox>

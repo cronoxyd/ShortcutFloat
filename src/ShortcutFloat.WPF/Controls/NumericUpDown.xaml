@@ -3,8 +3,11 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:ShortcutFloat.WPF.Controls"
+             xmlns:local="clr-namespace:ShortcutFloat.WPF.Controls" xmlns:data="clr-namespace:ShortcutFloat.WPF.Windows.Data"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <data:NullableDoublePlaceholderValueConverter x:Key="NullableDoublePlaceholderValueConverter"/>
+    </UserControl.Resources>
     <Border BorderThickness="1" BorderBrush="Gray">
         <Grid>
             <Grid.ColumnDefinitions>
@@ -20,8 +23,13 @@
                 TextAlignment="Right" 
                 Padding="5"
                 Grid.RowSpan="2"
-                Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:NumericUpDown}}, Path=Value}"
                 VerticalAlignment="Center">
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource NullableDoublePlaceholderValueConverter}">
+                        <Binding Path="Value" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:NumericUpDown}}"/>
+                        <Binding Path="NullPlaceholder" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:NumericUpDown}}"/>
+                    </MultiBinding>
+                </TextBlock.Text>
                 <TextBlock.Style>
                     <Style TargetType="{x:Type TextBlock}">
                         <Setter Property="Text" Value="{Binding 

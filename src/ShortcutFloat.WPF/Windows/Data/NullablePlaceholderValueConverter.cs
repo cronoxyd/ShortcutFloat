@@ -8,23 +8,34 @@ using System.Windows.Data;
 
 namespace ShortcutFloat.WPF.Windows.Data
 {
-    public class NullablePlaceholderValueConverter<T> : IValueConverter
+    public class NullablePlaceholderValueConverter<T> : IMultiValueConverter
         where T : struct
     {
-        public string NullPlaceholder { get; set; }
-
-        public NullablePlaceholderValueConverter(string nullPlaceholder) =>
-            NullPlaceholder = nullPlaceholder;
-
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            T? val = (T?)value;
-            return val != null ? val.Value : NullPlaceholder;
+            if (values == null) throw new ArgumentNullException(nameof(values));
+
+            T? val = (T?)values[0];
+            return val != null ? val.Value.ToString() : (values[1]?.ToString() ?? string.Empty);
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            throw new NotImplementedException();
-        }
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture) =>
+            value switch
+            {
+                T => new object[] { (T)value },
+                string => null,
+                null => null,
+                _ => throw new ArgumentException(),
+            };
+    }
+
+    public class NullableInt32PlaceholderValueConverter : NullablePlaceholderValueConverter<Int32>
+    { 
+
+    }
+
+    public class NullableDoublePlaceholderValueConverter : NullablePlaceholderValueConverter<double>
+    {
+
     }
 }

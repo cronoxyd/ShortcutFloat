@@ -47,6 +47,9 @@ namespace ShortcutFloat.WPF.Controls
                 {
                     if (value < Minimum) return;
                     if (value > Maximum) return;
+                } else if (!AllowNull)
+                {
+                    return;
                 }
                 SetValue(ValueProperty, value);
             }
@@ -139,6 +142,10 @@ namespace ShortcutFloat.WPF.Controls
 
         #region ValueIsNull
 
+        public static readonly DependencyProperty ValueIsNullProperty =
+            DependencyProperty.Register(nameof(ValueIsNull), typeof(bool), typeof(NumericUpDown),
+                new PropertyMetadata(new PropertyChangedCallback(NumericUpDown_ValueIsNullChanged)));
+
         public static readonly RoutedEvent ValueIsNullChangedEvent =
             EventManager.RegisterRoutedEvent(nameof(ValueIsNullChanged), RoutingStrategy.Direct, typeof(ValueChangedEventHandler<bool>),
                 typeof(NumericUpDown));
@@ -150,6 +157,30 @@ namespace ShortcutFloat.WPF.Controls
         }
 
         public bool ValueIsNull { get => Value == null; }
+
+        #endregion
+
+        #region AllowNull
+
+        public static readonly DependencyProperty AllowNullProperty =
+            DependencyProperty.Register(nameof(AllowNull), typeof(bool), typeof(NumericUpDown),
+                new PropertyMetadata(new PropertyChangedCallback(NumericUpDown_AllowNullChanged)));
+
+        public static readonly RoutedEvent AllowNullChangedEvent =
+            EventManager.RegisterRoutedEvent(nameof(AllowNullChanged), RoutingStrategy.Direct, typeof(ValueChangedEventHandler<bool>),
+                typeof(NumericUpDown));
+
+        public event ValueChangedEventHandler<string> AllowNullChanged
+        {
+            add { AddHandler(AllowNullChangedEvent, value); }
+            remove { RemoveHandler(AllowNullChangedEvent, value); }
+        }
+
+        public bool AllowNull
+        {
+            get => (bool)GetValue(AllowNullProperty);
+            set => SetValue(AllowNullProperty, value);
+        }
 
         #endregion
 
@@ -209,9 +240,7 @@ namespace ShortcutFloat.WPF.Controls
             ctrl.RaiseEvent(routedEventArgs);
 
             ValueChangedEventArgs<bool> valueIsNullRoutedEventArgs = new(ValueIsNullChangedEvent, ctrl.ValueIsNull);
-            if (oldValue == null && newValue != null)
-                ctrl.RaiseEvent(valueIsNullRoutedEventArgs);
-            else if (oldValue != null && newValue == null)
+            if (oldValue == null ^ newValue == null)
                 ctrl.RaiseEvent(valueIsNullRoutedEventArgs);
 
         }
@@ -240,6 +269,22 @@ namespace ShortcutFloat.WPF.Controls
             ctrl.RaiseEvent(routedEventArgs);
         }
 
+        private static void NumericUpDown_ValueIsNullChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            NumericUpDown ctrl = (NumericUpDown)sender;
+            bool newValue = (bool)e.NewValue;
+            ValueChangedEventArgs<bool> routedEventArgs = new(ValueIsNullChangedEvent, newValue);
+            ctrl.RaiseEvent(routedEventArgs);
+        }
+
+        private static void NumericUpDown_AllowNullChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
+        {
+            NumericUpDown ctrl = (NumericUpDown)sender;
+            bool newValue = (bool)e.NewValue;
+            ValueChangedEventArgs<bool> routedEventArgs = new(AllowNullChangedEvent, newValue);
+            ctrl.RaiseEvent(routedEventArgs);
+        }
+
         private void _upButtonElement_Click(object sender, RoutedEventArgs e)
         {
             if (Value != null)
@@ -254,8 +299,6 @@ namespace ShortcutFloat.WPF.Controls
                 Value = null;
             else if (Value != null)
                 Value--;
-            else
-                Value = Minimum;
         }
 
         public override void OnApplyTemplate()
