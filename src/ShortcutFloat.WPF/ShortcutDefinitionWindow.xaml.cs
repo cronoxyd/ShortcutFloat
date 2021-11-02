@@ -1,4 +1,4 @@
-﻿using ShortcutFloat.Common.Models.Triggers;
+﻿using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.ViewModels;
 using System.Windows;
 

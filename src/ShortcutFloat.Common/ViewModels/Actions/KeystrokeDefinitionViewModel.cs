@@ -65,6 +65,35 @@ namespace ShortcutFloat.Common.ViewModels.Actions
 
         public Key? Key { get => Model.Key; set => Model.Key = value; }
 
+        public bool HoldAndRelease { get => Model.HoldAndRelease; set => Model.HoldAndRelease = value; }
+        public uint HoldTimeLimitSeconds { get => Model.HoldTimeLimitSeconds; set => Model.HoldTimeLimitSeconds = value; }
+
+        public KeystrokeReleaseTriggerType ReleaseTriggerType { get => Model.ReleaseTriggerType; set => Model.ReleaseTriggerType = value; }
+
+        public bool ReleaseTriggerTypeMouse
+        {
+            get => ReleaseTriggerType.HasFlag(KeystrokeReleaseTriggerType.Mouse);
+            set
+            {
+                if (value)
+                    ReleaseTriggerType |= KeystrokeReleaseTriggerType.Mouse;
+                else
+                    ReleaseTriggerType &= ~KeystrokeReleaseTriggerType.Mouse;
+            }
+        }
+
+        public bool ReleaseTriggerTypeKeyboard
+        {
+            get => ReleaseTriggerType.HasFlag(KeystrokeReleaseTriggerType.Keyboard);
+            set
+            {
+                if (value)
+                    ReleaseTriggerType |= KeystrokeReleaseTriggerType.Keyboard;
+                else
+                    ReleaseTriggerType &= ~KeystrokeReleaseTriggerType.Keyboard;
+            }
+        }
+
         public KeystrokeDefinitionViewModel([NotNull] KeystrokeDefinition Model) : base(Model) { }
     }
 
@@ -72,5 +101,9 @@ namespace ShortcutFloat.Common.ViewModels.Actions
     {
         public ModifierKeys? ModifierKeys { get; set; }
         public Key? Key { get; set; }
+        public uint HoldTimeLimitMilliseconds { get; set; }
+        public KeystrokeReleaseTriggerType ReleaseTriggerType { get; set; }
+        public bool ReleaseTriggerTypeMouse { get; set; }
+        public bool ReleaseTriggerTypeKeyboard { get; set; }
     }
 }

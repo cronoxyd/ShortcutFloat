@@ -1,6 +1,5 @@
 ﻿using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
-using ShortcutFloat.Common.Models.Triggers;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;

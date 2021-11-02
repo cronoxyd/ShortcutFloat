@@ -7,11 +7,17 @@
         xmlns:actions="clr-namespace:ShortcutFloat.Common.Models.Actions;assembly=ShortcutFloat.Common"
         xmlns:input="clr-namespace:System.Windows.Input;assembly=netstandard" 
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common"
-        xmlns:actionviewmodels="clr-namespace:ShortcutFloat.Common.ViewModels.Actions;assembly=ShortcutFloat.Common"
+        xmlns:actionviewmodels="clr-namespace:ShortcutFloat.Common.ViewModels.Actions;assembly=ShortcutFloat.Common" xmlns:controls="clr-namespace:ShortcutFloat.WPF.Controls"
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutDefinitionViewModel}"
         mc:Ignorable="d"
         Title="Shortcut definition" Height="350" Width="500" 
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
+    <Window.Resources>
+        <Style TargetType="{x:Type CheckBox}">
+            <Setter Property="Margin" Value="5,5,5,5"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+    </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -51,50 +57,76 @@
                         </Style>
                         
                         <DataTemplate DataType="{x:Type actionviewmodels:KeystrokeDefinitionViewModel}">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <Label Content="Name:"/>
-                                    <TextBox Grid.Column="1" Text="{Binding Path=Name}"/>
-                                </Grid>
-                                <Grid>
-                                    <Grid.Resources>
-                                        <Style TargetType="{x:Type CheckBox}">
-                                            <Setter Property="Margin" Value="5,5,5,5"/>
-                                            <Setter Property="VerticalAlignment" Value="Center"/>
-                                        </Style>
-                                    </Grid.Resources>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <CheckBox Content="Ctrl" IsChecked="{Binding Path=ModifierCtrl}" Grid.Column="0"/>
-                                    <CheckBox Content="Alt" IsChecked="{Binding Path=ModifierAlt}" Grid.Column="1"/>
-                                    <CheckBox Content="Shift" IsChecked="{Binding Path=ModifierShift}" Grid.Column="2"/>
-                                    <Label Content="+" Grid.Column="3"/>
-                                    <ComboBox Grid.Column="4" ItemsSource="{Binding Source={StaticResource KeysEnum}}" SelectedItem="{Binding Path=Key}"/>
-                                </Grid>
-                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Name:"/>
+                                <TextBox Grid.Column="1" Text="{Binding Path=Name}"/>
+                                <StackPanel Grid.Row="1" Grid.Column="1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox Content="Ctrl" IsChecked="{Binding Path=ModifierCtrl}" Grid.Column="0"/>
+                                        <CheckBox Content="Alt" IsChecked="{Binding Path=ModifierAlt}" Grid.Column="1"/>
+                                        <CheckBox Content="Shift" IsChecked="{Binding Path=ModifierShift}" Grid.Column="2"/>
+                                        <Label Content="+" Grid.Column="3"/>
+                                        <ComboBox Grid.Column="4" ItemsSource="{Binding Source={StaticResource KeysEnum}}" SelectedItem="{Binding Path=Key}"/>
+                                    </Grid>
+                                    <Separator/>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition/>
+                                            <RowDefinition/>
+                                        </Grid.RowDefinitions>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <CheckBox Content="Hold and release" IsChecked="{Binding Path=HoldAndRelease}" Grid.ColumnSpan="4"/>
+                                        <Label Content="Hold time limit:" Grid.Row="1"/>
+                                        <controls:NumericUpDown Value="{Binding Path=HoldTimeLimitSeconds}"
+                                                            Minimum="0" Maximum="60000" Grid.Row="1" Grid.Column="1"/>
+                                        <Label Content="sec" Grid.Row="1" Grid.Column="2"/>
+                                        <Label Content="Release trigger:" Grid.Row="1" Grid.Column="3"/>
+                                        <StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal">
+                                            <CheckBox Content="Mouse" IsChecked="{Binding Path=ReleaseTriggerTypeMouse}"/>
+                                            <CheckBox Content="Keyboard" IsChecked="{Binding Path=ReleaseTriggerTypeKeyboard}"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
                         </DataTemplate>
 
                         <DataTemplate DataType="{x:Type actionviewmodels:TextblockDefinitionViewModel}">
-                            <StackPanel>
-                                <Grid>
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"/>
-                                        <ColumnDefinition/>
-                                    </Grid.ColumnDefinitions>
-                                    <Label Content="Name:"/>
-                                    <TextBox Grid.Column="1" Text="{Binding Path=Name}"/>
-                                </Grid>
-                                <TextBox MinHeight="50" AcceptsReturn="True" AcceptsTab="True" Text="{Binding Path=Content}"/>
-                            </StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition/>
+                                    <RowDefinition/>
+                                </Grid.RowDefinitions>
+                                <Label Content="Name:"/>
+                                <TextBox Grid.Column="1" Text="{Binding Path=Name}"/>
+                                <StackPanel Grid.Column="1" Grid.Row="1">
+                                    <TextBox MinHeight="50" AcceptsReturn="True" AcceptsTab="True" Text="{Binding Path=Content}"/>
+                                </StackPanel>
+                            </Grid>
                         </DataTemplate>
                     </ListBox.Resources>
                 </ListBox>

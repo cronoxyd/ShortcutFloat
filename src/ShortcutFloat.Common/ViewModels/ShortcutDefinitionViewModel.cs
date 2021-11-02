@@ -1,6 +1,5 @@
 ﻿using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Models.Actions;
-using ShortcutFloat.Common.Models.Triggers;
 using ShortcutFloat.Common.ViewModels.Actions;
 using System;
 using System.Collections.ObjectModel;

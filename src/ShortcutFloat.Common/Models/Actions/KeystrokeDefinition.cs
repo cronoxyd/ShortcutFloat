@@ -1,4 +1,5 @@
 ﻿using ShortcutFloat.Common.Extensions;
+using System;
 using System.Windows.Input;
 
 namespace ShortcutFloat.Common.Models.Actions
@@ -7,6 +8,21 @@ namespace ShortcutFloat.Common.Models.Actions
     {
         public ModifierKeys ModifierKeys { get; set; } = ModifierKeys.None;
         public Key? Key { get; set; } = null;
+        public bool HoldAndRelease { get; set; } = false;
+
+        /// <summary>
+        /// Specifies the maximum amount of time the keystroke will be held
+        /// </summary>
+        /// <remarks>
+        /// If set to <c>0</c>, the keystroke will be held indefinitely.
+        /// </remarks>
+        public uint HoldTimeLimitSeconds { get; set; } = 0;
+
+        /// <summary>
+        /// Specifies the type of user interaction that releases the keystroke
+        /// </summary>
+        public KeystrokeReleaseTriggerType ReleaseTriggerType { get; set; } =
+            KeystrokeReleaseTriggerType.Mouse | KeystrokeReleaseTriggerType.Keyboard;
 
         public KeystrokeDefinition() { }
 
@@ -28,5 +44,13 @@ namespace ShortcutFloat.Common.Models.Actions
                 string.Empty,
                 (new string[] { ModifierKeys.ToSendKeysString(), Key.ToSendKeysString() }).NotNullOrEmpty()
             );
+    }
+
+    [Flags]
+    public enum KeystrokeReleaseTriggerType
+    {
+        None,
+        Mouse,
+        Keyboard
     }
 }

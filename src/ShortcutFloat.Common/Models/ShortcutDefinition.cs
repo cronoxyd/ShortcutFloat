@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ShortcutFloat.Common.Models.Triggers
+namespace ShortcutFloat.Common.Models
 {
-    public class ShortcutDefinition : TriggerDefinition
+    public class ShortcutDefinition
     {
+        public string Name { get; set; }
         public List<IActionDefinition> Actions { get; } = new();
 
         public string[] ToSendKeysStrings() =>
