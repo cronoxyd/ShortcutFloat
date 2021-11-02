@@ -5,11 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ShortcutFloat.WPF" 
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common" 
-        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:data="clr-namespace:ShortcutFloat.WPF.Windows.Data"
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutFloatSettingsViewModel}"
         mc:Ignorable="d"
         Title="Shotcut Float settings" Height="400" Width="550" 
         WindowStartupLocation="CenterScreen" Icon="/Resources/ShortcutFloatIcon.ico">
+    <Window.Resources>
+        <data:ToNotNullableIntValueConverter x:Key="ToNotNullableIntValueConverter"/>
+    </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -48,9 +51,13 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Columns:"/>
-                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="1" Value="{Binding Path=FloatWindowGridColumns}"/>
+                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="1" 
+                                            Value="{Binding Path=FloatWindowGridColumns, 
+                        Converter={StaticResource ToNotNullableIntValueConverter}, Mode=TwoWay}"/>
                     <Label Content="Rows:" Grid.Column="2"/>
-                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="3" Value="{Binding Path=FloatWindowGridRows}"/>
+                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="3" 
+                                            Value="{Binding Path=FloatWindowGridRows, 
+                        Converter={StaticResource ToNotNullableIntValueConverter}, Mode=TwoWay}"/>
                 </Grid>
             </StackPanel>
         </GroupBox>
