@@ -26,7 +26,11 @@ namespace ShortcutFloat.WPF.Controls
         #region Value
         public static readonly DependencyProperty ValueProperty =
             DependencyProperty.Register(nameof(Value), typeof(double?), typeof(NumericUpDown),
-                new PropertyMetadata(new PropertyChangedCallback(NumericUpDown_ValueChanged)));
+                new PropertyMetadata(
+                    defaultValue: null,
+                    propertyChangedCallback: new PropertyChangedCallback(NumericUpDown_ValueChanged),
+                    coerceValueCallback: new CoerceValueCallback(NumericUpDown_CoerceValue)
+                ));
 
         public static readonly RoutedEvent ValueChangedEvent =
             EventManager.RegisterRoutedEvent(nameof(ValueChanged), RoutingStrategy.Direct, typeof(ValueChangedEventHandler<double?>),
@@ -45,8 +49,8 @@ namespace ShortcutFloat.WPF.Controls
             {
                 if (value != null)
                 {
-                    if (value < Minimum) return;
-                    if (value > Maximum) return;
+                    if (value < Minimum) SetValue(ValueProperty, Minimum);
+                    if (value > Maximum) SetValue(ValueProperty, Maximum);
                 } else if (!AllowNull)
                 {
                     return;
@@ -243,6 +247,16 @@ namespace ShortcutFloat.WPF.Controls
             if (oldValue == null ^ newValue == null)
                 ctrl.RaiseEvent(valueIsNullRoutedEventArgs);
 
+        }
+
+        public static object NumericUpDown_CoerceValue(DependencyObject depObj, object value)
+        {
+            NumericUpDown ctrl = (NumericUpDown)depObj;
+            double? currentValue = (double?)value;
+            if (currentValue == null)
+                return currentValue;
+            else
+                return Math.Clamp(currentValue.Value, ctrl.Minimum, ctrl.Maximum);
         }
 
         private static void NumericUpDown_MinimumChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)

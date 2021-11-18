@@ -19,19 +19,19 @@
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <TextBlock 
+            <TextBox 
                 TextAlignment="Right" 
                 Padding="5"
                 Grid.RowSpan="2"
                 VerticalAlignment="Center">
-                <TextBlock.Text>
+                <TextBox.Text>
                     <MultiBinding Converter="{StaticResource NullableDoublePlaceholderValueConverter}">
                         <Binding Path="Value" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:NumericUpDown}}"/>
                         <Binding Path="NullPlaceholder" RelativeSource="{RelativeSource Mode=FindAncestor, AncestorType={x:Type local:NumericUpDown}}"/>
                     </MultiBinding>
-                </TextBlock.Text>
-                <TextBlock.Style>
-                    <Style TargetType="{x:Type TextBlock}">
+                </TextBox.Text>
+                <TextBox.Style>
+                    <Style TargetType="{x:Type TextBox}">
                         <Setter Property="Text" Value="{Binding 
                             RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:NumericUpDown}}, 
                             Path=Value}"/>
@@ -46,8 +46,8 @@
                             </DataTrigger>
                         </Style.Triggers>
                     </Style>
-                </TextBlock.Style>
-            </TextBlock>
+                </TextBox.Style>
+            </TextBox>
 
             <RepeatButton Content="▲" Name="UpButton" Grid.Column="1" Padding="5,0,5,0" FontSize="8"/>
             <RepeatButton Content="▼" Name="DownButton" Grid.Column="1" Grid.Row="1" Padding="5,0,5,0" FontSize="8"/>

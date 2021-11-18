@@ -10,9 +10,6 @@
         mc:Ignorable="d"
         Title="Shotcut Float settings" Height="400" Width="550" 
         WindowStartupLocation="CenterScreen" Icon="/Resources/ShortcutFloatIcon.ico">
-    <Window.Resources>
-        <data:ToNotNullableIntValueConverter x:Key="ToNotNullableIntValueConverter"/>
-    </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -52,12 +49,10 @@
                     </Grid.ColumnDefinitions>
                     <Label Content="Columns:"/>
                     <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="1" 
-                                            Value="{Binding Path=FloatWindowGridColumns, 
-                        Converter={StaticResource ToNotNullableIntValueConverter}, Mode=TwoWay}"/>
+                                            Value="{Binding Path=FloatWindowGridColumns}"/>
                     <Label Content="Rows:" Grid.Column="2"/>
                     <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="3" 
-                                            Value="{Binding Path=FloatWindowGridRows, 
-                        Converter={StaticResource ToNotNullableIntValueConverter}, Mode=TwoWay}"/>
+                                            Value="{Binding Path=FloatWindowGridRows}"/>
                 </Grid>
             </StackPanel>
         </GroupBox>
