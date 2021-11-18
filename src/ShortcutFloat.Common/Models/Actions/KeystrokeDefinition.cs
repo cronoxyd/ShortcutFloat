@@ -32,10 +32,10 @@ namespace ShortcutFloat.Common.Models.Actions
             this.Key = Key;
         }
 
-        public KeystrokeDefinition(string Name, ModifierKeys ModifierKey, Key? Key)
+        public KeystrokeDefinition(string Name, ModifierKeys ModifierKeys, Key? Key)
         {
             this.Name = Name;
-            this.ModifierKeys = ModifierKey;
+            this.ModifierKeys = ModifierKeys;
             this.Key = Key;
         }
 
