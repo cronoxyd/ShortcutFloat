@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -240,8 +241,11 @@ namespace ShortcutFloat.WPF.Controls
         {
             NumericUpDown ctrl = (NumericUpDown)sender;
 
-            double? oldValue = e.OldValue != null ? (double?)Convert.ChangeType(e.OldValue, typeof(double), CultureInfo.InvariantCulture) : null;
-            double? newValue = e.NewValue != null ? (double?)Convert.ChangeType(e.NewValue, typeof(double), CultureInfo.InvariantCulture) : null;
+            // double? oldValue = e.OldValue != null ? (double?)Convert.ChangeType(e.OldValue, typeof(double), CultureInfo.InvariantCulture) : null;
+            // double? newValue = e.NewValue != null ? (double?)Convert.ChangeType(e.NewValue, typeof(double), CultureInfo.InvariantCulture) : null;
+
+            double? oldValue = CoerceValueFrom(e.OldValue);
+            double? newValue = CoerceValueFrom(e.NewValue);
             
             ValueChangedEventArgs<double?> routedEventArgs = new(ValueChangedEvent, newValue);
             ctrl.RaiseEvent(routedEventArgs);
@@ -250,6 +254,16 @@ namespace ShortcutFloat.WPF.Controls
             if (oldValue == null ^ newValue == null)
                 ctrl.RaiseEvent(valueIsNullRoutedEventArgs);
 
+        }
+
+        private static double? CoerceValueFrom(dynamic input)
+        {
+            if (input == null) return null;
+            return input switch
+            {
+                string => null,
+                _ => (double?)Convert.ChangeType(input, typeof(double), CultureInfo.InvariantCulture)
+            };
         }
 
         private static void NumericUpDown_MinimumChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
@@ -314,6 +328,11 @@ namespace ShortcutFloat.WPF.Controls
 
             UpButtonElement = GetTemplateChild(nameof(UpButton)) as RepeatButton;
             DownButtonElement = GetTemplateChild(nameof(DownButton)) as RepeatButton;
+        }
+
+        private void TextBox_PreviewTextInput(object sender, TextCompositionEventArgs e)
+        {            
+            e.Handled = !(string.IsNullOrEmpty(e.Text) || Regex.IsMatch(e.Text, "^[0-9-]+([.,][0-9]+)?$"));
         }
     }
 

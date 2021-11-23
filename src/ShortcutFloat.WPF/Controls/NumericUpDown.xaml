@@ -23,7 +23,7 @@
                 TextAlignment="Right" 
                 Padding="5"
                 Grid.RowSpan="2"
-                VerticalAlignment="Center">
+                VerticalAlignment="Center" PreviewTextInput="TextBox_PreviewTextInput">
                 <TextBox.Style>
                     <Style TargetType="{x:Type TextBox}">
                         <Setter Property="Text" Value="{Binding 
@@ -35,7 +35,7 @@
                                 Path=Value}" Value="{x:Null}">
                                 <Setter Property="Text" Value="{Binding 
                                     RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type local:NumericUpDown}}, 
-                                    Path=NullPlaceholder}"/>
+                                    Path=NullPlaceholder, Mode=OneWay}"/>
                                 <Setter Property="Foreground" Value="Gray"/>
                             </DataTrigger>
                         </Style.Triggers>
