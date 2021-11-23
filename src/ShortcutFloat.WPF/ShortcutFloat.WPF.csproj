@@ -25,6 +25,7 @@
 
 	<ItemGroup>
 	  <PackageReference Include="AnyClone" Version="1.1.2" />
+	  <PackageReference Include="Extended.Wpf.Toolkit" Version="3.6.0" />
 	  <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 

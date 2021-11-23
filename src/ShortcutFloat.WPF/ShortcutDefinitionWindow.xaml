@@ -7,7 +7,8 @@
         xmlns:actions="clr-namespace:ShortcutFloat.Common.Models.Actions;assembly=ShortcutFloat.Common"
         xmlns:input="clr-namespace:System.Windows.Input;assembly=netstandard" 
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common"
-        xmlns:actionviewmodels="clr-namespace:ShortcutFloat.Common.ViewModels.Actions;assembly=ShortcutFloat.Common" xmlns:controls="clr-namespace:ShortcutFloat.WPF.Controls"
+        xmlns:actionviewmodels="clr-namespace:ShortcutFloat.Common.ViewModels.Actions;assembly=ShortcutFloat.Common"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutDefinitionViewModel}"
         mc:Ignorable="d"
         Title="Shortcut definition" Height="350" Width="500" 
@@ -98,7 +99,7 @@
                                         </Grid.ColumnDefinitions>
                                         <CheckBox Content="Hold and release" IsChecked="{Binding Path=HoldAndRelease}" Grid.ColumnSpan="4"/>
                                         <Label Content="Hold time limit:" Grid.Row="1"/>
-                                        <controls:NumericUpDown Value="{Binding Path=HoldTimeLimitSeconds}"
+                                        <xctk:IntegerUpDown Value="{Binding Path=HoldTimeLimitSeconds}"
                                                             Minimum="0" Maximum="60000" Grid.Row="1" Grid.Column="1"/>
                                         <Label Content="sec" Grid.Row="1" Grid.Column="2"/>
                                         <Label Content="Release trigger:" Grid.Row="1" Grid.Column="3"/>
