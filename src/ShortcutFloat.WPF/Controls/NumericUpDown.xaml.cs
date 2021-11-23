@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -25,7 +26,7 @@ namespace ShortcutFloat.WPF.Controls
     {
         #region Value
         public static readonly DependencyProperty ValueProperty =
-            DependencyProperty.Register(nameof(Value), typeof(double?), typeof(NumericUpDown),
+            DependencyProperty.Register(nameof(Value), typeof(object), typeof(NumericUpDown),
                 new PropertyMetadata(new PropertyChangedCallback(NumericUpDown_ValueChanged)));
 
         public static readonly RoutedEvent ValueChangedEvent =
@@ -40,7 +41,11 @@ namespace ShortcutFloat.WPF.Controls
 
         public double? Value
         {
-            get => (double?)GetValue(ValueProperty);
+            get
+            {
+                dynamic backendValue = GetValue(ValueProperty);
+                return backendValue != null ? (double?)Convert.ChangeType(GetValue(ValueProperty), typeof(double), CultureInfo.InvariantCulture) : null;
+            }
             set
             {
                 if (value != null)
@@ -234,8 +239,10 @@ namespace ShortcutFloat.WPF.Controls
         private static void NumericUpDown_ValueChanged(DependencyObject sender, DependencyPropertyChangedEventArgs e)
         {
             NumericUpDown ctrl = (NumericUpDown)sender;
-            double? oldValue = (double?)e.OldValue;
-            double? newValue = (double?)e.NewValue;
+
+            double? oldValue = e.OldValue != null ? (double?)Convert.ChangeType(e.OldValue, typeof(double), CultureInfo.InvariantCulture) : null;
+            double? newValue = e.NewValue != null ? (double?)Convert.ChangeType(e.NewValue, typeof(double), CultureInfo.InvariantCulture) : null;
+            
             ValueChangedEventArgs<double?> routedEventArgs = new(ValueChangedEvent, newValue);
             ctrl.RaiseEvent(routedEventArgs);
 

@@ -80,11 +80,11 @@
                     <Label Content="Columns:"/>
 
                     <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="1" 
-                                            Value="{Binding Path=FloatWindowGridColumns, Converter={StaticResource NOPValueConverter}}" 
+                                            Value="{Binding Path=FloatWindowGridColumns}" 
                                             NullPlaceholder="(Inherit)" AllowNull="True"/>
                     <Label Content="Rows:" Grid.Column="2"/>
                     <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="3" 
-                                            Value="{Binding Path=FloatWindowGridRows, Converter={StaticResource NOPValueConverter}}" 
+                                            Value="{Binding Path=FloatWindowGridRows}" 
                                             NullPlaceholder="(Inherit)" AllowNull="True"/>
                 </Grid>
             </StackPanel>
