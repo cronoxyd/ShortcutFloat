@@ -1,4 +1,7 @@
 ﻿using ShortcutFloat.Common.Runtime;
+using ShortcutFloat.Common.Runtime.Interop;
+using ShortcutFloat.Common.Runtime.Interop.Drawing;
+using ShortcutFloat.Common.Runtime.Interop.Input;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
