@@ -6,7 +6,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:viewmodels="clr-namespace:ShortcutFloat.Common.ViewModels;assembly=ShortcutFloat.Common"
         xmlns:c="clr-namespace:ShortcutFloat.WPF.Windows.Controls"
-        xmlns:data="clr-namespace:ShortcutFloat.WPF.Windows.Data" xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit" xmlns:Controls="clr-namespace:ShortcutFloat.WPF.Controls"
+        xmlns:data="clr-namespace:ShortcutFloat.WPF.Windows.Data"
+        xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
         d:DataContext="{d:DesignInstance Type=viewmodels:ShortcutConfigurationViewModel}"
         mc:Ignorable="d"
         Title="Shortcut configuration" 
@@ -14,7 +15,6 @@
         WindowStartupLocation="CenterOwner" ShowInTaskbar="False">
     <Window.Resources>
         <data:UnaryBooleanConverter x:Key="UnaryBooleanConverter"/>
-        <data:NOPValueConverter x:Key="NOPValueConverter"/>
     </Window.Resources>
     <Grid Margin="5">
         <Grid.RowDefinitions>
@@ -78,14 +78,9 @@
                         <ColumnDefinition/>
                     </Grid.ColumnDefinitions>
                     <Label Content="Columns:"/>
-
-                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="1" 
-                                            Value="{Binding Path=FloatWindowGridColumns, Converter={StaticResource NOPValueConverter}}" 
-                                            NullPlaceholder="(Inherit)" AllowNull="True"/>
+                    <xctk:IntegerUpDown Minimum="0" Maximum="100" Grid.Column="1" Value="{Binding Path=FloatWindowGridColumns}" Watermark="(Inherit)"/>
                     <Label Content="Rows:" Grid.Column="2"/>
-                    <Controls:NumericUpDown Minimum="0" Maximum="100" Grid.Column="3" 
-                                            Value="{Binding Path=FloatWindowGridRows, Converter={StaticResource NOPValueConverter}}" 
-                                            NullPlaceholder="(Inherit)" AllowNull="True"/>
+                    <xctk:IntegerUpDown Minimum="0" Maximum="100" Grid.Column="3" Value="{Binding Path=FloatWindowGridRows}" Watermark="(Inherit)"/>
                 </Grid>
             </StackPanel>
         </GroupBox>
