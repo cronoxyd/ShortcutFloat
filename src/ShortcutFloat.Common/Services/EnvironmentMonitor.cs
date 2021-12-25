@@ -224,9 +224,11 @@ namespace ShortcutFloat.Common.Services
 
                 if (eventHandler == null)
                     Debug.Fail("Failed to compose event for keyboard hook");
-
-                var e = new KeyEventArgs(key.Value, states, lParam.time);
-                eventHandler(this, e);
+                else
+                {
+                    var e = new KeyEventArgs(key.Value, states, lParam.time);
+                    eventHandler(this, e);
+                }
             }
 
             return InteropServices.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
@@ -238,7 +240,8 @@ namespace ShortcutFloat.Common.Services
             {
                 WM.LBUTTONDOWN or WM.LBUTTONUP => MouseButton.Left,
                 WM.RBUTTONDOWN or WM.RBUTTONUP => MouseButton.Right,
-                WM.XBUTTONDOWN or WM.XBUTTONUP => (lParam.mouseData >> 16) switch {
+                WM.XBUTTONDOWN or WM.XBUTTONUP => (lParam.mouseData >> 16) switch
+                {
                     0x0001 => MouseButton.XButton1,
                     0x0002 => MouseButton.XButton2,
                     _ => null
@@ -254,7 +257,7 @@ namespace ShortcutFloat.Common.Services
 
                 switch (wParam)
                 {
-                    
+
                     case WM.LBUTTONDOWN or WM.RBUTTONDOWN or WM.XBUTTONDOWN:
                         state = MouseButtonState.Pressed;
                         eventHandler = MouseDown;
@@ -267,9 +270,11 @@ namespace ShortcutFloat.Common.Services
 
                 if (eventHandler == null || state == null)
                     Debug.Fail("Failed to compose event for mouse hook");
-
-                var e = new MouseButtonEventArgs(mouseButton.Value, state.Value, lParam.time);
-                eventHandler(this, e);
+                else
+                {
+                    var e = new MouseButtonEventArgs(mouseButton.Value, state.Value, lParam.time);
+                    eventHandler(this, e);
+                }
             }
 
             return InteropServices.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
@@ -328,7 +333,7 @@ namespace ShortcutFloat.Common.Services
             public ForegroundWindowBoundsChangedEventArgs(Rectangle bounds, Rectangle lastBounds)
             {
                 Delta = new(
-                    lastBounds.Left - bounds.Left, lastBounds.Top - bounds.Top, 
+                    lastBounds.Left - bounds.Left, lastBounds.Top - bounds.Top,
                     lastBounds.Right - bounds.Right, lastBounds.Bottom - bounds.Bottom
                 );
                 WindowBounds = bounds;
