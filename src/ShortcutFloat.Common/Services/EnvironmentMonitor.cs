@@ -1,4 +1,5 @@
-﻿using ShortcutFloat.Common.Runtime;
+﻿using ShortcutFloat.Common.Input;
+using ShortcutFloat.Common.Runtime;
 using ShortcutFloat.Common.Runtime.Interop;
 using ShortcutFloat.Common.Runtime.Interop.Drawing;
 using ShortcutFloat.Common.Runtime.Interop.Input;
@@ -95,8 +96,8 @@ namespace ShortcutFloat.Common.Services
         public event ForegroundWindowChangedEventHandler ForegroundWindowChanged = (sender, e) => { };
         public event ForegroundWindowBoundsChangedEventHandler ForegroundWindowBoundsChanged = (sender, e) => { };
 
-        public event KeyEventHandler KeyDown = (sender, e) => Debug.WriteLine($"Key down: {e.Key}");
-        public event KeyEventHandler KeyUp = (sender, e) => Debug.WriteLine($"Key up: {e.Key}");
+        public event MaskedKeyEventHandler KeyDown = (sender, e) => Debug.WriteLine($"Key down: {e.Key}");
+        public event MaskedKeyEventHandler KeyUp = (sender, e) => Debug.WriteLine($"Key up: {e.Key}");
         public event MouseButtonEventHandler MouseDown = (sender, e) => Debug.WriteLine($"Mouse down: {e.Button}");
         public event MouseButtonEventHandler MouseUp = (sender, e) => Debug.WriteLine($"Mouse up: {e.Button}");
 
@@ -208,7 +209,7 @@ namespace ShortcutFloat.Common.Services
 
             if (key != null)
             {
-                KeyEventHandler eventHandler = null;
+                MaskedKeyEventHandler eventHandler = null;
                 KeyStates states = KeyStates.None;
 
                 switch (wParam)
@@ -226,7 +227,7 @@ namespace ShortcutFloat.Common.Services
                     Debug.Fail("Failed to compose event for keyboard hook");
                 else
                 {
-                    var e = new KeyEventArgs(key.Value, states, lParam.time);
+                    var e = new MaskedKeyEventArgs(key.Value, states, lParam.time);
                     eventHandler(this, e);
                 }
             }
@@ -353,6 +354,90 @@ namespace ShortcutFloat.Common.Services
                 this.Key = Key;
                 States = states;
                 Timestamp = timestamp;
+            }
+        }
+
+        public delegate void MaskedKeyEventHandler(object sender, MaskedKeyEventArgs e);
+
+        public class MaskedKeyEventArgs : EventArgs
+        {
+            KeyStates States { get; }
+            public MaskedKey Key { get; }
+            public uint Timestamp { get; }
+
+            public MaskedKeyEventArgs(MaskedKey Key, KeyStates states, uint timestamp)
+            {
+                this.Key = Key;
+                States = states;
+                Timestamp = timestamp;
+            }
+
+            public MaskedKeyEventArgs(Key Key, KeyStates states, uint timestamp)
+            {
+                this.Key = ObscureKey(Key);
+                States = states;
+                Timestamp = timestamp;
+            }
+
+            /// <summary>
+            /// Returns the corresponding <see cref="MaskedKey"/> for the specified <paramref name="Key"/>.
+            /// </summary>
+            /// <param name="Key">The <see cref="System.Windows.Input.Key"/> to obscure</param>
+            /// <remarks>This conversion is exhaustive with <see cref="MaskedKey.Alphanumeric"/> being the catch-all.</remarks>
+            public static MaskedKey ObscureKey(Key Key)
+            {
+                return Key switch
+                {
+                    Key.None => MaskedKey.None,
+
+                    Key.LeftCtrl or Key.RightCtrl or 
+                    Key.LeftAlt or Key.RightAlt or 
+                    Key.LeftShift or Key.RightShift or 
+                    Key.CapsLock => MaskedKey.Modifier,
+
+                    Key.Escape or Key.Enter or Key.LWin or Key.RWin or
+                    Key.PrintScreen or Key.Scroll or Key.Pause or Key.Apps or 
+                    Key.Sleep or Key.System or Key.LineFeed => MaskedKey.System,
+
+                    Key.Up or Key.Right or Key.Down or Key.Left or
+                    Key.PageUp or Key.PageDown or Key.Home or Key.End or
+                    Key.Insert or Key.Delete or Key.Back or Key.Tab or
+                    Key.Next or Key.Prior => MaskedKey.Cursor,
+
+                    Key.NumLock or Key.NumPad0 or Key.NumPad1 or Key.NumPad2 or
+                    Key.NumPad3 or Key.NumPad4 or Key.NumPad5 or Key.NumPad6 or
+                    Key.NumPad7 or Key.NumPad8 or Key.NumPad9 => MaskedKey.NumPad,
+
+                    Key.Play or Key.MediaPlayPause or Key.MediaNextTrack or
+                    Key.MediaPreviousTrack or Key.MediaStop or Key.SelectMedia or
+                    Key.VolumeDown or Key.VolumeMute or Key.VolumeUp => MaskedKey.Media,
+
+                    Key.F1 or Key.F2 or Key.F3 or Key.F4 or Key.F5 or Key.F6 or 
+                    Key.F7 or Key.F8 or Key.F9 or Key.F10 or Key.F11 or Key.F12 or 
+                    Key.F13 or Key.F14 or Key.F15 or Key.F16 or Key.F17 or 
+                    Key.F18 or Key.F19 or Key.F20 or Key.F21 or Key.F22 or 
+                    Key.F23 or Key.F24 => MaskedKey.Function,
+
+                    Key.FinalMode or Key.HangulMode or Key.HanjaMode or 
+                    Key.ImeAccept or Key.ImeConvert or Key.ImeModeChange or 
+                    Key.ImeNonConvert or Key.ImeProcessed or Key.JunjaMode or 
+                    Key.KanaMode or Key.KanjiMode or Key.DbeEnterImeConfigureMode => MaskedKey.Ime,
+
+                    Key.OemSemicolon or Key.Oem1 or Key.OemPlus or 
+                    Key.OemComma or Key.OemMinus or Key.OemPeriod or 
+                    Key.Oem2 or Key.OemQuestion or Key.Oem3 or 
+                    Key.OemTilde or Key.Oem4 or Key.OemOpenBrackets or 
+                    Key.OemPipe or Key.Oem5 or Key.OemCloseBrackets or 
+                    Key.Oem6 or Key.OemQuotes or Key.Oem7 or Key.Oem8 or 
+                    Key.Oem102 or Key.OemBackslash or Key.OemClear => MaskedKey.Oem,
+
+                    Key.BrowserBack or Key.BrowserForward or 
+                    Key.BrowserRefresh or Key.BrowserStop or 
+                    Key.BrowserSearch or Key.BrowserFavorites or 
+                    Key.BrowserHome => MaskedKey.Browser,
+
+                    _ => MaskedKey.Alphanumeric
+                };
             }
         }
 
