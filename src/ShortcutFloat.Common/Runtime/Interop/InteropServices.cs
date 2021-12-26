@@ -156,18 +156,28 @@ namespace ShortcutFloat.Common.Runtime.Interop
         /// <summary>
         /// Synthesizes a keystroke. The system can use such a synthesized keystroke to generate a WM_KEYUP or WM_KEYDOWN message. The keyboard driver's interrupt handler calls the keybd_event function.
         /// </summary>
-        /// <param name="bVk">A virtual-key code. The code must be a value in the range 1 to 254. For a complete list, see Virtual Key Codes.</param>
+        /// <param name="bVk">A virtual-key code. The code must be a value in the range 1 to 254. For a complete list, see <see cref="VirtualKeyCode"/>.</param>
         /// <param name="bScan">A hardware scan code for the key.</param>
-        /// <param name="dwFlags">Controls various aspects of function operation. This parameter can be one or more of the following values.</param>
+        /// <param name="dwFlags">Controls various aspects of function operation. For values, see <see cref="KeyEventFlag"/>.</param>
         /// <param name="dwExtraInfo">An additional value associated with the key stroke.</param>
         [DllImport("user32.dll")]
         public static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
+        /// <summary>
+        /// <inheritdoc cref="keybd_event(byte, byte, uint, UIntPtr)"/>
+        /// </summary>
+        /// <param name="bVk"><inheritdoc cref="keybd_event(byte, byte, uint, UIntPtr)" path="/param[@name='bVk']"/></param>
+        /// <param name="dwFlags"><inheritdoc cref="keybd_event(byte, byte, uint, UIntPtr)" path="/param[@name='bScan']"/></param>
         public static void keybd_event(byte bVk, uint dwFlags)
         {
             keybd_event(bVk, 0x45, dwFlags, UIntPtr.Zero);
         }
 
+        /// <summary>
+        /// <inheritdoc cref="keybd_event(byte, byte, uint, UIntPtr)"/>
+        /// </summary>
+        /// <param name="bVk"><inheritdoc cref="keybd_event(byte, byte, uint, UIntPtr)" path="/param[@name='bVk']"/></param>
+        /// <param name="dwFlags"><inheritdoc cref="keybd_event(byte, byte, uint, UIntPtr)" path="/param[@name='bScan']"/></param>
         public static void keybd_event(VirtualKeyCode bVk, KeyEventFlag dwFlags)
         {
             keybd_event((byte)bVk, (uint)dwFlags);
