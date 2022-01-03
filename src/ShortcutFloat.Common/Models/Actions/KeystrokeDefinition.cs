@@ -45,12 +45,4 @@ namespace ShortcutFloat.Common.Models.Actions
                 (new string[] { ModifierKeys.ToSendKeysString(), Key.ToSendKeysString() }).NotNullOrEmpty()
             );
     }
-
-    [Flags]
-    public enum KeystrokeReleaseTriggerType
-    {
-        None,
-        Mouse,
-        Keyboard
-    }
 }
