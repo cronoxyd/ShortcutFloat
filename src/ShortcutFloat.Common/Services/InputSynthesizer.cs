@@ -1,8 +1,11 @@
-﻿using ShortcutFloat.Common.Input;
+﻿using ShortcutFloat.Common.Diagnostics;
+using ShortcutFloat.Common.Input;
+using ShortcutFloat.Common.Models.Actions;
 using ShortcutFloat.Common.Runtime.Interop;
 using ShortcutFloat.Common.Runtime.Interop.Input;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -15,13 +18,53 @@ namespace ShortcutFloat.Common.Services
     {
         private bool _running = false;
 
-        public Queue<InputItem> InputQueue { get; } = new();
+        private Queue<InputItem> InputQueue { get; } = new();
 
         private List<InputHoldItem> HoldItems { get; } = new();
 
         public int QueueIntervalMilliseconds { get; set; } = 10;
 
         public bool Running => _running;
+
+        //private LoopIntervalTuner synthesizerTuner { get; }
+
+        private EnvironmentMonitor environmentMonitor { get; }
+
+        public InputSynthesizer(EnvironmentMonitor environmentMonitor)
+        {
+            this.environmentMonitor = environmentMonitor;
+            environmentMonitor.KeyUp += EnvironmentMonitor_KeyUp;
+            environmentMonitor.MouseUp += EnvironmentMonitor_MouseUp;
+
+            //synthesizerTuner = new(nameof(InputSynthesizer), QueueIntervalMilliseconds);
+            //synthesizerTuner.IntervalAdjust += SynthesizerTuner_IntervalAdjust;
+        }
+
+        //private void SynthesizerTuner_IntervalAdjust(object sender, IntervalAdjustEventArgs e)
+        //{
+        //    QueueIntervalMilliseconds = (int)e.RecommendedLoopInterval;
+        //    synthesizerTuner.ExpectedLoopInterval = QueueIntervalMilliseconds;
+        //}
+
+        private void EnvironmentMonitor_MouseUp(object sender, EnvironmentMonitor.MouseButtonEventArgs e)
+        {
+            // ToList() to avoid concurrency conflicts
+            foreach (var item in HoldItems.ToList())
+            {
+                if (item.Item.ReleaseTriggerType.HasFlag(Models.Actions.KeystrokeReleaseTriggerType.Mouse))
+                    ReleaseInputItem(item);
+            }
+        }
+
+        private void EnvironmentMonitor_KeyUp(object sender, EnvironmentMonitor.MaskedKeyEventArgs e)
+        {
+            // ToList() to avoid concurrency conflicts
+            foreach (var item in HoldItems.ToList())
+            {
+                if (item.Item.ReleaseTriggerType.HasFlag(Models.Actions.KeystrokeReleaseTriggerType.Keyboard))
+                    ReleaseInputItem(item);
+            }
+        }
 
         public void Start()
         {
@@ -38,31 +81,40 @@ namespace ShortcutFloat.Common.Services
 
         private void SynthesizerLoop()
         {
+
             if (QueueIntervalMilliseconds <= 0)
                 throw new InvalidOperationException($"{nameof(QueueIntervalMilliseconds)} must be a positive integer.");
 
             while (Running)
             {
+                // synthesizerTuner.LoopStart();
+
                 if (InputQueue.Count > 0)
                 {
                     var item = InputQueue.Dequeue();
 
+                    Debug.WriteLine($"Processing {nameof(InputItem)} (hold: {item.HoldAndRelease})");
+
                     if (!item.HoldAndRelease)
-                    {
                         SendKeys.SendWait(item.GetSendKeysString());
-                    }
                     else
                     {
+                        ReleaseAllHeld();
                         PressInputItem(item);
                     }
                 }
 
-                foreach (var item in HoldItems.Where(item => item.TimedOut))
+                // ToList() to avoid concurrency issues
+                foreach (var item in HoldItems.ToList())
                 {
-                    ReleaseInputItem(item);
+                    if (!item.TimedOut)
+                        PressInputItem(item.Item, false); // Repeatedly press held keys (typematic)
+                    else
+                        ReleaseInputItem(item); // or remove the item if it timed out
                 }
 
                 Thread.Sleep(QueueIntervalMilliseconds);
+                // synthesizerTuner.LoopEnd();
             }
         }
 
@@ -92,6 +144,10 @@ namespace ShortcutFloat.Common.Services
             if (item.Text.Length > 0)
                 throw new NotSupportedException("Cannot synthesize keyboard events for a text.");
 
+            Debug.WriteLine($"Sending keyboard event ({dwFlags})");
+
+            // SetEnvironmentInputIgnore(true, item.ReleaseTriggerType);
+
             foreach (var key in item.Keys)
                 InteropServices.keybd_event(key.ToVirtualKeyCode().Value,
                     dwFlags);
@@ -99,6 +155,38 @@ namespace ShortcutFloat.Common.Services
             foreach (var mouseButton in item.MouseButtons)
                 InteropServices.keybd_event(mouseButton.ToVirtualKeyCode().Value,
                     dwFlags);
+
+            // SetEnvironmentInputIgnore(false);
+        }
+
+        private void SetEnvironmentInputIgnore(bool enable, KeystrokeReleaseTriggerType releaseType = KeystrokeReleaseTriggerType.None)
+        {
+            environmentMonitor.IgnoreKeyboardEvents = enable && releaseType.HasFlag(KeystrokeReleaseTriggerType.Keyboard);
+            environmentMonitor.IgnoreMouseEvents = enable && releaseType.HasFlag(KeystrokeReleaseTriggerType.Mouse);
+        }
+
+        public void EnqueueInputItem(InputItem item)
+        {
+            InputQueue.Enqueue(item);
+        }
+
+        public void Reset()
+        {
+            ClearQueue();
+            ReleaseAllHeld();
+            Debug.WriteLine($"Reset {nameof(InputSynthesizer)}");
+        }
+
+        public void ClearQueue()
+        {
+            InputQueue.Clear();
+        }
+
+        public void ReleaseAllHeld()
+        {
+            // ToList() to avoid concurrency conflicts
+            foreach (var item in HoldItems.ToList())
+                ReleaseInputItem(item);
         }
     }
 }
