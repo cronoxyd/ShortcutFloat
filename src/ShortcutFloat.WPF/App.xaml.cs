@@ -31,7 +31,7 @@ namespace ShortcutFloat.WPF
         public ShortcutFloatSettings Settings { get; set; } = new();
         private EnvironmentMonitor EnvironmentMonitor { get; } = new();
         private TrayService TrayService { get; } = new();
-        private InputSynthesizer InputSynthesizer { get; } = new();
+        private InputSynthesizer InputSynthesizer { get; set; }
         private ShortcutFloatSettingsForm SettingsForm { get; set; } = null;
         private FloatWindow FloatWindow { get; set; }
         private bool FloatWindowActive => FloatWindow?.IsVisible ?? false;
@@ -51,6 +51,9 @@ namespace ShortcutFloat.WPF
             EnvironmentMonitor.ForegroundWindowBoundsChanged += EnvironmentMonitor_ForegroundWindowBoundsChanged;
 
             EnvironmentMonitor.Start();
+
+            InputSynthesizer = new(EnvironmentMonitor);
+
             TrayService.Start();
             InputSynthesizer.Start();
 
@@ -149,6 +152,8 @@ namespace ShortcutFloat.WPF
             if (e.WindowProcess.Id == 0) return;
             Debug.WriteLine($"Foreground window changed\n\tWindow text:\t\"{e.WindowText}\"\n\tProcess:\t\t\"{e.WindowProcess.ProcessName}\" ({e.WindowProcess.Id})");
 
+            InputSynthesizer.Reset();
+
             ShortcutConfiguration matchingConfiguration = null;
 
             foreach (var config in Settings.ShortcutConfigurations)
@@ -223,6 +228,8 @@ namespace ShortcutFloat.WPF
 
         private void CloseFloat()
         {
+            InputSynthesizer.Reset();
+
             if (FloatWindow == null) return;
 
             Dispatcher.Invoke(() =>
@@ -288,7 +295,11 @@ namespace ShortcutFloat.WPF
         {
             if (EnvironmentMonitor.ForegroundWindowHandle == null) return;
             InteropServices.SetForegroundWindow(EnvironmentMonitor.ForegroundWindowHandle.Value);
-            InputSynthesizer.InputQueue.Enqueue(e.InputItem);
+
+            if (e.InputItem.HoldTimeLimitSeconds == null)
+                e.InputItem.HoldTimeLimitSeconds = Settings.KeyHoldTimeLimitSeconds;
+
+            InputSynthesizer.EnqueueInputItem(e.InputItem);
         }
 
         private static bool IsNotEmptyAndValidRegex(string input)
