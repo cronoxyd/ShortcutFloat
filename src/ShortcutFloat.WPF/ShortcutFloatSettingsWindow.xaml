@@ -12,6 +12,7 @@
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
         <GroupBox Header="General" HorizontalContentAlignment="Stretch">
@@ -53,7 +54,14 @@
                 </Grid>
             </StackPanel>
         </GroupBox>
-        <GroupBox Header="Configurations" Grid.Row="1">
+        <GroupBox Header="Hold and release" Grid.Row="1">
+            <StackPanel Orientation="Horizontal">
+                <Label Content="Hold time limit:" Grid.Row="1"/>
+                <xctk:IntegerUpDown Value="{Binding Path=KeyHoldTimeLimitSeconds}"
+                    Minimum="0" Maximum="60000" Grid.Row="1" Grid.Column="1" Watermark="(Inherit)"/>
+            </StackPanel>
+        </GroupBox>
+        <GroupBox Header="Configurations" Grid.Row="2">
             <DockPanel>
                 <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
                     <ToolBar>

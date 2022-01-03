@@ -20,6 +20,7 @@ namespace ShortcutFloat.Common.ViewModels
         public FloatWindowPositionReference FloatWindowPositionReference { get => Model.FloatWindowPositionReference; set => Model.FloatWindowPositionReference = value; }
         public int FloatWindowGridColumns { get => Model.FloatWindowGridColumns; set => Model.FloatWindowGridColumns = value; }
         public int FloatWindowGridRows { get => Model.FloatWindowGridRows; set => Model.FloatWindowGridRows = value; }
+        public uint KeyHoldTimeLimitSeconds { get => Model.KeyHoldTimeLimitSeconds; set => Model.KeyHoldTimeLimitSeconds = value; }
 
         public ICommand NewConfigurationCommand { get; }
         public ICommand EditConfigurationCommand { get; }

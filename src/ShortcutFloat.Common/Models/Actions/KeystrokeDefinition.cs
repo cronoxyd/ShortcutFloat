@@ -1,6 +1,7 @@
-using ShortcutFloat.Common.Extensions;
+﻿using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Input;
 using System;
+using System.Collections.Generic;
 using System.Windows.Input;
 
 namespace ShortcutFloat.Common.Models.Actions
@@ -17,7 +18,7 @@ namespace ShortcutFloat.Common.Models.Actions
         /// <remarks>
         /// If set to <c>0</c>, the keystroke will be held indefinitely.
         /// </remarks>
-        public uint? HoldTimeLimitSeconds { get; set; } = null;
+        public int? HoldTimeLimitSeconds { get; set; } = null;
 
         /// <summary>
         /// Specifies the type of user interaction that releases the keystroke

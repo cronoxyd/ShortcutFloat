@@ -66,7 +66,7 @@ namespace ShortcutFloat.Common.ViewModels.Actions
         public Key? Key { get => Model.Key; set => Model.Key = value; }
 
         public bool HoldAndRelease { get => Model.HoldAndRelease; set => Model.HoldAndRelease = value; }
-        public uint HoldTimeLimitSeconds { get => Model.HoldTimeLimitSeconds; set => Model.HoldTimeLimitSeconds = value; }
+        public int? HoldTimeLimitSeconds { get => Model.HoldTimeLimitSeconds; set => Model.HoldTimeLimitSeconds = value; }
 
         public KeystrokeReleaseTriggerType ReleaseTriggerType { get => Model.ReleaseTriggerType; set => Model.ReleaseTriggerType = value; }
 

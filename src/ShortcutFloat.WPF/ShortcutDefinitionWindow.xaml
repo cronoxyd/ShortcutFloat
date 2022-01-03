@@ -100,7 +100,7 @@
                                         <CheckBox Content="Hold and release" IsChecked="{Binding Path=HoldAndRelease}" Grid.ColumnSpan="4"/>
                                         <Label Content="Hold time limit:" Grid.Row="1"/>
                                         <xctk:IntegerUpDown Value="{Binding Path=HoldTimeLimitSeconds}"
-                                                            Minimum="0" Maximum="60000" Grid.Row="1" Grid.Column="1"/>
+                                                            Minimum="0" Maximum="60000" Grid.Row="1" Grid.Column="1" Watermark="(Inherit)"/>
                                         <Label Content="sec" Grid.Row="1" Grid.Column="2"/>
                                         <Label Content="Release trigger:" Grid.Row="1" Grid.Column="3"/>
                                         <StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal">
