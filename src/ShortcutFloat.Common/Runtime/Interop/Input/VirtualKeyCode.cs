@@ -1097,7 +1097,7 @@ namespace ShortcutFloat.Common.Runtime.Interop.Input
             VirtualKeyCode.VK_RETURN => Key.Return,
             VirtualKeyCode.VK_SHIFT => Key.LeftShift,
             VirtualKeyCode.VK_CONTROL => Key.LeftCtrl,
-            VirtualKeyCode.VK_MENU => null,
+            VirtualKeyCode.VK_MENU => Key.LeftAlt,
             VirtualKeyCode.VK_PAUSE => Key.Pause,
             VirtualKeyCode.VK_CAPITAL => Key.CapsLock,
             VirtualKeyCode.VK_KANA => Key.KanaMode,
@@ -1421,6 +1421,8 @@ namespace ShortcutFloat.Common.Runtime.Interop.Input
             Key.NoName => VirtualKeyCode.VK_NONAME,
             Key.Pa1 => VirtualKeyCode.VK_PA1,
             Key.OemClear => VirtualKeyCode.VK_OEM_CLEAR,
+            Key.LeftAlt => VirtualKeyCode.VK_MENU,
+            Key.RightAlt => VirtualKeyCode.VK_MENU,
             _ => null,
         };
 
