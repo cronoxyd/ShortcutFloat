@@ -1,4 +1,4 @@
-﻿using ShortcutFloat.Common.Input;
+using ShortcutFloat.Common.Input;
 using ShortcutFloat.Common.Runtime;
 using ShortcutFloat.Common.Runtime.Interop;
 using ShortcutFloat.Common.Runtime.Interop.Drawing;
@@ -243,7 +243,11 @@ namespace ShortcutFloat.Common.Services
             MouseButton? mouseButton = wParam switch
             {
                 WM.LBUTTONDOWN or WM.LBUTTONUP => MouseButton.Left,
+
                 WM.RBUTTONDOWN or WM.RBUTTONUP => MouseButton.Right,
+
+                WM.MBUTTONDOWN or WM.MBUTTONUP => MouseButton.Middle,
+
                 WM.XBUTTONDOWN or WM.XBUTTONUP => (lParam.mouseData >> 16) switch
                 {
                     0x0001 => MouseButton.XButton1,
@@ -262,11 +266,15 @@ namespace ShortcutFloat.Common.Services
                 switch (wParam)
                 {
 
-                    case WM.LBUTTONDOWN or WM.RBUTTONDOWN or WM.XBUTTONDOWN:
+                    case WM.LBUTTONDOWN or WM.RBUTTONDOWN or WM.XBUTTONDOWN or 
+                        WM.MBUTTONDOWN:
+
                         state = MouseButtonState.Pressed;
                         eventHandler = MouseDown;
                         break;
-                    case WM.LBUTTONUP or WM.RBUTTONUP or WM.XBUTTONUP:
+                    case WM.LBUTTONUP or WM.RBUTTONUP or WM.XBUTTONUP or 
+                        WM.MBUTTONUP:
+
                         state = MouseButtonState.Released;
                         eventHandler = MouseUp;
                         break;
