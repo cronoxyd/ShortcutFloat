@@ -16,7 +16,7 @@ namespace ShortcutFloat.Common.Models.Actions
         /// <remarks>
         /// If set to <c>0</c>, the keystroke will be held indefinitely.
         /// </remarks>
-        public uint HoldTimeLimitSeconds { get; set; } = 0;
+        public uint? HoldTimeLimitSeconds { get; set; } = null;
 
         /// <summary>
         /// Specifies the type of user interaction that releases the keystroke

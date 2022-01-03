@@ -11,5 +11,6 @@ namespace ShortcutFloat.Common.Models
         public List<ShortcutConfiguration> ShortcutConfigurations { get; set; } = new();
         public int FloatWindowGridColumns { get; set; } = 0;
         public int FloatWindowGridRows { get; set; } = 0;
+        public uint KeyHoldTimeLimitSeconds { get; set; } = 0;
     }
 }
