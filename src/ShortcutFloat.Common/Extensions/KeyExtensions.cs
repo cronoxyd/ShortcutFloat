@@ -1,4 +1,4 @@
-using ShortcutFloat.Common.Helper;
+﻿using ShortcutFloat.Common.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,7 +39,7 @@ namespace ShortcutFloat.Common.Extensions
                 Key.PageUp => "{PGUP}",
                 Key.PrintScreen => "{PRTSC}",
                 Key.Right => "{RIGHT}",
-                Key.Scroll => "{SCROLLLOCK",
+                Key.Scroll => "{SCROLLLOCK}",
                 Key.Tab => "{TAB}",
                 Key.Up => "{UP}",
 
