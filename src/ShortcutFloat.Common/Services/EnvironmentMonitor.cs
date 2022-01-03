@@ -103,6 +103,9 @@ namespace ShortcutFloat.Common.Services
 
         private void WindowMonitorLoop()
         {
+            if (MonitorIntervalMilliseconds <= 0)
+                throw new InvalidOperationException($"{nameof(MonitorIntervalMilliseconds)} must be a positive integer.");
+
             IntPtr? lastForegroundWindowHandle = null;
             string lastForegroundWindowText = null;
             Dictionary<IntPtr, RECT> lastWindowRects = new();
