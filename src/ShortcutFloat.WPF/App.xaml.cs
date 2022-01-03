@@ -1,6 +1,7 @@
-using AnyClone;
+﻿using AnyClone;
 using Newtonsoft.Json;
 using ShortcutFloat.Common.Extensions;
+using ShortcutFloat.Common.Input;
 using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Runtime;
 using ShortcutFloat.Common.Runtime.Interop;
@@ -30,6 +31,7 @@ namespace ShortcutFloat.WPF
         public ShortcutFloatSettings Settings { get; set; } = new();
         private EnvironmentMonitor EnvironmentMonitor { get; } = new();
         private TrayService TrayService { get; } = new();
+        private InputSynthesizer InputSynthesizer { get; } = new();
         private ShortcutFloatSettingsForm SettingsForm { get; set; } = null;
         private FloatWindow FloatWindow { get; set; }
         private bool FloatWindowActive => FloatWindow?.IsVisible ?? false;
@@ -50,6 +52,7 @@ namespace ShortcutFloat.WPF
 
             EnvironmentMonitor.Start();
             TrayService.Start();
+            InputSynthesizer.Start();
 
             TrayService.ShowSettings += TrayService_ShowSettings;
             TrayService.Quit += TrayService_Quit;
@@ -205,7 +208,7 @@ namespace ShortcutFloat.WPF
                         floatWindowConfig.FloatWindowGridRows = Settings.FloatWindowGridRows;
 
                     FloatWindow = new(floatWindowConfig);
-                    FloatWindow.InputSendRequested += FloatWindow_SendKeysRequested;
+                    FloatWindow.InputSendRequested += FloatWindow_InputSendRequested;
                     FloatWindow.LocationChanged += FloatWindow_LocationChanged;
 
                     PositionFloatWindow();
@@ -281,11 +284,11 @@ namespace ShortcutFloat.WPF
                 Common.Helper.Math.Map(input.Y, 0, 1, EnvironmentMonitor.MaxScreenBounds.Top, EnvironmentMonitor.MaxScreenBounds.Bottom)
             );
 
-        private void FloatWindow_SendKeysRequested(object sender, Common.ViewModels.SendKeysEventArgs e)
+        private void FloatWindow_InputSendRequested(object sender, Common.ViewModels.InputSendEventArgs e)
         {
             if (EnvironmentMonitor.ForegroundWindowHandle == null) return;
             InteropServices.SetForegroundWindow(EnvironmentMonitor.ForegroundWindowHandle.Value);
-            System.Windows.Forms.SendKeys.SendWait(e.SendKeysString);
+            InputSynthesizer.InputQueue.Enqueue(e.InputItem);
         }
 
         private static bool IsNotEmptyAndValidRegex(string input)
@@ -314,6 +317,7 @@ namespace ShortcutFloat.WPF
         {
             TrayService.Stop();
             EnvironmentMonitor.Stop();
+            InputSynthesizer.Stop();
             SaveSettings();
         }
 

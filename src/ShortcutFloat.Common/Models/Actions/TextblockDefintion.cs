@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShortcutFloat.Common.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -18,26 +19,7 @@ namespace ShortcutFloat.Common.Models.Actions
             this.Content = Content;
         }
 
-        public override string GetSendKeysString()
-        {
-            var retVal = string.Empty;
-            for (int i = 0; i < Content.Length; i++)
-                retVal += EscapeForSendKeys(Content[i]);
-
-            return retVal;
-        }
-
-        private string EscapeForSendKeys(char chr)
-        {
-            string EncloseChars = "+^%~()[]";
-            if (EncloseChars.Contains(chr))
-                return $"{{{chr}}}";
-            else if (chr == '{')
-                return "{{}";
-            else if (chr == '}')
-                return "{}}";
-            else
-                return chr.ToString();
-        }
+        public override InputItem GetInputItem()
+            => new() { Text = Content };
     }
 }

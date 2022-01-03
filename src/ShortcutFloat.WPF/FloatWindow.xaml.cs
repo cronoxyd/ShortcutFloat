@@ -15,7 +15,7 @@ namespace ShortcutFloat.WPF
     {
         protected const double BUTTON_PADDING = 25;
         public ShortcutConfigurationViewModel ViewModel { get; set; }
-        public event SendKeysEventHandler SendKeysRequested = (sender, e) => { };
+        public event InputSendEventHandler InputSendRequested = (sender, e) => { };
 
         public FloatWindow(ShortcutConfiguration model)
         {
@@ -28,7 +28,7 @@ namespace ShortcutFloat.WPF
             DataContext = ViewModel;
 
             foreach (var def in ViewModel.ShortcutDefinitions)
-                def.SendKeysRequested += (sender, e) => SendKeysRequested(this, e);
+                def.InputSendRequested += (sender, e) => InputSendRequested(this, e);
         }
     }
 }

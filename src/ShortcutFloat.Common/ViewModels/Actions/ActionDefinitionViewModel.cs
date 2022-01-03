@@ -1,4 +1,5 @@
-﻿using ShortcutFloat.Common.Models.Actions;
+﻿using ShortcutFloat.Common.Input;
+using ShortcutFloat.Common.Models.Actions;
 
 namespace ShortcutFloat.Common.ViewModels.Actions
 {
@@ -7,7 +8,7 @@ namespace ShortcutFloat.Common.ViewModels.Actions
 
         public string Name { get => Model.Name; set => Model.Name = value; }
 
-        public string GetSendKeysString() => Model.GetSendKeysString();
+        public InputItem GetInputItem() => Model.GetInputItem();
 
         public ActionDefinitionViewModel(ActionDefinition Model) : base(Model) { }
     }
@@ -15,6 +16,6 @@ namespace ShortcutFloat.Common.ViewModels.Actions
     public interface IActionDefinitionViewModel : ITypedViewModel<ActionDefinition>
     {
         public string Name { get; set; }
-        public string GetSendKeysString();
+        public InputItem GetInputItem();
     }
 }

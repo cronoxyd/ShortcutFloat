@@ -9,9 +9,6 @@ namespace ShortcutFloat.Common.Models
         public string Name { get; set; }
         public List<IActionDefinition> Actions { get; } = new();
 
-        public string[] ToSendKeysStrings() =>
-            Actions.Select(def => def.GetSendKeysString()).ToArray();
-
         public ShortcutDefinition() { }
 
         public ShortcutDefinition(string Name, IActionDefinition Action)

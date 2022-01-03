@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ShortcutFloat.Common.Input;
+using ShortcutFloat.Common.Models.Actions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,9 +14,11 @@ namespace ShortcutFloat.Common.ViewModels
 
     public class InputSendEventArgs : EventArgs
     {
-        public Key[] Keys { get; set; }
-        public MouseButton[] MouseButtons { get; set; }
-        public bool HoldAndRelease { get; set; } = false;
-        public uint? HoldAndReleaseTimeout { get; set; } = 0;
+        public InputItem InputItem { get; set; }
+
+        public InputSendEventArgs(InputItem inputItem)
+        {
+            InputItem = inputItem;
+        }
     }
 }

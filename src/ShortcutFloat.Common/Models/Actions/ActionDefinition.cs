@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ShortcutFloat.Common.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,12 +11,12 @@ namespace ShortcutFloat.Common.Models.Actions
     {
         public string Name { get; set; }
 
-        public abstract string GetSendKeysString();
+        public abstract InputItem GetInputItem();
     }
 
     public interface IActionDefinition
     {
         public string Name { get; set; }
-        public string GetSendKeysString();
+        public InputItem GetInputItem();
     }
 }

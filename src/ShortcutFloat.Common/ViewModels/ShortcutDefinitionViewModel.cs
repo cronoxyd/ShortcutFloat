@@ -24,7 +24,7 @@ namespace ShortcutFloat.Common.ViewModels
         public ICommand MoveActionUpCommand { get; }
         public ICommand MoveActionDownCommand { get; }
 
-        public event InputSendEventHandler SendKeysRequested = (sender, e) => { };
+        public event InputSendEventHandler InputSendRequested = (sender, e) => { };
 
         public ShortcutDefinitionViewModel(ShortcutDefinition Model) : base(Model)
         {
@@ -49,7 +49,7 @@ namespace ShortcutFloat.Common.ViewModels
                 () =>
                 {
                     foreach (var action in Actions)
-                        SendKeysRequested(this, new(action.GetSendKeysString()));
+                        InputSendRequested(this, new(action.GetInputItem()));
                 },
                 () => true
             );

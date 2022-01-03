@@ -1,4 +1,5 @@
-﻿using System;
+using ShortcutFloat.Common.Helper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -73,7 +74,7 @@ namespace ShortcutFloat.Common.Extensions
                 Key.LeftAlt => "%",
                 Key.RightAlt => "%",
 
-                _ => key.ToString().ToLower(),
+                _ => SendKeysHelper.EscapeForSendKeys(key.ToString().ToLower()),
             };
 
         public static string ToSendKeysString(this ModifierKeys? keys)

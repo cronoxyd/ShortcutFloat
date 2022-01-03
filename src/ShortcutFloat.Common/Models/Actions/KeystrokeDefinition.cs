@@ -1,4 +1,5 @@
-﻿using ShortcutFloat.Common.Extensions;
+using ShortcutFloat.Common.Extensions;
+using ShortcutFloat.Common.Input;
 using System;
 using System.Windows.Input;
 
@@ -39,10 +40,15 @@ namespace ShortcutFloat.Common.Models.Actions
             this.Key = Key;
         }
 
-        public override string GetSendKeysString() =>
-            string.Join(
-                string.Empty,
-                (new string[] { ModifierKeys.ToSendKeysString(), Key.ToSendKeysString() }).NotNullOrEmpty()
-            );
+        public override InputItem GetInputItem()
+        {
+            var retVal = new InputItem();
+            var keyList = new List<Key>();
+            keyList.AddRange(ModifierKeys.ToKeys());
+            if (Key != null)
+                keyList.Add(Key.Value);
+            retVal.Keys = keyList.ToArray();
+            return retVal;
+        }
     }
 }
