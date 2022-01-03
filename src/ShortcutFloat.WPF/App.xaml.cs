@@ -1,4 +1,4 @@
-﻿using AnyClone;
+using AnyClone;
 using Newtonsoft.Json;
 using ShortcutFloat.Common.Extensions;
 using ShortcutFloat.Common.Models;
@@ -205,7 +205,7 @@ namespace ShortcutFloat.WPF
                         floatWindowConfig.FloatWindowGridRows = Settings.FloatWindowGridRows;
 
                     FloatWindow = new(floatWindowConfig);
-                    FloatWindow.SendKeysRequested += FloatWindow_SendKeysRequested;
+                    FloatWindow.InputSendRequested += FloatWindow_SendKeysRequested;
                     FloatWindow.LocationChanged += FloatWindow_LocationChanged;
 
                     PositionFloatWindow();
