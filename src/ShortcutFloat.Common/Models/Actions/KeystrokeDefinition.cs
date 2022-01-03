@@ -43,7 +43,12 @@ namespace ShortcutFloat.Common.Models.Actions
 
         public override InputItem GetInputItem()
         {
-            var retVal = new InputItem();
+            var retVal = new InputItem()
+            {
+                HoldAndRelease = HoldAndRelease,
+                HoldTimeLimitSeconds = HoldTimeLimitSeconds
+            };
+
             var keyList = new List<Key>();
             keyList.AddRange(ModifierKeys.ToKeys());
             if (Key != null)
