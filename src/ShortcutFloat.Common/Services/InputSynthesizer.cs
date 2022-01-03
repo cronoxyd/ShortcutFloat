@@ -1,5 +1,4 @@
-﻿using ShortcutFloat.Common.Diagnostics;
-using ShortcutFloat.Common.Input;
+﻿using ShortcutFloat.Common.Input;
 using ShortcutFloat.Common.Models.Actions;
 using ShortcutFloat.Common.Runtime.Interop;
 using ShortcutFloat.Common.Runtime.Interop.Input;
@@ -146,8 +145,6 @@ namespace ShortcutFloat.Common.Services
 
             Debug.WriteLine($"Sending keyboard event ({dwFlags})");
 
-            // SetEnvironmentInputIgnore(true, item.ReleaseTriggerType);
-
             foreach (var key in item.Keys)
                 InteropServices.keybd_event(key.ToVirtualKeyCode().Value,
                     dwFlags);
@@ -155,14 +152,6 @@ namespace ShortcutFloat.Common.Services
             foreach (var mouseButton in item.MouseButtons)
                 InteropServices.keybd_event(mouseButton.ToVirtualKeyCode().Value,
                     dwFlags);
-
-            // SetEnvironmentInputIgnore(false);
-        }
-
-        private void SetEnvironmentInputIgnore(bool enable, KeystrokeReleaseTriggerType releaseType = KeystrokeReleaseTriggerType.None)
-        {
-            environmentMonitor.IgnoreKeyboardEvents = enable && releaseType.HasFlag(KeystrokeReleaseTriggerType.Keyboard);
-            environmentMonitor.IgnoreMouseEvents = enable && releaseType.HasFlag(KeystrokeReleaseTriggerType.Mouse);
         }
 
         public void EnqueueInputItem(InputItem item)
