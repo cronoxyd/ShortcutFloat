@@ -90,19 +90,60 @@ namespace ShortcutFloat.Common.Services
         /// </summary>
         public int MonitorIntervalMilliseconds { get; set; } = 10;
 
-        public bool MuteNextKeyboardEvent { get; set; } = false;
+        /// <summary>
+        /// Specifies whether to ignore keyboard events where the <see cref="KBDLLHOOKSTRUCT.flags"/> has either the
+        /// <see cref="KBDLLHOOKSTRUCTFlags.LLKHF_INJECTED"/> or <see cref="KBDLLHOOKSTRUCTFlags.LLKHF_LOWER_IL_INJECTED"/>
+        /// flags.
+        /// </summary>
+        public bool IgnoreInjectedKeyboardEvents { get; set; } = true;
 
-        public bool MuteNextMouseEvent { get; set; } = false;
+        /// <summary>
+        /// Specifies whether to ignore mouse events where the <see cref="MSLLHOOKSTRUCT.flags"/> has either the
+        /// <see cref="MSLLHOOKSTRUCTFlags.LLMHF_INJECTED"/> or <see cref="MSLLHOOKSTRUCTFlags.LLMHF_LOWER_IL_INJECTED"/>
+        /// flags.
+        /// </summary>
+        public bool IgnoreInjectedMouseEvents { get; set; } = true;
 
+        /// <summary>
+        /// The handle of the <see cref="LowLevelKeyboardDelegate"/> returned by 
+        /// <see cref="InteropServices.SetWindowsHookEx(HookType, InteropServices.LowLevelKeyboardProc, IntPtr, uint)"/>
+        /// </summary>
         private IntPtr? LowLevelKeyboardHookHandle { get; set; } = null;
+
+        /// <summary>
+        /// The handle of the <see cref="LowLevelMouseDelegate"/> returned by
+        /// <see cref="InteropServices.SetWindowsHookEx(HookType, InteropServices.LowLevelMouseProc, IntPtr, uint)"/>
+        /// </summary>
         private IntPtr? LowLevelMouseHookHandle { get; set; } = null;
 
+        /// <summary>
+        /// Occurs when the current window in the foreground changed.
+        /// </summary>
         public event ForegroundWindowChangedEventHandler ForegroundWindowChanged = (sender, e) => { };
+
+        /// <summary>
+        /// Occurs when the bounds of the foreground window changed.
+        /// </summary>
         public event ForegroundWindowBoundsChangedEventHandler ForegroundWindowBoundsChanged = (sender, e) => { };
 
+        /// <summary>
+        /// Occurs when a key was pressed on the keyboard.
+        /// </summary>
         public event MaskedKeyEventHandler KeyDown = (sender, e) => Debug.WriteLine($"Key down: {e.Key}");
+
+        /// <summary>
+        /// Occurs when a key was released on the keyboard.
+        /// </summary>
         public event MaskedKeyEventHandler KeyUp = (sender, e) => Debug.WriteLine($"Key up: {e.Key}");
+
+        /// <summary>
+        /// Occurs when a button was pressed on the mouse.
+        /// </summary>
         public event MouseButtonEventHandler MouseDown = (sender, e) => Debug.WriteLine($"Mouse down: {e.Button}");
+
+        /// <summary>
+        /// Occurs when a button was released on the mouse.
+        /// </summary>
         public event MouseButtonEventHandler MouseUp = (sender, e) => Debug.WriteLine($"Mouse up: {e.Button}");
 
         private void WindowMonitorLoop()
@@ -209,7 +250,10 @@ namespace ShortcutFloat.Common.Services
 
         private IntPtr LowLevelKeyboardProc(int code, WM wParam, KBDLLHOOKSTRUCT lParam)
         {
-            if (!MuteNextKeyboardEvent)
+            bool isInjected = lParam.flags.HasFlag(KBDLLHOOKSTRUCTFlags.LLKHF_INJECTED) || 
+                lParam.flags.HasFlag(KBDLLHOOKSTRUCTFlags.LLKHF_LOWER_IL_INJECTED);
+
+            if (!IgnoreInjectedKeyboardEvents && !isInjected)
             {
                 // TODO: Implement handling of keyboard event
                 // See: https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644985(v=vs.85)
@@ -242,14 +286,17 @@ namespace ShortcutFloat.Common.Services
                 }
             }
             else
-                MuteNextKeyboardEvent = false;
+                Debug.WriteLine("Ignoring injected keyboard event");
 
             return InteropServices.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
 
         private IntPtr LowLevelMouseProc(int code, WM wParam, MSLLHOOKSTRUCT lParam)
         {
-            if (!MuteNextMouseEvent)
+            bool isInjected = lParam.flags.HasFlag(MSLLHOOKSTRUCTFlags.LLMHF_INJECTED) ||
+                lParam.flags.HasFlag(MSLLHOOKSTRUCTFlags.LLMHF_LOWER_IL_INJECTED);
+
+            if (!IgnoreInjectedMouseEvents && !isInjected)
             {
                 MouseButton? mouseButton = wParam switch
                 {
@@ -301,7 +348,7 @@ namespace ShortcutFloat.Common.Services
                 }
             }
             else
-                MuteNextMouseEvent = false;
+                Debug.WriteLine("Ignoring injected mouse event");
 
             return InteropServices.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }

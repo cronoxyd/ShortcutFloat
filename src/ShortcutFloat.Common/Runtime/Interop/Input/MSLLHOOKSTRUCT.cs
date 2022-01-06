@@ -23,7 +23,7 @@ namespace ShortcutFloat.Common.Runtime.Interop.Input
         /// <summary>
         /// The event-injected flags. An application can use the following values to test the flags. Testing LLMHF_INJECTED (bit 0) will tell you whether the event was injected. If it was, then testing LLMHF_LOWER_IL_INJECTED (bit 1) will tell you whether or not the event was injected from a process running at lower integrity level.
         /// </summary>
-        public uint flags;
+        public MSLLHOOKSTRUCTFlags flags;
 
         /// <summary>
         /// The time stamp for this message.

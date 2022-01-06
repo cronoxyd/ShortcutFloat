@@ -143,13 +143,7 @@ namespace ShortcutFloat.Common.Services
             Debug.WriteLine($"Sending keyboard event ({dwFlags})");
 
             foreach (var key in item.GetKeys())
-            {
-                environmentMonitor.MuteNextKeyboardEvent = true;
-                environmentMonitor.MuteNextMouseEvent = true;
-
-                InteropServices.keybd_event(key.ToVirtualKeyCode().Value,
-                    dwFlags);
-            }
+                InteropServices.keybd_event(key.ToVirtualKeyCode().Value, dwFlags);
         }
 
         public void EnqueueShortcut(ShortcutDefinitionInvocation shortcutDefinition)

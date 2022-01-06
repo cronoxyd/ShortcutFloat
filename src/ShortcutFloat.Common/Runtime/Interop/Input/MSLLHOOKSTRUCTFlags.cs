@@ -7,12 +7,9 @@ using System.Threading.Tasks;
 namespace ShortcutFloat.Common.Runtime.Interop.Input
 {
     [Flags]
-    public enum KBDLLHOOKSTRUCTFlags : uint
+    public enum MSLLHOOKSTRUCTFlags : uint
     {
-        LLKHF_EXTENDED = 0x01,
-        LLKHF_LOWER_IL_INJECTED = 0x02,
-        LLKHF_INJECTED = 0x10,
-        LLKHF_ALTDOWN = 0x20,
-        LLKHF_UP = 0x80,
+        LLMHF_INJECTED = 0x01,
+        LLMHF_LOWER_IL_INJECTED = 0x02
     }
 }
