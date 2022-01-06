@@ -23,7 +23,7 @@ namespace ShortcutFloat.Common.Services
 
         private List<ShortcutDefinitionInvocation> HoldShortcuts { get; } = new();
 
-        public int QueueIntervalMilliseconds { get; set; } = 10;
+        public int QueueIntervalMilliseconds { get; set; } = 50;
 
         public bool Running => _running;
 
@@ -53,7 +53,10 @@ namespace ShortcutFloat.Common.Services
             foreach (var item in HoldShortcuts.ToList())
             {
                 if (item.ReleaseTriggerType.HasFlag(KeystrokeReleaseTriggerType.Mouse))
+                {
+                    Debug.WriteLine($"Releasing shortcut \"{item.Name}\" (mouse event: {e.Button})");
                     ReleaseShortcutDefinition(item);
+                }
             }
         }
 
@@ -63,7 +66,10 @@ namespace ShortcutFloat.Common.Services
             foreach (var item in HoldShortcuts.ToList())
             {
                 if (item.ReleaseTriggerType.HasFlag(KeystrokeReleaseTriggerType.Keyboard))
+                {
+                    Debug.WriteLine($"Releasing shortcut \"{item.Name}\" (keyboard event: {e.Key})");
                     ReleaseShortcutDefinition(item);
+                }
             }
         }
 
@@ -94,7 +100,7 @@ namespace ShortcutFloat.Common.Services
                 {
                     var item = ShortcutQueue.Dequeue();
 
-                    Debug.WriteLine($"Processing {nameof(ShortcutQueue)} (hold: {item.HoldAndRelease})");
+                    Debug.WriteLine($"Processing shortcut \"{item.Name}\" (hold: {item.HoldAndRelease})");
 
                     if (!item.HoldAndRelease)
                         SendKeys.SendWait(item.GetSendKeysString());
@@ -112,7 +118,10 @@ namespace ShortcutFloat.Common.Services
                     if (!item.TimedOut)
                         PressShortcutDefinition(item, false); // Repeatedly press held keys (typematic)
                     else
+                    {
+                        Debug.WriteLine($"Releasing shortcut \"{item.Name}\" (timeout)");
                         ReleaseShortcutDefinition(item); // or remove the item if it timed out
+                    }
                 }
 
                 Thread.Sleep(QueueIntervalMilliseconds);
@@ -140,10 +149,13 @@ namespace ShortcutFloat.Common.Services
 
         private void ShortcutDefinitionItemKeyboardEvent(ShortcutDefinition item, KeyEventFlag dwFlags)
         {
-            Debug.WriteLine($"Sending keyboard event ({dwFlags})");
+            // Debug.WriteLine($"Sending keyboard event ({dwFlags})");
 
             foreach (var key in item.GetKeys())
+            {
+                environmentMonitor.KeyboardEventIgnoreCount++;
                 InteropServices.keybd_event(key.ToVirtualKeyCode().Value, dwFlags);
+            }
         }
 
         public void EnqueueShortcut(ShortcutDefinitionInvocation shortcutDefinition)
@@ -155,7 +167,7 @@ namespace ShortcutFloat.Common.Services
         {
             ClearQueue();
             ReleaseAllHeld();
-            Debug.WriteLine($"Reset {nameof(InputSynthesizer)}");
+            // Debug.WriteLine($"Reset {nameof(InputSynthesizer)}");
         }
 
         public void ClearQueue()

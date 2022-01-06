@@ -90,19 +90,9 @@ namespace ShortcutFloat.Common.Services
         /// </summary>
         public int MonitorIntervalMilliseconds { get; set; } = 10;
 
-        /// <summary>
-        /// Specifies whether to ignore keyboard events where the <see cref="KBDLLHOOKSTRUCT.flags"/> has either the
-        /// <see cref="KBDLLHOOKSTRUCTFlags.LLKHF_INJECTED"/> or <see cref="KBDLLHOOKSTRUCTFlags.LLKHF_LOWER_IL_INJECTED"/>
-        /// flags.
-        /// </summary>
-        public bool IgnoreInjectedKeyboardEvents { get; set; } = true;
+        public uint KeyboardEventIgnoreCount { get; set; } = 0;
 
-        /// <summary>
-        /// Specifies whether to ignore mouse events where the <see cref="MSLLHOOKSTRUCT.flags"/> has either the
-        /// <see cref="MSLLHOOKSTRUCTFlags.LLMHF_INJECTED"/> or <see cref="MSLLHOOKSTRUCTFlags.LLMHF_LOWER_IL_INJECTED"/>
-        /// flags.
-        /// </summary>
-        public bool IgnoreInjectedMouseEvents { get; set; } = true;
+        public uint MouseEventIgnoreCount { get; set; } = 0;
 
         /// <summary>
         /// The handle of the <see cref="LowLevelKeyboardDelegate"/> returned by 
@@ -250,10 +240,7 @@ namespace ShortcutFloat.Common.Services
 
         private IntPtr LowLevelKeyboardProc(int code, WM wParam, KBDLLHOOKSTRUCT lParam)
         {
-            bool isInjected = lParam.flags.HasFlag(KBDLLHOOKSTRUCTFlags.LLKHF_INJECTED) || 
-                lParam.flags.HasFlag(KBDLLHOOKSTRUCTFlags.LLKHF_LOWER_IL_INJECTED);
-
-            if (!IgnoreInjectedKeyboardEvents && !isInjected)
+            if (KeyboardEventIgnoreCount == 0)
             {
                 // TODO: Implement handling of keyboard event
                 // See: https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644985(v=vs.85)
@@ -286,17 +273,14 @@ namespace ShortcutFloat.Common.Services
                 }
             }
             else
-                Debug.WriteLine("Ignoring injected keyboard event");
+                KeyboardEventIgnoreCount--;
 
             return InteropServices.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
 
         private IntPtr LowLevelMouseProc(int code, WM wParam, MSLLHOOKSTRUCT lParam)
         {
-            bool isInjected = lParam.flags.HasFlag(MSLLHOOKSTRUCTFlags.LLMHF_INJECTED) ||
-                lParam.flags.HasFlag(MSLLHOOKSTRUCTFlags.LLMHF_LOWER_IL_INJECTED);
-
-            if (!IgnoreInjectedMouseEvents && !isInjected)
+            if (MouseEventIgnoreCount == 0)
             {
                 MouseButton? mouseButton = wParam switch
                 {
@@ -348,7 +332,7 @@ namespace ShortcutFloat.Common.Services
                 }
             }
             else
-                Debug.WriteLine("Ignoring injected mouse event");
+                MouseEventIgnoreCount--;
 
             return InteropServices.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
@@ -462,13 +446,13 @@ namespace ShortcutFloat.Common.Services
                 {
                     Key.None => MaskedKey.None,
 
-                    Key.LeftCtrl or Key.RightCtrl or 
-                    Key.LeftAlt or Key.RightAlt or 
-                    Key.LeftShift or Key.RightShift or 
+                    Key.LeftCtrl or Key.RightCtrl or
+                    Key.LeftAlt or Key.RightAlt or
+                    Key.LeftShift or Key.RightShift or
                     Key.CapsLock => MaskedKey.Modifier,
 
                     Key.Escape or Key.Enter or Key.LWin or Key.RWin or
-                    Key.PrintScreen or Key.Scroll or Key.Pause or Key.Apps or 
+                    Key.PrintScreen or Key.Scroll or Key.Pause or Key.Apps or
                     Key.Sleep or Key.System or Key.LineFeed => MaskedKey.System,
 
                     Key.Up or Key.Right or Key.Down or Key.Left or
@@ -484,28 +468,28 @@ namespace ShortcutFloat.Common.Services
                     Key.MediaPreviousTrack or Key.MediaStop or Key.SelectMedia or
                     Key.VolumeDown or Key.VolumeMute or Key.VolumeUp => MaskedKey.Media,
 
-                    Key.F1 or Key.F2 or Key.F3 or Key.F4 or Key.F5 or Key.F6 or 
-                    Key.F7 or Key.F8 or Key.F9 or Key.F10 or Key.F11 or Key.F12 or 
-                    Key.F13 or Key.F14 or Key.F15 or Key.F16 or Key.F17 or 
-                    Key.F18 or Key.F19 or Key.F20 or Key.F21 or Key.F22 or 
+                    Key.F1 or Key.F2 or Key.F3 or Key.F4 or Key.F5 or Key.F6 or
+                    Key.F7 or Key.F8 or Key.F9 or Key.F10 or Key.F11 or Key.F12 or
+                    Key.F13 or Key.F14 or Key.F15 or Key.F16 or Key.F17 or
+                    Key.F18 or Key.F19 or Key.F20 or Key.F21 or Key.F22 or
                     Key.F23 or Key.F24 => MaskedKey.Function,
 
-                    Key.FinalMode or Key.HangulMode or Key.HanjaMode or 
-                    Key.ImeAccept or Key.ImeConvert or Key.ImeModeChange or 
-                    Key.ImeNonConvert or Key.ImeProcessed or Key.JunjaMode or 
+                    Key.FinalMode or Key.HangulMode or Key.HanjaMode or
+                    Key.ImeAccept or Key.ImeConvert or Key.ImeModeChange or
+                    Key.ImeNonConvert or Key.ImeProcessed or Key.JunjaMode or
                     Key.KanaMode or Key.KanjiMode or Key.DbeEnterImeConfigureMode => MaskedKey.Ime,
 
-                    Key.OemSemicolon or Key.Oem1 or Key.OemPlus or 
-                    Key.OemComma or Key.OemMinus or Key.OemPeriod or 
-                    Key.Oem2 or Key.OemQuestion or Key.Oem3 or 
-                    Key.OemTilde or Key.Oem4 or Key.OemOpenBrackets or 
-                    Key.OemPipe or Key.Oem5 or Key.OemCloseBrackets or 
-                    Key.Oem6 or Key.OemQuotes or Key.Oem7 or Key.Oem8 or 
+                    Key.OemSemicolon or Key.Oem1 or Key.OemPlus or
+                    Key.OemComma or Key.OemMinus or Key.OemPeriod or
+                    Key.Oem2 or Key.OemQuestion or Key.Oem3 or
+                    Key.OemTilde or Key.Oem4 or Key.OemOpenBrackets or
+                    Key.OemPipe or Key.Oem5 or Key.OemCloseBrackets or
+                    Key.Oem6 or Key.OemQuotes or Key.Oem7 or Key.Oem8 or
                     Key.Oem102 or Key.OemBackslash or Key.OemClear => MaskedKey.Oem,
 
-                    Key.BrowserBack or Key.BrowserForward or 
-                    Key.BrowserRefresh or Key.BrowserStop or 
-                    Key.BrowserSearch or Key.BrowserFavorites or 
+                    Key.BrowserBack or Key.BrowserForward or
+                    Key.BrowserRefresh or Key.BrowserStop or
+                    Key.BrowserSearch or Key.BrowserFavorites or
                     Key.BrowserHome => MaskedKey.Browser,
 
                     _ => MaskedKey.Alphanumeric
