@@ -10,13 +10,10 @@ namespace ShortcutFloat.Common.Models.Actions
     public abstract class ActionDefinition : IActionDefinition
     {
         public string Name { get; set; }
-
-        public abstract InputItem GetInputItem();
     }
 
     public interface IActionDefinition
     {
         public string Name { get; set; }
-        public InputItem GetInputItem();
     }
 }

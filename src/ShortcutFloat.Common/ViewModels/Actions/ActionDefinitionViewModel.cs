@@ -1,5 +1,4 @@
-﻿using ShortcutFloat.Common.Input;
-using ShortcutFloat.Common.Models.Actions;
+﻿using ShortcutFloat.Common.Models.Actions;
 
 namespace ShortcutFloat.Common.ViewModels.Actions
 {
@@ -8,14 +7,9 @@ namespace ShortcutFloat.Common.ViewModels.Actions
 
         public string Name { get => Model.Name; set => Model.Name = value; }
 
-        public InputItem GetInputItem() => Model.GetInputItem();
-
         public ActionDefinitionViewModel(ActionDefinition Model) : base(Model) { }
     }
 
-    public interface IActionDefinitionViewModel : ITypedViewModel<ActionDefinition>
-    {
-        public string Name { get; set; }
-        public InputItem GetInputItem();
-    }
+    public interface IActionDefinitionViewModel : ITypedViewModel<ActionDefinition>, IActionDefinition
+    { }
 }

@@ -213,7 +213,7 @@ namespace ShortcutFloat.WPF
                         floatWindowConfig.FloatWindowGridRows = Settings.FloatWindowGridRows;
 
                     FloatWindow = new(floatWindowConfig);
-                    FloatWindow.InputSendRequested += FloatWindow_InputSendRequested;
+                    FloatWindow.ShortcutInvokeRequested += FloatWindow_ShortcutInvokeRequested; ;
                     FloatWindow.LocationChanged += FloatWindow_LocationChanged;
 
                     PositionFloatWindow();
@@ -224,6 +224,17 @@ namespace ShortcutFloat.WPF
                 if (EnvironmentMonitor.ForegroundWindowHandle != null)
                     InteropServices.SetForegroundWindow(EnvironmentMonitor.ForegroundWindowHandle.Value);
             }
+        }
+
+        private void FloatWindow_ShortcutInvokeRequested(object sender, ShortcutDefinitionInvocation e)
+        {
+            if (EnvironmentMonitor.ForegroundWindowHandle == null) return;
+            InteropServices.SetForegroundWindow(EnvironmentMonitor.ForegroundWindowHandle.Value);
+
+            if (e.HoldAndRelease && e.HoldTimeLimitSeconds == null)
+                e.HoldTimeLimitSeconds = Settings.KeyHoldTimeLimitSeconds;
+
+            InputSynthesizer.EnqueueShortcut(e);
         }
 
         private void CloseFloat()
@@ -290,17 +301,6 @@ namespace ShortcutFloat.WPF
                 Common.Helper.Math.Map(input.X, 0, 1, EnvironmentMonitor.MaxScreenBounds.Left, EnvironmentMonitor.MaxScreenBounds.Right),
                 Common.Helper.Math.Map(input.Y, 0, 1, EnvironmentMonitor.MaxScreenBounds.Top, EnvironmentMonitor.MaxScreenBounds.Bottom)
             );
-
-        private void FloatWindow_InputSendRequested(object sender, Common.ViewModels.InputSendEventArgs e)
-        {
-            if (EnvironmentMonitor.ForegroundWindowHandle == null) return;
-            InteropServices.SetForegroundWindow(EnvironmentMonitor.ForegroundWindowHandle.Value);
-
-            if (e.InputItem.HoldTimeLimitSeconds == null)
-                e.InputItem.HoldTimeLimitSeconds = Settings.KeyHoldTimeLimitSeconds;
-
-            InputSynthesizer.EnqueueInputItem(e.InputItem);
-        }
 
         private static bool IsNotEmptyAndValidRegex(string input)
         {

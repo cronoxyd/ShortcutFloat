@@ -1,4 +1,6 @@
-﻿using ShortcutFloat.Common.Input;
+﻿using ShortcutFloat.Common.Extensions;
+using ShortcutFloat.Common.Input;
+using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Models.Actions;
 using ShortcutFloat.Common.Runtime.Interop;
 using ShortcutFloat.Common.Runtime.Interop.Input;
@@ -17,9 +19,9 @@ namespace ShortcutFloat.Common.Services
     {
         private bool _running = false;
 
-        private Queue<InputItem> InputQueue { get; } = new();
+        private Queue<ShortcutDefinitionInvocation> ShortcutQueue { get; } = new();
 
-        private List<InputHoldItem> HoldItems { get; } = new();
+        private List<ShortcutDefinitionInvocation> HoldShortcuts { get; } = new();
 
         public int QueueIntervalMilliseconds { get; set; } = 10;
 
@@ -48,20 +50,20 @@ namespace ShortcutFloat.Common.Services
         private void EnvironmentMonitor_MouseUp(object sender, EnvironmentMonitor.MouseButtonEventArgs e)
         {
             // ToList() to avoid concurrency conflicts
-            foreach (var item in HoldItems.ToList())
+            foreach (var item in HoldShortcuts.ToList())
             {
-                if (item.Item.ReleaseTriggerType.HasFlag(Models.Actions.KeystrokeReleaseTriggerType.Mouse))
-                    ReleaseInputItem(item);
+                if (item.ReleaseTriggerType.HasFlag(KeystrokeReleaseTriggerType.Mouse))
+                    ReleaseShortcutDefinition(item);
             }
         }
 
         private void EnvironmentMonitor_KeyUp(object sender, EnvironmentMonitor.MaskedKeyEventArgs e)
         {
             // ToList() to avoid concurrency conflicts
-            foreach (var item in HoldItems.ToList())
+            foreach (var item in HoldShortcuts.ToList())
             {
-                if (item.Item.ReleaseTriggerType.HasFlag(Models.Actions.KeystrokeReleaseTriggerType.Keyboard))
-                    ReleaseInputItem(item);
+                if (item.ReleaseTriggerType.HasFlag(KeystrokeReleaseTriggerType.Keyboard))
+                    ReleaseShortcutDefinition(item);
             }
         }
 
@@ -88,28 +90,29 @@ namespace ShortcutFloat.Common.Services
             {
                 // synthesizerTuner.LoopStart();
 
-                if (InputQueue.Count > 0)
+                if (ShortcutQueue.Count > 0)
                 {
-                    var item = InputQueue.Dequeue();
+                    var item = ShortcutQueue.Dequeue();
 
-                    Debug.WriteLine($"Processing {nameof(InputItem)} (hold: {item.HoldAndRelease})");
+                    Debug.WriteLine($"Processing {nameof(ShortcutQueue)} (hold: {item.HoldAndRelease})");
 
                     if (!item.HoldAndRelease)
                         SendKeys.SendWait(item.GetSendKeysString());
                     else
                     {
                         ReleaseAllHeld();
-                        PressInputItem(item);
+                        item.StartTimeout();
+                        PressShortcutDefinition(item);
                     }
                 }
 
                 // ToList() to avoid concurrency issues
-                foreach (var item in HoldItems.ToList())
+                foreach (var item in HoldShortcuts.ToList())
                 {
                     if (!item.TimedOut)
-                        PressInputItem(item.Item, false); // Repeatedly press held keys (typematic)
+                        PressShortcutDefinition(item, false); // Repeatedly press held keys (typematic)
                     else
-                        ReleaseInputItem(item); // or remove the item if it timed out
+                        ReleaseShortcutDefinition(item); // or remove the item if it timed out
                 }
 
                 Thread.Sleep(QueueIntervalMilliseconds);
@@ -117,46 +120,41 @@ namespace ShortcutFloat.Common.Services
             }
         }
 
-        private void PressInputItem(InputItem item, bool addToHoldList = true)
+        private void PressShortcutDefinition(ShortcutDefinitionInvocation item, bool addToHoldList = true)
         {
-            InputItemKeyboardEvent(item, KeyEventFlag.KEYEVENTF_NONE);
+            ShortcutDefinitionItemKeyboardEvent(item, KeyEventFlag.KEYEVENTF_NONE);
 
             if (addToHoldList)
-                HoldItems.Add(new(item));
+                HoldShortcuts.Add(item);
         }
 
-        private void ReleaseInputItem(InputItem item)
+        private void ReleaseShortcutDefinition(ShortcutDefinitionInvocation item, bool removeFromHoldList = true)
         {
-            InputItemKeyboardEvent(item, KeyEventFlag.KEYEVENTF_KEYUP);
-        }
-
-        private void ReleaseInputItem(InputHoldItem item, bool removeFromHoldList = true)
-        {
-            InputItemKeyboardEvent(item.Item, KeyEventFlag.KEYEVENTF_KEYUP);
+            ShortcutDefinitionItemKeyboardEvent(item, KeyEventFlag.KEYEVENTF_KEYUP);
 
             if (removeFromHoldList)
-                HoldItems.Remove(item);
+                HoldShortcuts.Remove(item);
+
+            item.HoldReleaseCallback();
         }
 
-        private void InputItemKeyboardEvent(InputItem item, KeyEventFlag dwFlags)
+        private void ShortcutDefinitionItemKeyboardEvent(ShortcutDefinition item, KeyEventFlag dwFlags)
         {
-            if (item.Text.Length > 0)
-                throw new NotSupportedException("Cannot synthesize keyboard events for a text.");
-
             Debug.WriteLine($"Sending keyboard event ({dwFlags})");
 
-            foreach (var key in item.Keys)
+            foreach (var key in item.GetKeys())
+            {
+                environmentMonitor.MuteNextKeyboardEvent = true;
+                environmentMonitor.MuteNextMouseEvent = true;
+
                 InteropServices.keybd_event(key.ToVirtualKeyCode().Value,
                     dwFlags);
-
-            foreach (var mouseButton in item.MouseButtons)
-                InteropServices.keybd_event(mouseButton.ToVirtualKeyCode().Value,
-                    dwFlags);
+            }
         }
 
-        public void EnqueueInputItem(InputItem item)
+        public void EnqueueShortcut(ShortcutDefinitionInvocation shortcutDefinition)
         {
-            InputQueue.Enqueue(item);
+            ShortcutQueue.Enqueue(shortcutDefinition);
         }
 
         public void Reset()
@@ -168,14 +166,14 @@ namespace ShortcutFloat.Common.Services
 
         public void ClearQueue()
         {
-            InputQueue.Clear();
+            ShortcutQueue.Clear();
         }
 
         public void ReleaseAllHeld()
         {
             // ToList() to avoid concurrency conflicts
-            foreach (var item in HoldItems.ToList())
-                ReleaseInputItem(item);
+            foreach (var item in HoldShortcuts.ToList())
+                ReleaseShortcutDefinition(item);
         }
     }
 }

@@ -15,7 +15,7 @@
         ResizeMode="NoResize"
         ShowInTaskbar="False" Background="{StaticResource MDShade30}">
     <Window.Resources>
-        <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+        <!--<Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
             <Setter Property="Padding" Value="5,5,5,5"/>
             <Setter Property="MinWidth" Value="75"/>
             <Setter Property="Background" Value="{StaticResource MDShade37}"/>
@@ -23,8 +23,10 @@
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="{x:Type Button}">
-                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" BorderThickness="1">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" Margin="{TemplateBinding Margin}"/>
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" 
+                                BorderThickness="1">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                              Margin="{TemplateBinding Margin}"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
@@ -34,21 +36,51 @@
                     <Setter Property="Background" Value="{StaticResource MDSignature}"/>
                 </Trigger>
             </Style.Triggers>
-        </Style>
+        </Style>-->
     </Window.Resources>
     <Grid>
         <ItemsControl ItemsSource="{Binding Path=ShortcutDefinitions}">
             <ItemsControl.ItemsPanel>
                 <ItemsPanelTemplate>
                     <UniformGrid 
-                        Columns="{Binding Path=DataContext.FloatWindowGridColumns, RelativeSource={RelativeSource AncestorType=Window}}" 
-                        Rows="{Binding Path=DataContext.FloatWindowGridRows, RelativeSource={RelativeSource AncestorType=Window}}"/>
+                        Columns="{Binding Path=DataContext.FloatWindowGridColumns, 
+                            RelativeSource={RelativeSource AncestorType=Window}}" 
+                        Rows="{Binding Path=DataContext.FloatWindowGridRows, 
+                            RelativeSource={RelativeSource AncestorType=Window}}"/>
                 </ItemsPanelTemplate>
             </ItemsControl.ItemsPanel>
             <ItemsControl.ItemTemplate>
-                <DataTemplate>
+                <DataTemplate DataType="{x:Type viewmodels:ShortcutDefinitionViewModel}">
                     <Button Content="{Binding Path=Name}" Command="{Binding Path=SendCommand}" 
-                            Padding="20,15,20,15" Stylus.IsPressAndHoldEnabled="False"/>
+                            Padding="20,15,20,15" Stylus.IsPressAndHoldEnabled="False">
+                        <Button.Style>
+                            <Style TargetType="{x:Type Button}" BasedOn="{StaticResource {x:Type Button}}">
+                                <Setter Property="Padding" Value="5,5,5,5"/>
+                                <Setter Property="MinWidth" Value="75"/>
+                                <Setter Property="Background" Value="{StaticResource MDShade37}"/>
+                                <Setter Property="Foreground" Value="{StaticResource PrimaryTextColor}"/>
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="{x:Type Button}">
+                                            <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" 
+                                BorderThickness="1">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" 
+                                              Margin="{TemplateBinding Margin}"/>
+                                            </Border>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{StaticResource MDSignature}"/>
+                                    </Trigger>
+                                    <DataTrigger Binding="{Binding Path=IsHeld}">
+                                        <Setter Property="Foreground" Value="{StaticResource MDSignature}"/>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Button.Style>
+                    </Button>
                 </DataTemplate>
             </ItemsControl.ItemTemplate>
         </ItemsControl>

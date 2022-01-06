@@ -1,4 +1,5 @@
 ﻿using ShortcutFloat.Common.Extensions;
+using ShortcutFloat.Common.Input;
 using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Models.Actions;
 using ShortcutFloat.Common.ViewModels;
@@ -15,7 +16,7 @@ namespace ShortcutFloat.WPF
     {
         protected const double BUTTON_PADDING = 25;
         public ShortcutConfigurationViewModel ViewModel { get; set; }
-        public event InputSendEventHandler InputSendRequested = (sender, e) => { };
+        public event EventHandler<ShortcutDefinitionInvocation> ShortcutInvokeRequested = (sender, e) => { };
 
         public FloatWindow(ShortcutConfiguration model)
         {
@@ -28,7 +29,7 @@ namespace ShortcutFloat.WPF
             DataContext = ViewModel;
 
             foreach (var def in ViewModel.ShortcutDefinitions)
-                def.InputSendRequested += (sender, e) => InputSendRequested(this, e);
+                def.ShortcutInvokeRequested += (sender, e) => ShortcutInvokeRequested(this, e);
         }
     }
 }

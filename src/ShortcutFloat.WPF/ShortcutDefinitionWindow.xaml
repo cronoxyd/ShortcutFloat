@@ -22,6 +22,7 @@
     <Grid Margin="5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -38,7 +39,31 @@
             <TextBox Grid.Column="1" Text="{Binding Path=Name}"/>
         </Grid>
 
-        <GroupBox Grid.Row="1" Header="Actions">
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <CheckBox Content="Hold and release" IsChecked="{Binding Path=HoldAndRelease}" Grid.ColumnSpan="4"/>
+            <Label Content="Hold time limit:" Grid.Row="1"/>
+            <xctk:IntegerUpDown Value="{Binding Path=HoldTimeLimitSeconds}"
+                                Minimum="0" Maximum="60000" Grid.Row="1" Grid.Column="1" Watermark="(Inherit)"/>
+            <Label Content="sec" Grid.Row="1" Grid.Column="2"/>
+            <Label Content="Release trigger:" Grid.Row="1" Grid.Column="3"/>
+            <StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal">
+                <CheckBox Content="Mouse" IsChecked="{Binding Path=ReleaseTriggerTypeMouse}"/>
+                <CheckBox Content="Keyboard" IsChecked="{Binding Path=ReleaseTriggerTypeKeyboard}"/>
+            </StackPanel>
+        </Grid>
+
+        <GroupBox Grid.Row="2" Header="Actions">
             <DockPanel>
                 <ToolBarTray DockPanel.Dock="Top" IsLocked="True">
                     <ToolBar>
@@ -84,30 +109,6 @@
                                         <Label Content="+" Grid.Column="3"/>
                                         <ComboBox Grid.Column="4" ItemsSource="{Binding Source={StaticResource KeysEnum}}" SelectedItem="{Binding Path=Key}"/>
                                     </Grid>
-                                    <Separator/>
-                                    <Grid>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition/>
-                                            <RowDefinition/>
-                                        </Grid.RowDefinitions>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                            <ColumnDefinition Width="Auto"/>
-                                        </Grid.ColumnDefinitions>
-                                        <CheckBox Content="Hold and release" IsChecked="{Binding Path=HoldAndRelease}" Grid.ColumnSpan="4"/>
-                                        <Label Content="Hold time limit:" Grid.Row="1"/>
-                                        <xctk:IntegerUpDown Value="{Binding Path=HoldTimeLimitSeconds}"
-                                                            Minimum="0" Maximum="60000" Grid.Row="1" Grid.Column="1" Watermark="(Inherit)"/>
-                                        <Label Content="sec" Grid.Row="1" Grid.Column="2"/>
-                                        <Label Content="Release trigger:" Grid.Row="1" Grid.Column="3"/>
-                                        <StackPanel Grid.Row="1" Grid.Column="4" Orientation="Horizontal">
-                                            <CheckBox Content="Mouse" IsChecked="{Binding Path=ReleaseTriggerTypeMouse}"/>
-                                            <CheckBox Content="Keyboard" IsChecked="{Binding Path=ReleaseTriggerTypeKeyboard}"/>
-                                        </StackPanel>
-                                    </Grid>
                                 </StackPanel>
                             </Grid>
                         </DataTemplate>
@@ -134,7 +135,7 @@
             </DockPanel>
         </GroupBox>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right">
             <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click"/>
             <Button x:Name="SaveButton" Content="Save" Click="SaveButton_Click"/>
         </StackPanel>

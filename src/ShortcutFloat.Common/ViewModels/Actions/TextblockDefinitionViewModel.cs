@@ -1,10 +1,6 @@
-﻿using ShortcutFloat.Common.Models.Actions;
-using System;
-using System.Collections.Generic;
+﻿using ShortcutFloat.Common.Helper;
+using ShortcutFloat.Common.Models.Actions;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ShortcutFloat.Common.ViewModels.Actions
 {
@@ -16,8 +12,6 @@ namespace ShortcutFloat.Common.ViewModels.Actions
         public TextblockDefinitionViewModel([NotNull] TextblockDefintion Model) : base(Model) { }
     }
 
-    public interface ITextblockDefinitionViewModel : IActionDefinitionViewModel
-    {
-        public string Content { get; set; }
-    }
+    public interface ITextblockDefinitionViewModel : ITextblockDefinition
+    { }
 }

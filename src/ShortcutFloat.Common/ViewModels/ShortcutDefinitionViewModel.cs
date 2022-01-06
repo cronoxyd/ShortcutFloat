@@ -1,4 +1,5 @@
-﻿using ShortcutFloat.Common.Models;
+﻿using ShortcutFloat.Common.Input;
+using ShortcutFloat.Common.Models;
 using ShortcutFloat.Common.Models.Actions;
 using ShortcutFloat.Common.ViewModels.Actions;
 using System;
@@ -16,6 +17,39 @@ namespace ShortcutFloat.Common.ViewModels
         public ObservableCollection<IActionDefinitionViewModel> Actions { get; } = new();
         public ICollectionView ActionsView { get; }
         public IActionDefinitionViewModel SelectedAction { get; set; } = null;
+        public bool HoldAndRelease { get => Model.HoldAndRelease; set => Model.HoldAndRelease = value; }
+
+        /// <inheritdoc cref="ShortcutDefinition.HoldTimeLimitSeconds"/>
+        public int? HoldTimeLimitSeconds { get => Model.HoldTimeLimitSeconds; set => Model.HoldTimeLimitSeconds = value; }
+
+        /// <inheritdoc cref="ShortcutDefinition.ReleaseTriggerType"/>
+        public KeystrokeReleaseTriggerType ReleaseTriggerType { get => Model.ReleaseTriggerType; set => Model.ReleaseTriggerType = value; }
+
+        public bool ReleaseTriggerTypeMouse
+        {
+            get => ReleaseTriggerType.HasFlag(KeystrokeReleaseTriggerType.Mouse);
+            set
+            {
+                if (value)
+                    ReleaseTriggerType |= KeystrokeReleaseTriggerType.Mouse;
+                else
+                    ReleaseTriggerType &= ~KeystrokeReleaseTriggerType.Mouse;
+            }
+        }
+
+        public bool ReleaseTriggerTypeKeyboard
+        {
+            get => ReleaseTriggerType.HasFlag(KeystrokeReleaseTriggerType.Keyboard);
+            set
+            {
+                if (value)
+                    ReleaseTriggerType |= KeystrokeReleaseTriggerType.Keyboard;
+                else
+                    ReleaseTriggerType &= ~KeystrokeReleaseTriggerType.Keyboard;
+            }
+        }
+
+        public bool IsHeld { get; set; } = false;
 
         public ICommand NewKeystrokeCommand { get; }
         public ICommand NewTextblockCommand { get; }
@@ -24,7 +58,7 @@ namespace ShortcutFloat.Common.ViewModels
         public ICommand MoveActionUpCommand { get; }
         public ICommand MoveActionDownCommand { get; }
 
-        public event InputSendEventHandler InputSendRequested = (sender, e) => { };
+        public event EventHandler<ShortcutDefinitionInvocation> ShortcutInvokeRequested = (sender, e) => { };
 
         public ShortcutDefinitionViewModel(ShortcutDefinition Model) : base(Model)
         {
@@ -46,10 +80,14 @@ namespace ShortcutFloat.Common.ViewModels
             Actions.CollectionChanged += ShortcutDefinitionViewModel_CollectionChanged;
 
             SendCommand = new RelayCommand(
-                () =>
-                {
-                    foreach (var action in Actions)
-                        InputSendRequested(this, new(action.GetInputItem()));
+                () => {
+                    var invocation = new ShortcutDefinitionInvocation(Model);
+
+                    if (HoldAndRelease)
+                        invocation.HoldReleaseCallback = () => IsHeld = false;
+
+                    ShortcutInvokeRequested(this, invocation);
+                    IsHeld = true;
                 },
                 () => true
             );

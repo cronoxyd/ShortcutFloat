@@ -6,25 +6,10 @@ using System.Windows.Input;
 
 namespace ShortcutFloat.Common.Models.Actions
 {
-    public class KeystrokeDefinition : ActionDefinition
+    public class KeystrokeDefinition : ActionDefinition, IKeystrokeDefinition
     {
         public ModifierKeys ModifierKeys { get; set; } = ModifierKeys.None;
         public Key? Key { get; set; } = null;
-        public bool HoldAndRelease { get; set; } = false;
-
-        /// <summary>
-        /// Specifies the maximum amount of time the keystroke will be held
-        /// </summary>
-        /// <remarks>
-        /// If set to <c>0</c>, the keystroke will be held indefinitely.
-        /// </remarks>
-        public int? HoldTimeLimitSeconds { get; set; } = null;
-
-        /// <summary>
-        /// Specifies the type of user interaction that releases the keystroke
-        /// </summary>
-        public KeystrokeReleaseTriggerType ReleaseTriggerType { get; set; } =
-            KeystrokeReleaseTriggerType.Mouse | KeystrokeReleaseTriggerType.Keyboard;
 
         public KeystrokeDefinition() { }
 
@@ -40,21 +25,11 @@ namespace ShortcutFloat.Common.Models.Actions
             this.ModifierKeys = ModifierKeys;
             this.Key = Key;
         }
+    }
 
-        public override InputItem GetInputItem()
-        {
-            var retVal = new InputItem()
-            {
-                HoldAndRelease = HoldAndRelease,
-                HoldTimeLimitSeconds = HoldTimeLimitSeconds
-            };
-
-            var keyList = new List<Key>();
-            keyList.AddRange(ModifierKeys.ToKeys());
-            if (Key != null)
-                keyList.Add(Key.Value);
-            retVal.Keys = keyList.ToArray();
-            return retVal;
-        }
+    public interface IKeystrokeDefinition : IActionDefinition
+    {
+        public ModifierKeys ModifierKeys { get; set; }
+        public Key? Key { get; set; }
     }
 }

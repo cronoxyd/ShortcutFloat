@@ -1,10 +1,6 @@
-﻿using ShortcutFloat.Common.Models.Actions;
-using System;
-using System.Collections.Generic;
+﻿using ShortcutFloat.Common.Extensions;
+using ShortcutFloat.Common.Models.Actions;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace ShortcutFloat.Common.ViewModels.Actions
@@ -65,45 +61,9 @@ namespace ShortcutFloat.Common.ViewModels.Actions
 
         public Key? Key { get => Model.Key; set => Model.Key = value; }
 
-        public bool HoldAndRelease { get => Model.HoldAndRelease; set => Model.HoldAndRelease = value; }
-        public int? HoldTimeLimitSeconds { get => Model.HoldTimeLimitSeconds; set => Model.HoldTimeLimitSeconds = value; }
-
-        public KeystrokeReleaseTriggerType ReleaseTriggerType { get => Model.ReleaseTriggerType; set => Model.ReleaseTriggerType = value; }
-
-        public bool ReleaseTriggerTypeMouse
-        {
-            get => ReleaseTriggerType.HasFlag(KeystrokeReleaseTriggerType.Mouse);
-            set
-            {
-                if (value)
-                    ReleaseTriggerType |= KeystrokeReleaseTriggerType.Mouse;
-                else
-                    ReleaseTriggerType &= ~KeystrokeReleaseTriggerType.Mouse;
-            }
-        }
-
-        public bool ReleaseTriggerTypeKeyboard
-        {
-            get => ReleaseTriggerType.HasFlag(KeystrokeReleaseTriggerType.Keyboard);
-            set
-            {
-                if (value)
-                    ReleaseTriggerType |= KeystrokeReleaseTriggerType.Keyboard;
-                else
-                    ReleaseTriggerType &= ~KeystrokeReleaseTriggerType.Keyboard;
-            }
-        }
-
         public KeystrokeDefinitionViewModel([NotNull] KeystrokeDefinition Model) : base(Model) { }
     }
 
-    public interface IKeystrokeDefinitionViewModel : IActionDefinitionViewModel
-    {
-        public ModifierKeys? ModifierKeys { get; set; }
-        public Key? Key { get; set; }
-        public uint HoldTimeLimitMilliseconds { get; set; }
-        public KeystrokeReleaseTriggerType ReleaseTriggerType { get; set; }
-        public bool ReleaseTriggerTypeMouse { get; set; }
-        public bool ReleaseTriggerTypeKeyboard { get; set; }
-    }
+    public interface IKeystrokeDefinitionViewModel : IKeystrokeDefinition
+    { }
 }

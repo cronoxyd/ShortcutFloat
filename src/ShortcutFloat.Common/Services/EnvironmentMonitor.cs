@@ -88,7 +88,11 @@ namespace ShortcutFloat.Common.Services
         /// <summary>
         /// Specifies the interval at which the environment is inspected in milliseconds.
         /// </summary>
-        int MonitorIntervalMilliseconds { get; set; } = 10;
+        public int MonitorIntervalMilliseconds { get; set; } = 10;
+
+        public bool MuteNextKeyboardEvent { get; set; } = false;
+
+        public bool MuteNextMouseEvent { get; set; } = false;
 
         private IntPtr? LowLevelKeyboardHookHandle { get; set; } = null;
         private IntPtr? LowLevelMouseHookHandle { get; set; } = null;
@@ -205,89 +209,99 @@ namespace ShortcutFloat.Common.Services
 
         private IntPtr LowLevelKeyboardProc(int code, WM wParam, KBDLLHOOKSTRUCT lParam)
         {
-            // TODO: Implement handling of keyboard event
-            // See: https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644985(v=vs.85)
-
-            Key? key = ((VirtualKeyCode)lParam.vkCode).ToKey();
-
-            if (key != null)
+            if (!MuteNextKeyboardEvent)
             {
-                MaskedKeyEventHandler eventHandler = null;
-                KeyStates states = KeyStates.None;
+                // TODO: Implement handling of keyboard event
+                // See: https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/ms644985(v=vs.85)
 
-                switch (wParam)
-                {
-                    case WM.KEYDOWN or WM.SYSKEYDOWN:
-                        eventHandler = KeyDown;
-                        states |= KeyStates.Down;
-                        break;
-                    case WM.KEYUP or WM.SYSKEYUP:
-                        eventHandler = KeyUp;
-                        break;
-                }
+                Key? key = ((VirtualKeyCode)lParam.vkCode).ToKey();
 
-                if (eventHandler == null)
-                    Debug.Fail("Failed to compose event for keyboard hook");
-                else
+                if (key != null)
                 {
-                    var e = new MaskedKeyEventArgs(key.Value, states, lParam.time);
-                    eventHandler(this, e);
+                    MaskedKeyEventHandler eventHandler = null;
+                    KeyStates states = KeyStates.None;
+
+                    switch (wParam)
+                    {
+                        case WM.KEYDOWN or WM.SYSKEYDOWN:
+                            eventHandler = KeyDown;
+                            states |= KeyStates.Down;
+                            break;
+                        case WM.KEYUP or WM.SYSKEYUP:
+                            eventHandler = KeyUp;
+                            break;
+                    }
+
+                    if (eventHandler == null)
+                        Debug.Fail("Failed to compose event for keyboard hook");
+                    else
+                    {
+                        var e = new MaskedKeyEventArgs(key.Value, states, lParam.time);
+                        eventHandler(this, e);
+                    }
                 }
             }
+            else
+                MuteNextKeyboardEvent = false;
 
             return InteropServices.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
 
         private IntPtr LowLevelMouseProc(int code, WM wParam, MSLLHOOKSTRUCT lParam)
         {
-            MouseButton? mouseButton = wParam switch
+            if (!MuteNextMouseEvent)
             {
-                WM.LBUTTONDOWN or WM.LBUTTONUP => MouseButton.Left,
-
-                WM.RBUTTONDOWN or WM.RBUTTONUP => MouseButton.Right,
-
-                WM.MBUTTONDOWN or WM.MBUTTONUP => MouseButton.Middle,
-
-                WM.XBUTTONDOWN or WM.XBUTTONUP => (lParam.mouseData >> 16) switch
+                MouseButton? mouseButton = wParam switch
                 {
-                    0x0001 => MouseButton.XButton1,
-                    0x0002 => MouseButton.XButton2,
+                    WM.LBUTTONDOWN or WM.LBUTTONUP => MouseButton.Left,
+
+                    WM.RBUTTONDOWN or WM.RBUTTONUP => MouseButton.Right,
+
+                    WM.MBUTTONDOWN or WM.MBUTTONUP => MouseButton.Middle,
+
+                    WM.XBUTTONDOWN or WM.XBUTTONUP => (lParam.mouseData >> 16) switch
+                    {
+                        0x0001 => MouseButton.XButton1,
+                        0x0002 => MouseButton.XButton2,
+                        _ => null
+                    },
+
                     _ => null
-                },
+                };
 
-                _ => null
-            };
-
-            if (mouseButton != null)
-            {
-                MouseButtonEventHandler eventHandler = null;
-                MouseButtonState? state = null;
-
-                switch (wParam)
+                if (mouseButton != null)
                 {
+                    MouseButtonEventHandler eventHandler = null;
+                    MouseButtonState? state = null;
 
-                    case WM.LBUTTONDOWN or WM.RBUTTONDOWN or WM.XBUTTONDOWN or 
-                        WM.MBUTTONDOWN:
+                    switch (wParam)
+                    {
 
-                        state = MouseButtonState.Pressed;
-                        eventHandler = MouseDown;
-                        break;
-                    case WM.LBUTTONUP or WM.RBUTTONUP or WM.XBUTTONUP or 
-                        WM.MBUTTONUP:
+                        case WM.LBUTTONDOWN or WM.RBUTTONDOWN or WM.XBUTTONDOWN or
+                            WM.MBUTTONDOWN:
 
-                        state = MouseButtonState.Released;
-                        eventHandler = MouseUp;
-                        break;
-                }
+                            state = MouseButtonState.Pressed;
+                            eventHandler = MouseDown;
+                            break;
+                        case WM.LBUTTONUP or WM.RBUTTONUP or WM.XBUTTONUP or
+                            WM.MBUTTONUP:
 
-                if (eventHandler == null || state == null)
-                    Debug.Fail("Failed to compose event for mouse hook");
-                else
-                {
-                    var e = new MouseButtonEventArgs(mouseButton.Value, state.Value, lParam.time);
-                    eventHandler(this, e);
+                            state = MouseButtonState.Released;
+                            eventHandler = MouseUp;
+                            break;
+                    }
+
+                    if (eventHandler == null || state == null)
+                        Debug.Fail("Failed to compose event for mouse hook");
+                    else
+                    {
+                        var e = new MouseButtonEventArgs(mouseButton.Value, state.Value, lParam.time);
+                        eventHandler(this, e);
+                    }
                 }
             }
+            else
+                MuteNextMouseEvent = false;
 
             return InteropServices.CallNextHookEx(IntPtr.Zero, code, wParam, lParam);
         }
