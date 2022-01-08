@@ -1,4 +1,4 @@
-<img src="https://github.com/cronoxyd/ShortcutFloat/blob/master/Doc/Images/ShortcutFloatIcon.png?raw=true" align="right" style="width: 128px; height: 128px;">
+<img src="https://github.com/cronoxyd/ShortcutFloat/blob/master/doc/Images/ShortcutFloatIcon.png?raw=true" align="right" style="width: 128px; height: 128px;">
 
 # Shortcut Float
 ## About
